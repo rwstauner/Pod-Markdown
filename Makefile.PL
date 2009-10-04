@@ -3,6 +3,8 @@ include 'Module::AutoInstall';
 
 name 'Pod-Markdown';
 all_from 'lib/Pod/Markdown.pm';
+readme_from 'lib/Pod/Markdown.pm';
+readme_markdown_from 'lib/Pod/Markdown.pm';
 
 auto_set_homepage;
 auto_set_bugtracker;

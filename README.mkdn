@@ -1,27 +1,83 @@
-This is the Perl distribution Pod-Markdown.
+# NAME
 
-## Installation
+Pod::Markdown - Convert POD to Markdown
 
-Pod-Markdown installation is straightforward. If your CPAN shell is
-set up, you should just be able to do
+# SYNOPSIS
 
-    % cpan Pod::Markdown
+    my $parser = Pod::Markdown->new;
+    $parser->parse_from_filehandle(\*STDIN);
+    print $parser->as_markdown;
 
-Download it, unpack it, then build it as per the usual:
+# DESCRIPTION
 
-    % perl Makefile.PL
-    % make && make test
+This module subclasses [Pod::Parser](http://search.cpan.org/search?mode=module&query=Pod::Parser) and converts POD to Markdown.
 
-Then install it:
+# METHODS
 
-    % make install
+- `initialize`
 
-## Documentation
+Initializes a newly constructed object.
 
-Pod-Markdown documentation is available as in POD. So you can do:
+- `as_markdown`
 
-    % perldoc Pod::Markdown
+Returns the parsed POD as Markdown. Takes named arguments. If the `with_meta`
+argument is given a positive value, meta tags are generated as well.
 
-to read the documentation online with your favorite pager.
+- `command`
 
-Marcel Gruenauer
+Handles POD command paragraphs, denoted by a line beginning with `=`.
+
+- `verbatim`
+
+Handles verbatim text.
+
+- `textblock`
+
+Handles normal blocks of POD.
+
+- `interior_sequence`
+
+Handles interior sequences in POD. An interior sequence is an embedded command
+within a block of text which appears as a command name - usually a single
+uppercase character - followed immediately by a string of text which is
+enclosed in angle brackets.
+
+# BUGS AND LIMITATIONS
+
+- * Doesn't create pure Markdown texts. 
+
+- * The links to manpages are incomplete.
+
+Please report any bugs or feature requests through the web interface at
+<http://rt.cpan.org>.
+
+# INSTALLATION
+
+See perlmodinstall for information and options on installing Perl modules.
+
+# AVAILABILITY
+
+The latest version of this module is available from the Comprehensive Perl
+Archive Network (CPAN). Visit <http://www.perl.com/CPAN/> to find a CPAN
+site near you. Or see <http://search.cpan.org/dist/Pod-Markdown/>.
+
+The development version lives at <http://github.com/hanekomu/pod-markdown/>.
+Instead of sending patches, please fork this project using the standard git
+and github infrastructure.
+
+# AUTHORS
+
+Marcel Gr&uuml;nauer, `<marcel@cpan.org>`
+
+Victor Moral, `<victor@taquiones.net>`
+
+# COPYRIGHT AND LICENSE
+
+Copyright 2009 by Marcel Gr&uuml;nauer
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+# SEE ALSO
+
+This module is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](http://search.cpan.org/search?mode=module&query=Module::Build::IkiWiki).
