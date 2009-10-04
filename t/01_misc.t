@@ -19,9 +19,6 @@ my $expect = do { local $/; <DATA> };
 eq_or_diff $markdown, $expect, "markdown from $input";
 
 __DATA__
-[[meta title="pod2markdown - Convert POD text to Markdown "]]
-[[meta author="Marcel Gruumlnauer, `<marcel@cpan.org>`"]]
-
 # NAME
 
 pod2markdown - Convert POD text to Markdown 
@@ -37,13 +34,13 @@ a filter that expects POD on STDIN and outputs Markdown on STDOUT.
 
 # AUTHORS
 
-Marcel Gruumlnauer, `<marcel@cpan.org>`
+Marcel Gr&uuml;nauer, `<marcel@cpan.org>`
 
 Victor Moral, `<victor@taquiones.net>`
 
 # COPYRIGHT AND LICENSE
 
-Copyright 2009 by Marcel Gruumlnauer
+Copyright 2009 by Marcel Gr&uuml;nauer
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

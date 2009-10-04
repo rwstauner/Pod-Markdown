@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use base qw(Pod::Parser);
 
@@ -28,10 +28,15 @@ sub _private {
 }
 
 sub as_markdown {
-    my $parser = shift;
+    my ($parser, %args) = @_;
     my $data   = $parser->_private;
     my $lines  = $data->{Text};
-    my @header = $parser->_build_markdown_head;
+
+    my @header;
+    if ($args{with_meta}) {
+        @header = $parser->_build_markdown_head;
+    }
+
     join("\n" x 2, @header, @{$lines});
 }
 
@@ -162,7 +167,7 @@ sub interior_sequence {
             return '>' if $charname eq 'gt';
             return '|' if $charname eq 'verbar';
             return '/' if $charname eq 'sol';
-            return $charname;
+            return "&$charname;";
         },
         'L' => \&_resolv_link,
     );
@@ -215,7 +220,8 @@ Initializes a newly constructed object.
 
 =item C<as_markdown>
 
-Returns the parsed POD as Markdown.
+Returns the parsed POD as Markdown. Takes named arguments. If the C<with_meta>
+argument is given a positive value, meta tags are generated as well.
 
 =item C<command>
 
