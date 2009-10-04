@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Pod::Markdown;
+our $VERSION = '0.01';
+convert(\*STDIN, \*STDOUT);
+
+sub convert {
+    my ($in_file, $out_file) = @_;
+    my $parser = Pod::Markdown->new;
+    $parser->parse_from_filehandle($in_file);
+    print $out_file $parser->as_markdown;
+}
+
+__END__
+
+=head1 NAME
+
+pod2markdown - Convert POD text to Markdown 
+
+=head1 SYNOPSIS
+
+    $ pod2markdown < POD_File > Markdown_File
+
+=head1 DESCRIPTION
+
+This program uses L<Pod::Markdown> to convert POD into Markdown sources. It is
+a filter that expects POD on STDIN and outputs Markdown on STDOUT.
+
+=head1 AUTHORS
+
+Marcel GrE<uuml>nauer, C<< <marcel@cpan.org> >>
+
+Victor Moral, C<< <victor@taquiones.net> >>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2009 by Marcel GrE<uuml>nauer
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+This program is strongly based on C<pod2mdwn> from L<Module::Build::IkiWiki>.
+
+=cut

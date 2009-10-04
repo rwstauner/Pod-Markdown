@@ -1,0 +1,12 @@
+# no strict 'refs'
+[TestingAndDebugging::ProhibitNoStrict]
+allow = refs
+
+[-BuiltinFunctions::ProhibitStringyEval]
+[-ControlStructures::ProhibitMutatingListFunctions]
+[-Subroutines::ProhibitExplicitReturnUndef]
+[-Subroutines::ProhibitSubroutinePrototypes]
+[-Variables::ProhibitConditionalDeclarations]
+
+# for mkdir $dir, 0777
+[-ValuesAndExpressions::ProhibitLeadingZeros]
