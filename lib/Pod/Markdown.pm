@@ -186,7 +186,7 @@ sub _resolv_link {
         # direct link to a URL
         return sprintf '<%s>', $arg;
     } elsif ($arg =~ m{^(\w+(::\w+)*)$}) {
-        return "[$1](http://search.cpan.org/search?mode=module&query=$1)"
+        return "[$1](http://search.cpan.org/perldoc?$1)"
     } else {
         return sprintf '%s<%s>', $cmd, $arg;
     }

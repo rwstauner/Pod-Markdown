@@ -29,7 +29,7 @@ pod2markdown - Convert POD text to Markdown
 
 # DESCRIPTION
 
-This program uses [Pod::Markdown](http://search.cpan.org/search?mode=module&query=Pod::Markdown) to convert POD into Markdown sources. It is
+This program uses [Pod::Markdown](http://search.cpan.org/perldoc?Pod::Markdown) to convert POD into Markdown sources. It is
 a filter that expects POD on STDIN and outputs Markdown on STDOUT.
 
 # AUTHORS
@@ -47,4 +47,4 @@ it under the same terms as Perl itself.
 
 # SEE ALSO
 
-This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](http://search.cpan.org/search?mode=module&query=Module::Build::IkiWiki).
+This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](http://search.cpan.org/perldoc?Module::Build::IkiWiki).

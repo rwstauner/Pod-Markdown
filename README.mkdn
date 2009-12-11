@@ -10,7 +10,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # DESCRIPTION
 
-This module subclasses [Pod::Parser](http://search.cpan.org/search?mode=module&query=Pod::Parser) and converts POD to Markdown.
+This module subclasses [Pod::Parser](http://search.cpan.org/perldoc?Pod::Parser) and converts POD to Markdown.
 
 # METHODS
 
@@ -80,4 +80,4 @@ it under the same terms as Perl itself.
 
 # SEE ALSO
 
-This module is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](http://search.cpan.org/search?mode=module&query=Module::Build::IkiWiki).
+This module is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](http://search.cpan.org/perldoc?Module::Build::IkiWiki).
