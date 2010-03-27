@@ -32,19 +32,6 @@ pod2markdown - Convert POD text to Markdown
 This program uses [Pod::Markdown](http://search.cpan.org/perldoc?Pod::Markdown) to convert POD into Markdown sources. It is
 a filter that expects POD on STDIN and outputs Markdown on STDOUT.
 
-# AUTHORS
-
-Marcel Gr&uuml;nauer, `<marcel@cpan.org>`
-
-Victor Moral, `<victor@taquiones.net>`
-
-# COPYRIGHT AND LICENSE
-
-Copyright 2009 by Marcel Gr&uuml;nauer
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
 # SEE ALSO
 
 This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](http://search.cpan.org/perldoc?Module::Build::IkiWiki).

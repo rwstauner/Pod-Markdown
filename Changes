@@ -1,8 +1,12 @@
-Revision history for Perl extension Pod-Markdown
+Revision history for Perl extension {{$dist->name}}
+
+{{$NEXT}}
+    - converted the distribution to Dist::Zilla-style
+    - bin/pod2markdown now uses '#!/usr/bin/env perl'
 
 0.02 Sun Oct  4 16:30:06 CEST 2009 (Marcel Gruenauer <marcel@cpan.org>)
-     - E<foo> now outputs '&foo;'
-     - only generate meta tags if asked to
+    - E<foo> now outputs '&foo;'
+    - only generate meta tags if asked to
 
 0.01  2009-10-04T12:24:45Z (Marcel Gruenauer <marcel@cpan.org>)
-     - original version
+    - original version

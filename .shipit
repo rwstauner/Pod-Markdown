@@ -1,6 +1,0 @@
-steps = FindVersion, ChangeVersion, CheckChangeLog, Manifest, DistTestExtra, Commit, Tag, MakeDist, UploadCPAN, Twitter, DistClean
-
-git.tagpattern = v%v
-git.push_to    = origin
-twitter.config = ~/.twitterrc
-
