@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+
+1.100860  2010-03-27 14:31:43 Europe/Vienna
     - converted the distribution to Dist::Zilla-style
     - bin/pod2markdown now uses '#!/usr/bin/env perl'
 
