@@ -1,6 +1,7 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    - improved L<> link handling
 
 1.100860  2010-03-27 14:31:43 Europe/Vienna
     - converted the distribution to Dist::Zilla-style

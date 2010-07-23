@@ -89,7 +89,7 @@ sub command {
         my $level = $1;
 
         # the headers never are indented
-        $parser->_save(sprintf '%s %s', '#' x $level, $paragraph);
+        $parser->_save($parser->format_header($level, $paragraph));
         if ($level == 1) {
             if ($paragraph =~ m{NAME}xmsi) {
                 $data->{searching} = 'title';
@@ -177,16 +177,28 @@ sub interior_sequence {
 
 sub _resolv_link {
     my ($cmd, $arg, $pod_seq) = @_;
-    if ($arg =~ m{^http|ftp}xms) {
+    my $text = $arg =~ s"^(.+?)\|"" ? $1 : '';
 
-        # direct link to a URL
-        return sprintf '<%s>', $arg;
-    } elsif ($arg =~ m{^(\w+(::\w+)*)$}) {
-        return "[$1](http://search.cpan.org/perldoc?$1)";
+    if ($arg =~ m{^http|ftp}xms) { # direct link to a URL
+        $text ||= $arg;
+        return sprintf '[%s](%s)', $text, $arg;
+    } elsif ($arg =~ m{^/(.*)$}) {
+        $text ||= $1;
+        $text = $1;
+        return "[$text](\#pod_$1)";
+    } elsif ($arg =~ m{^(\w+(?:::\w+)*)$}) {
+        $text ||= $1;
+        return "[$text](http://search.cpan.org/perldoc?$1)";
     } else {
         return sprintf '%s<%s>', $cmd, $arg;
     }
 }
+
+sub format_header {
+    my ($level, $paragraph) = @_[1,2];
+    sprintf '%s %s', '#' x $level, $paragraph;
+}
+
 1;
 
 =begin :prelude
