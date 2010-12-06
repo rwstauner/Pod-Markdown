@@ -11,7 +11,7 @@ my $markdown = $parser->as_markdown;
 my $expect = <<'EOMARKDOWN';
 # NAME
 
-pod2markdown - Convert POD text to Markdown 
+pod2markdown - Convert POD text to Markdown
 
 # SYNOPSIS
 
@@ -41,7 +41,7 @@ eq_or_diff $markdown, $expect, "this file's POD as markdown";
 __DATA__
 =head1 NAME
 
-pod2markdown - Convert POD text to Markdown 
+pod2markdown - Convert POD text to Markdown
 
 =head1 SYNOPSIS
 
@@ -61,3 +61,9 @@ HTTP is at L<http://univie.ac.at/baz/>.
 This program is strongly based on C<pod2mdwn> from L<Module::Build::IkiWiki>.
 
 And see L</foobar> as well.
+
+=head1 MORE TESTS
+
+=head2 I<Italics>, B<Bold>, C<Code>, and L<Links> should work in headers
+
+I<Italics>, B<Bold>, C<Code>, and L<Links> should work in body text.
