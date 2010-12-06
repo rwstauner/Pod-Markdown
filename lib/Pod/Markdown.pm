@@ -88,6 +88,8 @@ sub command {
     if ($command =~ m{head(\d)}xms) {
         my $level = $1;
 
+        $paragraph = $parser->interpolate($paragraph, $line_num);
+
         # the headers never are indented
         $parser->_save($parser->format_header($level, $paragraph));
         if ($level == 1) {
