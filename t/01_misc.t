@@ -31,6 +31,12 @@ HTTP is at [http://univie.ac.at/baz/](http://univie.ac.at/baz/).
 This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](http://search.cpan.org/perldoc?Module::Build::IkiWiki).
 
 And see [foobar](#pod_foobar) as well.
+
+# MORE TESTS
+
+## _Italics_, __Bold__, `Code`, and [Links](http://search.cpan.org/perldoc?Links) should work in headers
+
+_Italics_, __Bold__, `Code`, and [Links](http://search.cpan.org/perldoc?Links) should work in body text.
 EOMARKDOWN
 
 1 while chomp $markdown;
