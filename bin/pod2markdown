@@ -13,9 +13,9 @@ sub convert {
     print $out_file $parser->as_markdown;
 }
 
-=head1 NAME
-
-pod2markdown - Convert POD text to Markdown 
+__END__
+#PODNAME: pod2markdown
+#ABSTRACT: Convert POD text to Markdown
 
 =head1 SYNOPSIS
 
