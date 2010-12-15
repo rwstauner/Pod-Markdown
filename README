@@ -2,7 +2,7 @@ NAME
     Pod::Markdown - Convert POD to Markdown
 
 VERSION
-    version 1.103490
+    version 1.103491
 
 SYNOPSIS
         my $parser = Pod::Markdown->new;
