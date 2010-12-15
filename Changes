@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+
+1.103491  2010-12-15 23:03:02 Europe/Vienna
     - added Ryan C. Thompson's email address
 
 1.103490  2010-12-15 16:12:31 Europe/Vienna
