@@ -203,7 +203,7 @@ sub format_header {
 
 =begin :prelude
 
-=for stopwords textblock
+=for stopwords textblock thompsonclan
 
 =end :prelude
 

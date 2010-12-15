@@ -1,6 +1,7 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    - added Ryan C. Thompson's email address
 
 1.103490  2010-12-15 16:12:31 Europe/Vienna
     - improved L<> link handling
