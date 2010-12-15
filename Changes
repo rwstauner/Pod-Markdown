@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+
+1.103490  2010-12-15 16:12:31 Europe/Vienna
     - improved L<> link handling
     - Enabled interpolation of I<these thingies> in headers
 
