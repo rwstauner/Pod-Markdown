@@ -71,8 +71,7 @@ sub _indent_text {
 }
 
 sub _clean_text {
-    my $parser  = shift;
-    my $text    = shift;
+    my $text    = $_[1];
     my @trimmed = grep { $_; } split(/\n/, $text);
     return wantarray ? @trimmed : join("\n", @trimmed);
 }
@@ -124,7 +123,7 @@ sub command {
 }
 
 sub verbatim {
-    my ($parser, $paragraph, $line_num) = @_;
+    my ($parser, $paragraph) = @_;
     $parser->_save($paragraph);
 }
 
@@ -151,8 +150,7 @@ sub textblock {
 }
 
 sub interior_sequence {
-    my ($parser, $seq_command, $seq_argument, $pod_seq) = @_;
-    my $data      = $parser->_private;
+    my ($seq_command, $seq_argument, $pod_seq) = @_[1..3];
     my %interiors = (
         'I' => sub { return '_' . $_[1] . '_' },      # italic
         'B' => sub { return '__' . $_[1] . '__' },    # bold
@@ -160,7 +158,7 @@ sub interior_sequence {
         'F' => sub { return '`' . $_[1] . '`' },      # system path
         'S' => sub { return '`' . $_[1] . '`' },      # code
         'E' => sub {
-            my ($seq, $charname) = @_;
+            my $charname = $_[1];
             return '<' if $charname eq 'lt';
             return '>' if $charname eq 'gt';
             return '|' if $charname eq 'verbar';
@@ -178,7 +176,7 @@ sub interior_sequence {
 }
 
 sub _resolv_link {
-    my ($cmd, $arg, $pod_seq) = @_;
+    my ($cmd, $arg) = @_;
     my $text = $arg =~ s"^(.+?)\|"" ? $1 : '';
 
     if ($arg =~ m{^http|ftp}xms) { # direct link to a URL
@@ -246,4 +244,8 @@ Handles interior sequences in POD. An interior sequence is an embedded command
 within a block of text which appears as a command name - usually a single
 uppercase character - followed immediately by a string of text which is
 enclosed in angle brackets.
+
+=method format_header
+
+Formats a header according to the given level.
 

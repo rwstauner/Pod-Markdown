@@ -36,6 +36,9 @@ METHODS
     a single uppercase character - followed immediately by a string of text
     which is enclosed in angle brackets.
 
+  format_header
+    Formats a header according to the given level.
+
 INSTALLATION
     See perlmodinstall for information and options on installing Perl
     modules.
