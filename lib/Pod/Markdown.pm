@@ -19,7 +19,7 @@ sub _private {
         Text      => [],       # final text
         Indent    => 0,        # list indent levels counter
         ListType  => '-',      # character on every item
-        searching => undef,    # what are we searching for? (title, author etc.)
+        searching => ''   ,    # what are we searching for? (title, author etc.)
         Title     => undef,    # page title
         Author    => undef,    # page author
     };
@@ -55,6 +55,12 @@ sub _save {
     $text = $parser->_indent_text($text);
     push @{ $data->{Text} }, $text;
     return;
+}
+
+sub _unsave {
+    my ($parser, $text) = @_;
+    my $data = $parser->_private;
+    return pop @{ $data->{Text} };
 }
 
 sub _indent_text {
@@ -97,7 +103,7 @@ sub command {
             } elsif ($paragraph =~ m{AUTHOR}xmsi) {
                 $data->{searching} = 'author';
             } else {
-                $data->{searching} = undef;
+                $data->{searching} = '';
             }
         }
     }
@@ -113,9 +119,21 @@ sub command {
 
         # decrement indent level
         $data->{Indent}--;
+        $data->{searching} = '';
     } elsif ($command =~ m{item}xms) {
-        $parser->_save(sprintf '%s %s',
-            $data->{ListType}, $parser->interpolate($paragraph, $line_num));
+        $paragraph = $parser->interpolate($paragraph, $line_num);
+        $paragraph =~ s{^\h* \* \h*}{}xms;
+
+        if ($data->{searching} eq 'listpara') {
+            $data->{searching} = 'listheadhuddled';
+        }
+        else {
+            $data->{searching} = 'listhead';
+        }
+
+        if (length $paragraph) {
+            $parser->textblock($paragraph, $line_num);
+        }
     }
 
     # ignore other commands
@@ -138,11 +156,18 @@ sub textblock {
     $paragraph = $parser->_clean_text($paragraph);
 
     # searching ?
-    if ($data->{searching}) {
-        if ($data->{searching} =~ m{title|author}xms) {
-            $data->{ ucfirst $data->{searching} } = $paragraph;
-            $data->{searching} = undef;
+    if ($data->{searching} =~ m{title|author}xms) {
+        $data->{ ucfirst $data->{searching} } = $paragraph;
+        $data->{searching} = '';
+    } elsif ($data->{searching} =~ m{listhead(huddled)?$}xms) {
+        my $is_huddled = $1;
+        $paragraph = sprintf '%s %s', $data->{ListType}, $paragraph;
+        if ($is_huddled) {
+            $paragraph = $parser->_unsave() . "\n" . $paragraph;
         }
+        $data->{searching} = 'listpara';
+    } elsif ($data->{searching} eq 'listpara') {
+        $data->{searching} = '';
     }
 
     # save the text

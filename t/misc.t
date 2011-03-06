@@ -37,6 +37,19 @@ And see [foobar](#pod_foobar) as well.
 ## _Italics_, __Bold__, `Code`, and [Links](http://search.cpan.org/perldoc?Links) should work in headers
 
 _Italics_, __Bold__, `Code`, and [Links](http://search.cpan.org/perldoc?Links) should work in body text.
+
+- This
+- is
+- a
+
+basic
+
+- bulleted
+
+item
+
+- list
+- test
 EOMARKDOWN
 
 1 while chomp $markdown;
@@ -73,3 +86,29 @@ And see L</foobar> as well.
 =head2 I<Italics>, B<Bold>, C<Code>, and L<Links> should work in headers
 
 I<Italics>, B<Bold>, C<Code>, and L<Links> should work in body text.
+
+=over 4
+
+=item *
+
+This
+
+=item * is
+
+=item * a
+
+basic
+
+=item *
+
+bulleted
+
+item
+
+=item *
+
+list
+
+=item * test
+
+=back
