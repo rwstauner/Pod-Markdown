@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+
+1.110730  2011-03-14 10:11:52 Europe/Vienna
     - make bulleted lists work at least minimally (thanks ap)
 
 1.103491  2010-12-15 23:03:02 Europe/Vienna
