@@ -2,7 +2,7 @@ NAME
     Pod::Markdown - Convert POD to Markdown
 
 VERSION
-    version 1.103491
+    version 1.110730
 
 SYNOPSIS
         my $parser = Pod::Markdown->new;
@@ -55,7 +55,7 @@ AVAILABILITY
     CPAN site near you, or see <http://search.cpan.org/dist/Pod-Markdown/>.
 
     The development version lives at
-    <http://github.com/hanekomu/Pod-Markdown.git> and may be cloned from
+    <http://github.com/hanekomu/Pod-Markdown> and may be cloned from
     <git://github.com/hanekomu/Pod-Markdown.git>. Instead of sending
     patches, please fork this project using the standard git and github
     infrastructure.
