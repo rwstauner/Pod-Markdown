@@ -58,7 +58,7 @@ sub _save {
 }
 
 sub _unsave {
-    my ($parser, $text) = @_;
+    my $parser = shift;
     my $data = $parser->_private;
     return pop @{ $data->{Text} };
 }
