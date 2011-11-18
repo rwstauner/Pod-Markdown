@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+
+1.110731  2011-11-18T03:28:34Z
     - Ensure verbatim pod becomes verbatim markdown
       by increasing indentation if necessary [rt-72414]
     - Co-maintainership granted to RWSTAUNER
