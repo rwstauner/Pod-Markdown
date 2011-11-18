@@ -93,9 +93,9 @@ I<Italics>, B<Bold>, C<Code>, and L<Links> should work in body text.
 
 This
 
-=item * is
+=item *	is
 
-=item * a
+=item	* a
 
 basic
 

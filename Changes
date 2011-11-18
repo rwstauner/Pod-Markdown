@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    - Change /\h/ to /[ \t]/ for compatibility with older perls.
+      Thanks to David Golden for reporting [rt-71961]
 
 1.110731  2011-11-18T03:28:34Z
     - Ensure verbatim pod becomes verbatim markdown
