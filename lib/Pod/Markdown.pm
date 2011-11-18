@@ -142,6 +142,24 @@ sub command {
 
 sub verbatim {
     my ($parser, $paragraph) = @_;
+
+    # POD verbatim can start with any number of spaces (or tabs)
+    # markdown should be 4 spaces (or a tab)
+    # so indent any paragraphs so that all lines start with at least 4 spaces
+    my @lines = split /\n/, $paragraph;
+    my $indent = ' ' x 4;
+    foreach my $line ( @lines ){
+        next unless $line =~ m/^( +)/;
+        # find the smallest indentation
+        $indent = $1 if length($1) < length($indent);
+    }
+    if( (my $smallest = length($indent)) < 4 ){
+        # invert to get what needs to be prepended
+        $indent = ' ' x (4 - $smallest);
+        # leave tabs alone
+        $paragraph = join "\n", map { /^\t/ ? $_ : $indent . $_ } @lines;
+    }
+
     $parser->_save($paragraph);
 }
 
