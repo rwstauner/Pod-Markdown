@@ -227,7 +227,6 @@ sub _resolv_link {
         return sprintf '[%s](%s)', $text, $arg;
     } elsif ($arg =~ m{^/(.*)$}) {
         $text ||= $1;
-        $text = $1;
         return "[$text](\#pod_$1)";
     } elsif ($arg =~ m{^(\w+(?:::\w+)*)$}) {
         $text ||= $1;
