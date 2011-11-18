@@ -2,6 +2,8 @@
 use 5.008;
 use strict;
 use warnings;
+# PODNAME: pod2markdown
+# ABSTRACT: Convert POD text to Markdown
 
 use Pod::Markdown;
 convert(\*STDIN, \*STDOUT);
@@ -12,10 +14,6 @@ sub convert {
     $parser->parse_from_filehandle($in_file);
     print $out_file $parser->as_markdown;
 }
-
-__END__
-#PODNAME: pod2markdown
-#ABSTRACT: Convert POD text to Markdown
 
 =head1 SYNOPSIS
 
