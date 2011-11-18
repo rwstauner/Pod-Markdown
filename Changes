@@ -1,6 +1,7 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    - Co-maintainership granted to RWSTAUNER
 
 1.110730  2011-03-14 10:11:52 Europe/Vienna
     - make bulleted lists work at least minimally (thanks ap)
