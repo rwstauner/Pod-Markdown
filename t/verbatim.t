@@ -43,6 +43,10 @@ to preserve the formatting:
      Because you can
      if you want to
 
+# 1 space
+
+    a little short, but valid
+
 # THAT'S ENOUGH
 EOMARKDOWN
 
@@ -85,6 +89,10 @@ to preserve the formatting:
 
      Because you can
      if you want to
+
+=head1 1 space
+
+ a little short, but valid
 
 =head1 THAT'S ENOUGH
 
