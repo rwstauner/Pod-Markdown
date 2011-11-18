@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+
+1.110732  2011-11-18T04:06:06Z
     - Change /\h/ to /[ \t]/ for compatibility with older perls.
       Thanks to David Golden for reporting [rt-71961]
 
