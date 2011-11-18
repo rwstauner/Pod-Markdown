@@ -1,1 +1,3 @@
-Pod-Markdown-*
+/Pod-Markdown-*
+.build/
+cover_db/
