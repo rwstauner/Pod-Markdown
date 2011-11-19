@@ -1,6 +1,17 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    [Enhancements]
+    - Use Pod::ParseLink to dramatically improve (and simplify) link parsing
+      (including sections, alternate text, and man pages).
+
+    [Format Change]
+    - NOTE: L</foo> now becomes ["foo"](#foo) instead of [foo](#pod_foo).
+      This is consistent with perldoc, perlpodspec, and Pod::Simple::(X)HTML
+      which is used for metacpan.org and search.cpan.org.
+      No '#pod_' id/name attributes were ever generated so the links
+      probably weren't very useful (and probably still aren't).
+      If this change presents a problem please report it.
 
 1.110732  2011-11-18T04:06:06Z
     - Change /\h/ to /[ \t]/ for compatibility with older perls.

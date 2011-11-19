@@ -30,7 +30,7 @@ HTTP is at [http://univie.ac.at/baz/](http://univie.ac.at/baz/).
 
 This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](http://search.cpan.org/perldoc?Module::Build::IkiWiki).
 
-And see [foobar](#pod_foobar) as well.
+And see ["foobar"](#foobar) as well.
 
 # MORE TESTS
 
