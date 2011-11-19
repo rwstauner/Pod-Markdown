@@ -263,11 +263,7 @@ sub format_header {
 
 1;
 
-=begin :prelude
-
-=for stopwords textblock thompsonclan Pagaltzis
-
-=end :prelude
+=for stopwords textblock
 
 =head1 SYNOPSIS
 
