@@ -45,6 +45,9 @@ my @tests = (
 ['/section name',                q</Object Attributes>,     qq^["Object Attributes"](#Object Attributes)^],
 ['http',                         q<http://www.perl.org/>,   qq^[http://www.perl.org/](http://www.perl.org/)^],
 ['text|http',             q<Perl.org|http://www.perl.org/>, qq^[Perl.org](http://www.perl.org/)^],
+
+# varies according to pod-to-html formatter:
+['other/section name',           q<Other/Section Name>,     qq^["Section Name" in Other](${pod_prefix}Other#Section Name)^],
 );
 
 plan tests => scalar @tests;
