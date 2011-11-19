@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+
+1.120000  2011-11-19T05:44:51Z
     [Enhancements]
     - Use Pod::ParseLink to dramatically improve (and simplify) link parsing
       (including sections, alternate text, and man pages).
