@@ -26,6 +26,8 @@ my @tests = (
   [E => q<eacute>,          q{&eacute;}],
 
   [F => q<file.ext>,        q{`file.ext`}],
+  [X => q<index>,           q{}],
+  [Z => q<null>,            q{}],
 
   [Q => q<unknown>,         q{Q<unknown>}, 'uknown code (Q<>)' ],
 );

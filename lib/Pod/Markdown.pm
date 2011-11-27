@@ -213,6 +213,8 @@ sub interior_sequence {
             return "&$charname;";
         },
         'L' => \&_resolv_link,
+        'X' => sub { '' },
+        'Z' => sub { '' },
     );
     if (exists $interiors{$seq_command}) {
         my $code = $interiors{$seq_command};
