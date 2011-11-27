@@ -40,6 +40,8 @@ And see ["foobar"](#foobar) as well.
 
 _Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in body text.
 
+__Nested `codes`__ work, too
+
 - This
 - is
 - a
@@ -92,6 +94,8 @@ And see L</foobar> as well.
 =head2 I<Italics>, B<Bold>, C<Code>, and L<Links> should work in headers
 
 I<Italics>, B<Bold>, C<Code>, and L<Links> should work in body text.
+
+B<< Nested C<codes> >> work, too
 
 =over 4
 

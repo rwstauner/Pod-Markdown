@@ -10,7 +10,6 @@ my $man_prefix = 'http://man.he.net/man';
 my $parser = Pod::Markdown->new;
 
 my @tests = (
-  # TODO: test some nested codes
   [I => q<italic>,          q{_italic_}],
   [B => q<bold>,            q{__bold__}],
   [C => q<code>,            q{`code`}],
