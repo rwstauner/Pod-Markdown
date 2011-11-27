@@ -1,6 +1,11 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    [Prereqs]
+    - Require version 1.10 of Pod::ParseLink (core in perl 5.12)
+      to handle alt text with schemes/absolute URLs.
+      This can be changed from "requires" to "recommends" if it poses a problem.
+
     [Test Fix]
     - Skip tests (rather than fail) for alt text with absolute url
       if Pod::ParseLink < 1.10
