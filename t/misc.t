@@ -52,6 +52,10 @@ item
 
 - list
 - test
+
+# Links
+
+[Formatting `C`odes](${pod_prefix}Links#L<...>)
 EOMARKDOWN
 
 1 while chomp $markdown;
@@ -114,3 +118,7 @@ list
 =item * test
 
 =back
+
+=head1 Links
+
+L<<< FormattZ<>ing C<C>odes|Links/"LE<lt>...E<gt>" >>>

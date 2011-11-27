@@ -197,6 +197,10 @@ sub textblock {
 sub interior_sequence {
     my ($self, $seq_command, $seq_argument, $pod_seq) = @_;
 
+    # nested links are not allowed
+    return sprintf '%s<%s>', $seq_command, $seq_argument
+        if $seq_command eq 'L' && $self->_private->{InsideLink};
+
     my $i = 2;
     my %interiors = (
         'I' => sub { return '_'  . $_[$i] . '_'  },      # italic
@@ -234,7 +238,11 @@ sub interior_sequence {
 sub _resolv_link {
     my ($self, $cmd, $arg) = @_;
 
+    local $self->_private->{InsideLink} = 1;
+
     my ($text, $inferred, $name, $section, $type) =
+      # perlpodspec says formatting codes can occur in all parts of an L<>
+      map { $_ && $self->interpolate($_, 1) }
       Pod::ParseLink::parselink($arg);
     my $url = '';
 

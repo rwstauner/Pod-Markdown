@@ -36,7 +36,8 @@ my @tests = (
 ['external http',                q<http://website>,         qq^[http://website](http://website)^],
 ['http, alt text (perl 5.12)',   q<web|http://website>,     qq^[web](http://website)^],
 
-['embedded codes',               q^the docs on C<$.>|perlvar/"$."^, qq^[the docs on C<\$.>](${pod_prefix}perlvar#\$.)^],
+['embedded codes',               q^the docs on C<$.>|perlvar/"$."^, qq^[the docs on `\$.`](${pod_prefix}perlvar#\$.)^],
+["don't expand nested L's",      q^perlpodspec/"About LE<lt>...E<gt> Codes"^, qq^["About L<...> Codes" in perlpodspec](${pod_prefix}perlpodspec#About L<...> Codes)^],
 
 # perlpodspec examples:
 ['name',                         q<Foo::Bar>,               qq^[Foo::Bar](${pod_prefix}Foo::Bar)^],

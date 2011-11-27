@@ -1,6 +1,7 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    - Handle POD formatting codes embedded in links
     - Handle more POD formatting codes
 
 1.120001  2011-11-27T04:07:30Z
