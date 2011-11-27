@@ -10,9 +10,24 @@ my $man_prefix = 'http://man.he.net/man';
 my $parser = Pod::Markdown->new;
 
 my @tests = (
+  # TODO: test some nested codes
   [I => q<italic>,          q{_italic_}],
   [B => q<bold>,            q{__bold__}],
   [C => q<code>,            q{`code`}],
+
+  # links tested extensively in t/links.t
+  [L => q<link>,             "[link](${pod_prefix}link)"],
+
+  [E => q<lt>,              q{<}],
+  [E => q<gt>,              q{>}],
+  [E => q<verbar>,          q{|}],
+  [E => q<sol>,             q{/}],
+
+  [E => q<eacute>,          q{&eacute;}],
+
+  [F => q<file.ext>,        q{`file.ext`}],
+
+  [Q => q<unknown>,         q{Q<unknown>}, 'uknown code (Q<>)' ],
 );
 
 plan tests => scalar @tests * 2;
