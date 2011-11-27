@@ -24,6 +24,9 @@ my @tests = (
   [E => q<sol>,             q{/}],
 
   [E => q<eacute>,          q{&eacute;}],
+  [E => q<0x201E>,          q{&#x201E;},  'E hex'],
+  [E => q<075>,             q{&#61;},     'E octal'],
+  [E => q<181>,             q{&#181;},    'E decimal'],
 
   [F => q<file.ext>,        q{`file.ext`}],
   [X => q<index>,           q{}],
