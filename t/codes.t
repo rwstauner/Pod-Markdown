@@ -2,7 +2,6 @@
 use strict;
 use warnings;
 use Test::More;
-use Test::Differences;
 use Pod::Markdown;
 
 my $pod_prefix = 'http://search.cpan.org/perldoc?';
