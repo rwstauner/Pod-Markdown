@@ -52,7 +52,7 @@ my @tests = (
 ['other/section name',           q<Other/Section Name>,     qq^["Section Name" in Other](${pod_prefix}Other#Section Name)^],
 );
 
-plan tests => scalar @tests;
+plan tests => scalar @tests * 2;
 
 foreach my $test ( @tests ){
   my ($desc, $pod, $mkdn) = @$test;
@@ -61,6 +61,9 @@ foreach my $test ( @tests ){
     skip 'alt text with schemes/absolute URLs not supported until perl 5.12 / Pod::ParseLink 1.10', 1
       if !$alt_text_for_urls && $pod =~ m/\|\w+:[^:\s]\S*\z/; # /alt text \| url (not perl module)/ (regexp from perlpodspec)
 
-    is $parser->interior_sequence(L => $pod), $mkdn, $desc;
+    # interior_sequence is what we specifically want to test
+    is $parser->interior_sequence(L => $pod), $mkdn, $desc . ' (interior_sequence)';
+    # but interpolate() tests the pod parsing as a whole (which can expose recursion bugs, etc)
+    is $parser->interpolate("L<<< $pod >>>"), $mkdn, $desc . ' (interpolate)';
   }
 }
