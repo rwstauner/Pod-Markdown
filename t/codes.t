@@ -28,6 +28,7 @@ my @tests = (
   [E => q<181>,             q{&#181;},    'E decimal'],
 
   [F => q<file.ext>,        q{`file.ext`}],
+  [S => q<$x ? $y : $z>,    q{$x&nbsp;?&nbsp;$y&nbsp;:&nbsp;$z}],
   [X => q<index>,           q{}],
   [Z => q<null>,            q{}],
 

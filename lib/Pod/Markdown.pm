@@ -207,7 +207,11 @@ sub interior_sequence {
         'B' => sub { return '__' . $_[$i] . '__' },      # bold
         'C' => sub { return '`'  . $_[$i] . '`'  },      # monospace
         'F' => sub { return '`'  . $_[$i] . '`'  },      # system path
-        'S' => sub { return '`'  . $_[$i] . '`'  },      # code
+        # non-breaking space
+        'S' => sub {
+            (my $s = $_[$i]) =~ s/ /&nbsp;/g;
+            return $s;
+        },
         'E' => sub {
             my $charname = $_[$i];
             return '<' if $charname eq 'lt';

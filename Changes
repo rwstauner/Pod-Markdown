@@ -1,8 +1,15 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    [Enhancements]
     - Handle POD formatting codes embedded in links
     - Handle more POD formatting codes
+    - Convert spaces in S<> to &nbsp;
+
+    [Format Change]
+    - S<> no longer produces backticks (code sections).
+      This is consistent with perlpod and perlpodspec.
+      Use something like S<C<code>> if you intend it to be treated as code.
 
 1.120001  2011-11-27T04:07:30Z
     [Prereqs]
