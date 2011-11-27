@@ -195,15 +195,17 @@ sub textblock {
 }
 
 sub interior_sequence {
-    my ($seq_command, $seq_argument, $pod_seq) = @_[1..3];
+    my ($self, $seq_command, $seq_argument, $pod_seq) = @_;
+
+    my $i = 2;
     my %interiors = (
-        'I' => sub { return '_' . $_[1] . '_' },      # italic
-        'B' => sub { return '__' . $_[1] . '__' },    # bold
-        'C' => sub { return '`' . $_[1] . '`' },      # monospace
-        'F' => sub { return '`' . $_[1] . '`' },      # system path
-        'S' => sub { return '`' . $_[1] . '`' },      # code
+        'I' => sub { return '_'  . $_[$i] . '_'  },      # italic
+        'B' => sub { return '__' . $_[$i] . '__' },      # bold
+        'C' => sub { return '`'  . $_[$i] . '`'  },      # monospace
+        'F' => sub { return '`'  . $_[$i] . '`'  },      # system path
+        'S' => sub { return '`'  . $_[$i] . '`'  },      # code
         'E' => sub {
-            my $charname = $_[1];
+            my $charname = $_[$i];
             return '<' if $charname eq 'lt';
             return '>' if $charname eq 'gt';
             return '|' if $charname eq 'verbar';
@@ -214,14 +216,14 @@ sub interior_sequence {
     );
     if (exists $interiors{$seq_command}) {
         my $code = $interiors{$seq_command};
-        return $code->($seq_command, $seq_argument, $pod_seq);
+        return $code->($self, $seq_command, $seq_argument, $pod_seq);
     } else {
         return sprintf '%s<%s>', $seq_command, $seq_argument;
     }
 }
 
 sub _resolv_link {
-    my ($cmd, $arg) = @_;
+    my ($self, $cmd, $arg) = @_;
 
     my ($text, $inferred, $name, $section, $type) =
       Pod::ParseLink::parselink($arg);
