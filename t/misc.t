@@ -5,21 +5,23 @@ use Test::More tests => 1;
 use Test::Differences;
 use Pod::Markdown;
 
+my $pod_prefix = 'http://search.cpan.org/perldoc?';
+
 my $parser = Pod::Markdown->new;
 $parser->parse_from_filehandle(\*DATA);
 my $markdown = $parser->as_markdown;
-my $expect = <<'EOMARKDOWN';
+my $expect = <<EOMARKDOWN;
 # NAME
 
 pod2markdown - Convert POD text to Markdown
 
 # SYNOPSIS
 
-    $ pod2markdown < POD_File > Markdown_File
+    \$ pod2markdown < POD_File > Markdown_File
 
 # DESCRIPTION
 
-This program uses [Pod::Markdown](http://search.cpan.org/perldoc?Pod::Markdown) to convert POD into Markdown sources. It is
+This program uses [Pod::Markdown](${pod_prefix}Pod::Markdown) to convert POD into Markdown sources. It is
 a filter that expects POD on STDIN and outputs Markdown on STDOUT.
 
 FTP is at [ftp://ftp.univie.ac.at/foo/bar](ftp://ftp.univie.ac.at/foo/bar).
@@ -28,15 +30,15 @@ HTTP is at [http://univie.ac.at/baz/](http://univie.ac.at/baz/).
 
 # SEE ALSO
 
-This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](http://search.cpan.org/perldoc?Module::Build::IkiWiki).
+This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](${pod_prefix}Module::Build::IkiWiki).
 
 And see ["foobar"](#foobar) as well.
 
 # MORE TESTS
 
-## _Italics_, __Bold__, `Code`, and [Links](http://search.cpan.org/perldoc?Links) should work in headers
+## _Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in headers
 
-_Italics_, __Bold__, `Code`, and [Links](http://search.cpan.org/perldoc?Links) should work in body text.
+_Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in body text.
 
 - This
 - is
