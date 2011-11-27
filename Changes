@@ -1,6 +1,9 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+    [Test Fix]
+    - Skip tests (rather than fail) for alt text with absolute url
+      if Pod::ParseLink < 1.10
 
 1.120000  2011-11-19T05:44:51Z
     [Enhancements]

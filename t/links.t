@@ -10,6 +10,8 @@ my $man_prefix = 'http://man.he.net/man';
 
 my $parser = Pod::Markdown->new;
 
+my $alt_text_for_urls = (Pod::ParseLink->VERSION >= 1.10);
+
 my @tests = (
 # in order of L<> examples in perlpod:
 ['name',                         q<name>,                   qq^[name](${pod_prefix}name)^],
@@ -54,5 +56,11 @@ plan tests => scalar @tests;
 
 foreach my $test ( @tests ){
   my ($desc, $pod, $mkdn) = @$test;
-  is $parser->interior_sequence(L => $pod), $mkdn, $desc;
+
+  SKIP: {
+    skip 'alt text with schemes/absolute URLs not supported until perl 5.12 / Pod::ParseLink 1.10', 1
+      if !$alt_text_for_urls && $pod =~ m/\|\w+:[^:\s]\S*\z/; # /alt text \| url (not perl module)/ (regexp from perlpodspec)
+
+    is $parser->interior_sequence(L => $pod), $mkdn, $desc;
+  }
 }
