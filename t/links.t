@@ -50,6 +50,12 @@ my @tests = (
 
 # varies according to pod-to-html formatter:
 ['other/section name',           q<Other/Section Name>,     qq^["Section Name" in Other](${pod_prefix}Other#Section Name)^],
+
+# is there something better to do?
+['no url: empty',                q<>,                       qq^L<>^],
+['no url: pipe',                 q<|>,                      qq^L<|>^],
+['no url: slash',                q</>,                      qq^L</>^],
+['no url: quotes',               q<"">,                     qq^L<"">^],
 );
 
 plan tests => scalar @tests * 2;
