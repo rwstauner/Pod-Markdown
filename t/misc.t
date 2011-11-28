@@ -42,6 +42,10 @@ _Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in body
 
 __Nested `codes`__ work, too
 
+non-breaking space: foo&nbsp;bar.
+
+non-breaking code: `\$x&nbsp;?&nbsp;\$y&nbsp;:&nbsp;\$z` foo&nbsp;`bar`&nbsp;baz
+
 - This
 - is
 - a
@@ -96,6 +100,10 @@ And see L</foobar> as well.
 I<Italics>, B<Bold>, C<Code>, and L<Links> should work in body text.
 
 B<< Nested C<codes> >> work, too
+
+non-breaking space: S<foo bar>.
+
+non-breaking code: S<C<$x ? $y : $z>> S<foo C<bar> baz>
 
 =over 4
 

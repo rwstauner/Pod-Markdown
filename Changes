@@ -10,7 +10,7 @@ Revision history for Perl extension {{$dist->name}}
     [Format Change]
     - S<> no longer produces backticks (code sections).
       This is consistent with perlpod and perlpodspec.
-      Use something like S<C<code>> if you intend it to be treated as code.
+      Use something like S<C<$x + $y>> if you intend it to be treated as code.
 
 1.120001  2011-11-27T04:07:30Z
     [Prereqs]
