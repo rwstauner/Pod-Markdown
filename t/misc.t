@@ -46,6 +46,8 @@ non-breaking space: foo&nbsp;bar.
 
 non-breaking code: `\$x&nbsp;?&nbsp;\$y&nbsp;:&nbsp;\$z` foo&nbsp;`bar`&nbsp;baz
 
+    verbatim para B<with> C<< E<verbar> >> codes
+
 - This
 - is
 - a
@@ -104,6 +106,8 @@ B<< Nested C<codes> >> work, too
 non-breaking space: S<foo bar>.
 
 non-breaking code: S<C<$x ? $y : $z>> S<foo C<bar> baz>
+
+ verbatim para B<with> C<< E<verbar> >> codes
 
 =over 4
 
