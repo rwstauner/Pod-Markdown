@@ -219,6 +219,9 @@ sub interior_sequence {
             return '|' if $charname eq 'verbar';
             return '/' if $charname eq 'sol';
 
+            # convert legacy charnames to more modern ones (see perlpodspec)
+            $charname =~ s/\A([lr])chevron\z/${1}aquo/;
+
             return "&#$1;" if $charname =~ /^0(x[0-9a-fA-Z]+)$/;
 
             $charname = oct($charname) if $charname =~ /^0\d+$/;

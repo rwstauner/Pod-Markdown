@@ -27,6 +27,12 @@ my @tests = (
   [E => q<075>,             q{&#61;},     'E octal'],
   [E => q<181>,             q{&#181;},    'E decimal'],
 
+  # legacy charnames specifically mentioned by perlpodspec
+  [E => q<lchevron>,        q{&laquo;}],
+  [E => q<rchevron>,        q{&raquo;}],
+  [E => q<zchevron>,        q{&zchevron;}],
+  [E => q<rchevrony>,       q{&rchevrony;}],
+
   [F => q<file.ext>,        q{`file.ext`}],
   [S => q<$x ? $y : $z>,    q{$x&nbsp;?&nbsp;$y&nbsp;:&nbsp;$z}],
   [X => q<index>,           q{}],
