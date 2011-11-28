@@ -53,7 +53,8 @@ EOMARKDOWN
 1 while chomp $markdown;
 1 while chomp $expect;
 
-eq_or_diff $markdown, $expect, "this file's POD as markdown";
+eq_or_diff $markdown, $expect,
+  'preserve verbatim paragraphs of various initial whitespace combinations';
 
 __DATA__
 =head1 SYNOPSIS
