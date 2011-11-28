@@ -1,6 +1,8 @@
 Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
+
+1.200000  2011-11-28T17:57:01Z
     [Enhancements]
     - Handle POD formatting codes embedded in links
     - Render Z<> and X<> as blank strings
@@ -13,6 +15,9 @@ Revision history for Perl extension {{$dist->name}}
       Use something like S<C<$x + $y>> if you intend it to be treated as code.
     - Author meta tag with no title meta tag does not produce a leading newline.
       This was considered a bug.
+
+    [Tests]
+    - More tests, increased coverage
 
 1.120001  2011-11-27T04:07:30Z
     [Prereqs]
