@@ -141,6 +141,10 @@ sub command {
 sub verbatim {
     my ($parser, $paragraph) = @_;
 
+    # NOTE: perlpodspec says parsers should expand tabs by default
+    # NOTE: Apparently Pod::Parser does not.  should we?
+    # NOTE: this might be s/^\t/" " x 8/e, but what about tabs inside the para?
+
     # POD verbatim can start with any number of spaces (or tabs)
     # markdown should be 4 spaces (or a tab)
     # so indent any paragraphs so that all lines start with at least 4 spaces
