@@ -48,6 +48,11 @@ my @tests = (
 ['http',                         q<http://www.perl.org/>,   qq^[http://www.perl.org/](http://www.perl.org/)^],
 ['text|http',             q<Perl.org|http://www.perl.org/>, qq^[Perl.org](http://www.perl.org/)^],
 
+# how should these be handled?
+['man()',                        q<crontab()>,              qq^[crontab()](${man_prefix}1/crontab)^],
+['man(X)',                       q<crontab(X)>,             qq^[crontab(X)](${man_prefix}X/crontab)^],
+['man(2)-page',                  q<crontab(2)-page>,        qq^[crontab(2)-page](${man_prefix}2/crontab)^],
+
 # varies according to pod-to-html formatter:
 ['other/section name',           q<Other/Section Name>,     qq^["Section Name" in Other](${pod_prefix}Other#Section Name)^],
 
