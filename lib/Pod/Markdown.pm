@@ -41,14 +41,10 @@ sub as_markdown {
 sub _build_markdown_head {
     my $parser    = shift;
     my $data      = $parser->_private;
-    my $paragraph = '';
-    if (defined $data->{Title}) {
-        $paragraph .= sprintf '[[meta title="%s"]]', $data->{Title};
-    }
-    if (defined $data->{Author}) {
-        $paragraph .= "\n" . sprintf '[[meta author="%s"]]', $data->{Author};
-    }
-    return $paragraph;
+    return join "\n",
+        map  { qq![[meta \l$_="$data->{$_}"]]! }
+        grep { defined $data->{$_} }
+        qw( Title Author );
 }
 
 sub _save {

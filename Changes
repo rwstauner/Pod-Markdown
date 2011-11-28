@@ -7,10 +7,12 @@ Revision history for Perl extension {{$dist->name}}
     - Handle numeric (hex, octal, and decimal) E<> escapes
     - Convert spaces in S<> to &nbsp;
 
-    [Format Change]
+    [Format Changes]
     - S<> no longer produces backticks (code sections).
       This is consistent with perlpod and perlpodspec.
       Use something like S<C<$x + $y>> if you intend it to be treated as code.
+    - Author meta tag with no title meta tag does not produce a leading newline.
+      This was considered a bug.
 
 1.120001  2011-11-27T04:07:30Z
     [Prereqs]
