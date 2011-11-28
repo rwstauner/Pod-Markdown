@@ -3,7 +3,8 @@ Revision history for Perl extension {{$dist->name}}
 {{$NEXT}}
     [Enhancements]
     - Handle POD formatting codes embedded in links
-    - Handle more POD formatting codes
+    - Render Z<> and X<> as blank strings
+    - Handle numeric (hex, octal, and decimal) E<> escapes
     - Convert spaces in S<> to &nbsp;
 
     [Format Change]
