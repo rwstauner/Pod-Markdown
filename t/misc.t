@@ -11,7 +11,7 @@ my $parser = Pod::Markdown->new;
 $parser->parse_from_filehandle(\*DATA);
 my $markdown = $parser->as_markdown;
 my $expect = <<EOMARKDOWN;
-# NAME
+# POD
 
 pod2markdown - Convert POD text to Markdown
 
@@ -70,7 +70,7 @@ EOMARKDOWN
 eq_or_diff $markdown, $expect, "this file's POD as markdown";
 
 __DATA__
-=head1 NAME
+=head1 POD
 
 pod2markdown - Convert POD text to Markdown
 
