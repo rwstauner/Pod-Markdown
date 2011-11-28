@@ -259,7 +259,7 @@ sub _resolv_link {
         $url = $name;
     } elsif ($type eq 'man') {
         # stolen from Pod::Simple::(X)HTML
-        my ($page, $part) = $name =~ /([^(]+)(?:[(](\S*)[)])?/;
+        my ($page, $part) = $name =~ /\A([^(]+)(?:[(](\S*)[)])?/;
         $url = 'http://man.he.net/man' . ($part || 1) . '/' . ($page || $name);
     } else {
         if ($name) {
