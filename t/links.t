@@ -63,6 +63,9 @@ my @tests = (
 ['no url: pipe',                 q<|>,                      qq^L<|>^],
 ['no url: slash',                q</>,                      qq^L</>^],
 ['no url: quotes',               q<"">,                     qq^L<"">^],
+
+['empty text: |url',             q<|http://foo>,            qq^[http://foo](http://foo)^],
+['false text: 0|url',            q<0|http://foo>,           qq^[0](http://foo)^],
 );
 
 plan tests => scalar @tests * 2;
