@@ -77,7 +77,15 @@ sub _indent_text {
 sub _clean_text {
     my $text    = $_[1];
     my @trimmed = grep { $_; } split(/\n/, $text);
+
     return wantarray ? @trimmed : join("\n", @trimmed);
+}
+
+sub _escape {
+	my $text = $_[1];
+	# escape stars and stripes as they are interpret in markdown as emphasis
+	$text =~ s/(\_|\*)/\\$1/g;
+	return $text;
 }
 
 sub command {
@@ -140,6 +148,7 @@ sub command {
 
 sub verbatim {
     my ($parser, $paragraph) = @_;
+    $paragraph = $parser->_escape($paragraph);
 
     # NOTE: perlpodspec says parsers should expand tabs by default
     # NOTE: Apparently Pod::Parser does not.  should we?
@@ -168,6 +177,7 @@ sub verbatim {
 sub textblock {
     my ($parser, $paragraph, $line_num) = @_;
     my $data = $parser->_private;
+    $paragraph = $parser->_escape($paragraph);
 
     # interpolate the paragraph for embebed sequences
     $paragraph = $parser->interpolate($paragraph, $line_num);

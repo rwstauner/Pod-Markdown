@@ -17,7 +17,7 @@ pod2markdown - Convert POD text to Markdown
 
 # SYNOPSIS
 
-    \$ pod2markdown < POD_File > Markdown_File
+    \$ pod2markdown < POD\\_File > Markdown\\_File
 
 # DESCRIPTION
 
@@ -64,6 +64,11 @@ item
 # Links
 
 [Formatting `C`odes](${pod_prefix}Links#L<...>)
+
+# Special characters
+
+    foo\\_bar is the result of 4 \\* 4
+
 EOMARKDOWN
 
 1 while chomp $markdown;
@@ -138,3 +143,7 @@ list
 =head1 Links
 
 L<<< FormattZ<>ing C<C>odes|Links/"LE<lt>...E<gt>" >>>
+
+=head1 Special characters
+
+    foo_bar is the result of 4 * 4
