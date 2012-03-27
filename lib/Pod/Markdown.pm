@@ -107,6 +107,7 @@ sub command {
     if ($command =~ m{head(\d)}xms) {
         my $level = $1;
 
+        $paragraph = $parser->_escape($paragraph);
         $paragraph = $parser->interpolate($paragraph, $line_num);
 
         # the headers never are indented
