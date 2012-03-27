@@ -157,7 +157,6 @@ sub command {
 
 sub verbatim {
     my ($parser, $paragraph) = @_;
-    $paragraph = $parser->_escape($paragraph);
 
     # NOTE: perlpodspec says parsers should expand tabs by default
     # NOTE: Apparently Pod::Parser does not.  should we?

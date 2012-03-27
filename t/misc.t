@@ -17,7 +17,7 @@ pod2markdown - Convert POD text to Markdown
 
 # SYNOPSIS
 
-    \$ pod2markdown < POD\\_File > Markdown\\_File
+    \$ pod2markdown < POD_File > Markdown_File
 
 # DESCRIPTION
 
