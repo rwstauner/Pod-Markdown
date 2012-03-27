@@ -82,10 +82,18 @@ sub _clean_text {
 }
 
 sub _escape {
-	my $text = $_[1];
-	# escape stars and stripes as they are interpret in markdown as emphasis
-	$text =~ s/(\_|\*)/\\$1/g;
-	return $text;
+    local $_ = $_[1];
+
+    # do inline characters first
+    s/([][\\`*_#])/\\$1/g;
+
+    # escape unordered lists
+    s/^([-+*])/\\$1/mg;
+
+    # escape dots that would wrongfully create numbered lists
+    s/^( (?:>\s+)? \d+ ) (\.\x20)/$1\\$2/xgm;
+
+    return $_;
 }
 
 sub command {

@@ -64,11 +64,67 @@ item
 # Links
 
 [Formatting `C`odes](${pod_prefix}Links#L<...>)
+EOMARKDOWN
+$expect .= <<'EOMARKDOWN';
 
-# Special characters
+# \*Special\* characters
 
-    foo\\_bar is the result of 4 \\* 4
+    foo_bar is the result of 4 * 4
 
+Regular characters like \*asterisks\* and \_\_underscores\_\_
+should be escaped in regular text paragraphs.
+Also \[brackets\],
+lists:
+
+\+ a
+\+ b
+
+\- a
+\- b
+
+\# fake headings
+\#\#\# fake headings \#\#\#
+
+> Quote
+> blocks
+> 1\. with
+> 2\. lists
+
+1996\. A year.
+
+\* Bird
+
+\* Magic
+
+\* List item
+
+        `code` block
+
+Hr's:
+
+\---
+
+\* \* \*
+
+Inline \`code\`;
+Links: \[Foo\] \[1\], \[Bar\](/baz)
+An image: !\[image\](/foo)
+backslash \\
+
+From http://daringfireball.net/projects/markdown/syntax:
+
+\\   backslash
+\`   backtick
+\*   asterisk
+\_   underscore
+{}  curly braces
+\[\]  square brackets
+()  parentheses
+\#   hash mark
+\+   plus sign
+\-   minus sign (hyphen)
+.   dot
+!   exclamation mark
 EOMARKDOWN
 
 1 while chomp $markdown;
@@ -144,6 +200,61 @@ list
 
 L<<< FormattZ<>ing C<C>odes|Links/"LE<lt>...E<gt>" >>>
 
-=head1 Special characters
+=head1 *Special* characters
 
     foo_bar is the result of 4 * 4
+
+Regular characters like *asterisks* and __underscores__
+should be escaped in regular text paragraphs.
+Also [brackets],
+lists:
+
++ a
++ b
+
+- a
+- b
+
+# fake headings
+### fake headings ###
+
+> Quote
+> blocks
+> 1. with
+> 2. lists
+
+1996. A year.
+
+* Bird
+
+* Magic
+
+* List item
+
+        `code` block
+
+Hr's:
+
+---
+
+* * *
+
+Inline `code`;
+Links: [Foo] [1], [Bar](/baz)
+An image: ![image](/foo)
+backslash \
+
+From http://daringfireball.net/projects/markdown/syntax:
+
+\   backslash
+`   backtick
+*   asterisk
+_   underscore
+{}  curly braces
+[]  square brackets
+()  parentheses
+#   hash mark
++   plus sign
+-   minus sign (hyphen)
+.   dot
+!   exclamation mark
