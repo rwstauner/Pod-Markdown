@@ -32,6 +32,8 @@ HTTP is at [http://univie.ac.at/baz/](http://univie.ac.at/baz/).
 
 This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](${pod_prefix}Module::Build::IkiWiki).
 
+Inline `code _need not_ be escaped`.
+
 And see ["foobar"](#foobar) as well.
 
 # MORE TESTS
@@ -153,6 +155,8 @@ HTTP is at L<http://univie.ac.at/baz/>.
 =head1 SEE ALSO
 
 This program is strongly based on C<pod2mdwn> from L<Module::Build::IkiWiki>.
+
+Inline C<< code _need not_ be escaped >>.
 
 And see L</foobar> as well.
 

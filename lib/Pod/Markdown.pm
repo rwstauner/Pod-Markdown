@@ -84,6 +84,8 @@ sub _clean_text {
 sub _escape {
     local $_ = $_[1];
 
+    # FIXME: don't escape chars inside C<> blocks
+
     # do inline characters first
     s/([][\\`*_#])/\\$1/g;
 
