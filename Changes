@@ -2,6 +2,10 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+    - Escape special Markdown characters with backslashes.
+      Thanks to Florian (fschlich at zedat dot fu-berlin dot de)
+      for the initial patch (rt-75620).
+
 1.200000  2011-11-28T17:57:01Z
     [Enhancements]
     - Handle POD formatting codes embedded in links
