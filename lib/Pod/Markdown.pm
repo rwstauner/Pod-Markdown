@@ -312,6 +312,9 @@ sub format_header {
 
 This module subclasses L<Pod::Parser> and converts POD to Markdown.
 
+Literal characters in Pod that are special in Markdown
+(like *asterisks*) are backslash-escaped.
+
 =method initialize
 
 Initializes a newly constructed object.
