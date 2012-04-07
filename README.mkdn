@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 1.200000
+version 1.200001
 
 # SYNOPSIS
 
@@ -16,13 +16,16 @@ version 1.200000
 
 This module subclasses [Pod::Parser](http://search.cpan.org/perldoc?Pod::Parser) and converts POD to Markdown.
 
+Literal characters in Pod that are special in Markdown
+(like \*asterisks\*) are backslash-escaped.
+
 # METHODS
 
 ## initialize
 
 Initializes a newly constructed object.
 
-## as_markdown
+## as\_markdown
 
 Returns the parsed POD as Markdown. Takes named arguments. If the `with_meta`
 argument is given a positive value, meta tags are generated as well.
@@ -39,14 +42,14 @@ Handles verbatim text.
 
 Handles normal blocks of POD.
 
-## interior_sequence
+## interior\_sequence
 
 Handles interior sequences in POD. An interior sequence is an embedded command
 within a block of text which appears as a command name - usually a single
 uppercase character - followed immediately by a string of text which is
 enclosed in angle brackets.
 
-## format_header
+## format\_header
 
 Formats a header according to the given level.
 
