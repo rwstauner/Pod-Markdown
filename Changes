@@ -2,7 +2,8 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
-    - Escape special Markdown characters with backslashes.
+    - Escape characters that are special to Markdown
+      (but normal in Pod) with backslashes.
       Thanks to Florian (fschlich at zedat dot fu-berlin dot de)
       for the initial patch (rt-75620).
 
