@@ -184,12 +184,24 @@ sub verbatim {
     $parser->_save($paragraph);
 }
 
+sub _escape_non_code {
+    my ($parser, $text, $ptree) = @_;
+    $text = $parser->_escape($text)
+        unless $ptree->isa('Pod::InteriorSequence') && $ptree->cmd_name eq 'C';
+    return $text;
+}
+
 sub textblock {
     my ($parser, $paragraph, $line_num) = @_;
     my $data = $parser->_private;
-    $paragraph = $parser->_escape($paragraph);
 
-    # interpolate the paragraph for embebed sequences
+    # escape markdown characters in text sequences except for inline code
+    $paragraph = join '', $parser->parse_text(
+        { -expand_text => '_escape_non_code' },
+        $paragraph, $line_num
+    )->raw_text;
+
+    # interpolate the paragraph for embedded sequences
     $paragraph = $parser->interpolate($paragraph, $line_num);
 
     # clean the empty lines

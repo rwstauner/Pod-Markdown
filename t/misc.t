@@ -32,8 +32,6 @@ HTTP is at [http://univie.ac.at/baz/](http://univie.ac.at/baz/).
 
 This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](${pod_prefix}Module::Build::IkiWiki).
 
-Inline `code _need not_ be escaped`.
-
 And see ["foobar"](#foobar) as well.
 
 # MORE TESTS
@@ -43,6 +41,12 @@ And see ["foobar"](#foobar) as well.
 _Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in body text.
 
 __Nested `codes`__ work, too
+
+## \\_Other\\_ \\*Characters\\* \\[Should\\](Be) \\`Escaped\\` in headers
+
+Inline `code _need not_ be escaped`.
+
+__Nested `c*des` \\_should\\_ be escaped__ (but not code).
 
 non-breaking space: foo&nbsp;bar.
 
@@ -156,8 +160,6 @@ HTTP is at L<http://univie.ac.at/baz/>.
 
 This program is strongly based on C<pod2mdwn> from L<Module::Build::IkiWiki>.
 
-Inline C<< code _need not_ be escaped >>.
-
 And see L</foobar> as well.
 
 =head1 MORE TESTS
@@ -167,6 +169,12 @@ And see L</foobar> as well.
 I<Italics>, B<Bold>, C<Code>, and L<Links> should work in body text.
 
 B<< Nested C<codes> >> work, too
+
+=head2 _Other_ *Characters* [Should](Be) `Escaped` in headers
+
+Inline C<< code _need not_ be escaped >>.
+
+B<< Nested C<c*des> _should_ be escaped >> (but not code).
 
 non-breaking space: S<foo bar>.
 
