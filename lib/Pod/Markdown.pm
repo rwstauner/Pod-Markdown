@@ -84,13 +84,11 @@ sub _clean_text {
 sub _escape {
     local $_ = $_[1];
 
-    # FIXME: don't escape chars inside C<> blocks
-
     # do inline characters first
     s/([][\\`*_#])/\\$1/g;
 
-    # escape unordered lists
-    s/^([-+*])/\\$1/mg;
+    # escape unordered lists and blockquotes
+    s/^([-+*>])/\\$1/mg;
 
     # escape dots that would wrongfully create numbered lists
     s/^( (?:>\s+)? \d+ ) (\.\x20)/$1\\$2/xgm;

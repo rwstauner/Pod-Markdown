@@ -91,10 +91,10 @@ lists:
 \# fake headings
 \#\#\# fake headings \#\#\#
 
-> Quote
-> blocks
-> 1\. with
-> 2\. lists
+\> Quote
+\> blocks
+\> 1. with
+\> 2. lists
 
 1996\. A year.
 
