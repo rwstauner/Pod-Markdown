@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 1.200001
+version 1.300000
 
 # SYNOPSIS
 
@@ -17,7 +17,8 @@ version 1.200001
 This module subclasses [Pod::Parser](http://search.cpan.org/perldoc?Pod::Parser) and converts POD to Markdown.
 
 Literal characters in Pod that are special in Markdown
-(like \*asterisks\*) are backslash-escaped.
+(like \*asterisks\*) are backslash-escaped
+(except those in verbatim blocks or `C<code>` sections).
 
 # METHODS
 

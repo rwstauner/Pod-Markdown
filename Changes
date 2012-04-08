@@ -2,8 +2,13 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+1.300000  2012-04-08T00:08:25Z
+
     - Document that characters in varbatim paragraphs and code sections
       are not escaped.
+    - Bump release number to demonstrate major formatting difference
+      of last change (backslash-escaped characters).
+      (Forgot to do it last time.)
 
 1.200001  2012-04-07T23:16:23Z
 
