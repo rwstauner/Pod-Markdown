@@ -333,7 +333,8 @@ sub format_header {
 This module subclasses L<Pod::Parser> and converts POD to Markdown.
 
 Literal characters in Pod that are special in Markdown
-(like *asterisks*) are backslash-escaped.
+(like *asterisks*) are backslash-escaped
+(except those in verbatim blocks or C<< CE<lt>codeE<gt> >> sections).
 
 =method initialize
 

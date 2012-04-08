@@ -2,6 +2,9 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+    - Document that characters in varbatim paragraphs and code sections
+      are not escaped.
+
 1.200001  2012-04-07T23:16:23Z
 
     - Escape characters that are special to Markdown
