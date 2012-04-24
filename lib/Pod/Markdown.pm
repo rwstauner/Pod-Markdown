@@ -136,6 +136,8 @@ sub command {
         $data->{Indent}--;
         $data->{searching} = '';
     } elsif ($command =~ m{item}xms) {
+        # this strips the POD bullet; the searching=listhead will insert markdown's
+        # FIXME: this does not account for numbered or named lists
         $paragraph =~ s{^[ \t]* \* [ \t]*}{}xms;
 
         if ($data->{searching} eq 'listpara') {
@@ -212,6 +214,8 @@ sub textblock {
         my $is_huddled = $1;
         $paragraph = sprintf '%s %s', $data->{ListType}, $paragraph;
         if ($is_huddled) {
+            # FIXME: what does this do?
+            # does this have something to do with preserving an indent?
             $paragraph = $parser->_unsave() . "\n" . $paragraph;
         }
         $data->{searching} = 'listpara';
