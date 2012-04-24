@@ -136,7 +136,6 @@ sub command {
         $data->{Indent}--;
         $data->{searching} = '';
     } elsif ($command =~ m{item}xms) {
-        $paragraph = $parser->interpolate($paragraph, $line_num);
         $paragraph =~ s{^[ \t]* \* [ \t]*}{}xms;
 
         if ($data->{searching} eq 'listpara') {
