@@ -66,6 +66,7 @@ item
 
 - list
 - test
+- and _Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in list item
 
 # Links
 
@@ -205,6 +206,8 @@ item
 list
 
 =item * test
+
+=item * and I<Italics>, B<Bold>, C<Code>, and L<Links> should work in list item
 
 =back
 
