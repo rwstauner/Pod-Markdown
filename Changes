@@ -2,6 +2,8 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+    - Add TODO tests for improving list handling.
+
 1.300000  2012-04-08T00:08:25Z
 
     - Document that characters in varbatim paragraphs and code sections
