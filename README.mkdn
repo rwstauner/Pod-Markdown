@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 1.300000
+version 1.301
 
 # SYNOPSIS
 
