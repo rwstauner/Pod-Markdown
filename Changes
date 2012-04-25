@@ -2,6 +2,10 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+    - Fix double-interpolation of list headings
+      which caused escaping of the markdown characters.
+      Thanks to motemen for the pull request (gh-1).
+
     - Add TODO tests for improving list handling.
 
 1.300000  2012-04-08T00:08:25Z
