@@ -35,7 +35,7 @@ sub as_markdown {
     if ($args{with_meta}) {
         @header = $parser->_build_markdown_head;
     }
-    join("\n" x 2, @header, @{$lines});
+    join("\n" x 2, @header, @{$lines}) . "\n";
 }
 
 sub _build_markdown_head {

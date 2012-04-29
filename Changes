@@ -2,6 +2,9 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+    - End markdown output with a newline to be more consistent with...
+      everything.  If this causes a problem for you please report it.
+
 1.301     2012-04-25T03:56:11Z
 
     - Fix double-interpolation of list headings

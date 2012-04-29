@@ -50,9 +50,6 @@ to preserve the formatting:
 # THAT'S ENOUGH
 EOMARKDOWN
 
-1 while chomp $markdown;
-1 while chomp $expect;
-
 eq_or_diff $markdown, $expect,
   'preserve verbatim paragraphs of various initial whitespace combinations';
 

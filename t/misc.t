@@ -134,9 +134,6 @@ From http://daringfireball.net/projects/markdown/syntax:
 !   exclamation mark
 EOMARKDOWN
 
-1 while chomp $markdown;
-1 while chomp $expect;
-
 eq_or_diff $markdown, $expect, "this file's POD as markdown";
 
 __DATA__

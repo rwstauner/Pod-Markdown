@@ -86,8 +86,6 @@ plan tests => scalar @tests;
 
 foreach my $test ( @tests ) {
   my ($desc, $pod, $exp) = @$test;
-  1 while chomp $pod;
-  1 while chomp $exp;
 
   my $parser = Pod::Markdown->new;
   $parser->parse_from_filehandle( IOString->new($pod) );

@@ -42,9 +42,6 @@ my $expect = <<EOMARKDOWN;
 2. D
 EOMARKDOWN
 
-1 while chomp $markdown;
-1 while chomp $expect;
-
 TODO: {
   local $TODO = 'Lists only minimally supported';
   eq_or_diff $markdown, $expect, "this file's POD as markdown";
