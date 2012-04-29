@@ -5,6 +5,10 @@ Revision history for Perl extension {{$dist->name}}
     - End markdown output with a newline to be more consistent with...
       everything.  If this causes a problem for you please report it.
 
+    - Enable pod2markdown to accept file paths as arguments
+      (for both input and output (defaulting to STDIN/STDOUT)).
+      Thanks to Mike Doherty for the suggestion [rt-76726].
+
 1.301     2012-04-25T03:56:11Z
 
     - Fix double-interpolation of list headings

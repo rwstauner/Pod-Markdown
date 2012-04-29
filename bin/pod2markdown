@@ -6,7 +6,11 @@ use warnings;
 # ABSTRACT: Convert POD text to Markdown
 
 use Pod::Markdown;
-convert(\*STDIN, \*STDOUT);
+
+my $in_fh  = get_handle(shift(@ARGV), '<', \*STDIN);
+my $out_fh = get_handle(shift(@ARGV), '>', \*STDOUT);
+
+convert($in_fh, $out_fh);
 
 sub convert {
     my ($in_file, $out_file) = @_;
@@ -15,14 +19,38 @@ sub convert {
     print $out_file $parser->as_markdown;
 }
 
+sub get_handle {
+  my ($path, $op, $default) = @_;
+  (!defined($path) || $path eq '-') ? $default : do {
+    open(my $fh, $op, $path)
+      or die "Failed to open '$path': $!\n";
+    $fh;
+  };
+}
+
 =head1 SYNOPSIS
 
+    # parse STDIN, print to STDOUT
     $ pod2markdown < POD_File > Markdown_File
+
+    # parse file, print to STDOUT
+    $ pod2markdown input.pod
+
+    # parse file, print to file
+    $ pod2markdown input.pod output.mkdn
+
+    # parse STDIN, print to file
+    $ pod2markdown - output.mkdn
 
 =head1 DESCRIPTION
 
-This program uses L<Pod::Markdown> to convert POD into Markdown sources. It is
-a filter that expects POD on STDIN and outputs Markdown on STDOUT.
+This program uses L<Pod::Markdown> to convert POD into Markdown sources.
+
+It accepts two optional arguments:
+
+=for :list
+* input pod file (defaults to C<STDIN>)
+* output markdown file (defaults to C<STDOUT>)
 
 =head1 SEE ALSO
 
