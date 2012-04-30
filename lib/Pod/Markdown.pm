@@ -371,3 +371,7 @@ enclosed in angle brackets.
 
 Formats a header according to the given level.
 
+=head1 SEE ALSO
+
+=for :list
+* L<pod2markdown> - script included for command line usage
