@@ -6,8 +6,7 @@ use Test::Differences;
 use Pod::Markdown;
 
 use File::Temp qw{ tempfile }; # core
-use File::Spec::Functions; # core
-use IPC::Open2 'open2'; # core
+use File::Spec::Functions qw( catfile ); # core
 
 my ($lib, $bin) = scalar(grep { /\bblib\Wlib$/ } @INC)
   ? ('blib/lib', 'blib/script')
@@ -23,51 +22,47 @@ my ($tmp_out, $outfile) = tempfile( 'pod2markdown-out.XXXXXX', TMPDIR => 1, UNLI
 print $tmp_out "overwrite me\n";
 close $tmp_out;
 
-foreach my $test (
-  ['no args'],
-  ['both dashes', ('-') x 2],
-){
-  my $desc = shift @$test;
-  pod2markdown(@$test, sub {
-    my ($in_fh, $out_fh) = @_;
-    print $in_fh "=head1 P2M\n";
-    close $in_fh;
-    is slurp_fh($out_fh), "# P2M\n", "$desc: stdin/stdout";
-  });
+# I tried this with IPC::Open2, but windows hangs waiting for more <STDIN>...
+
+sub testp2m {
+  my ($args, $desc) = @_;
+  unshift @$args, $^X, "-I$lib", $script;
+  {
+    open(my $fh, '>', $outfile) or die "Failed to open $outfile: $!";
+    print $fh "oops\n";
+    close $fh;
+  }
+  is slurp_file($outfile), "oops\n", 'output file prepared';
+  system(join ' ', map { length($_) > 1 ? qq["$_"] : $_ } @$args);
+  is slurp_file($outfile), "# Temp\n\n_File_\n", $desc;
 }
 
-  pod2markdown($infile, sub {
-    my ($in_fh, $out_fh) = @_;
-    close $in_fh;
-    is slurp_fh($out_fh), "# Temp\n\n_File_\n", "input file, stdout";
-  });
+  testp2m(
+    ['<', $infile, '>', $outfile],
+    'no args: < in > out',
+  );
 
-    is slurp_file($outfile), "overwrite me\n", "output file not used yet";
+  testp2m(
+    [$infile, '>', $outfile],
+    '1 arg: input file, stdout',
+  );
 
-  pod2markdown($infile, $outfile, sub {
-    close $_ for @_;
-  });
+  testp2m(
+    [$infile, $outfile],
+    '2 args: input file, output file',
+  );
 
-    is slurp_file($outfile), "# Temp\n\n_File_\n", "input file, output file";
+  testp2m(
+    ['-', $outfile, '<', $infile],
+    '2 args: - (stdin), output file',
+  );
 
-  pod2markdown('-', $outfile, sub {
-    my ($in_fh, $out_fh) = @_;
-    print $in_fh "=head1 P2M\n";
-    close $in_fh;
-    close $out_fh;
-  });
-    # after the sub
-    is slurp_file($outfile), "# P2M\n", "stdin, output file";
+  testp2m(
+    ['-', '-', '<', $infile, '>', $outfile],
+    'both dashes: - (stdin) - (stdout)',
+  );
 
 done_testing;
-
-sub pod2markdown {
-  my $func = pop;
-  my ($in, $out);
-  my $pid = open2($out, $in, $^X, "-I$lib", $script, @_);
-  $func->($in, $out);
-  waitpid $pid, 0;
-}
 
 sub slurp_file {
   my $path = shift;
