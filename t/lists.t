@@ -42,6 +42,10 @@ my $expect = <<EOMARKDOWN;
 2. D
 EOMARKDOWN
 
+# check out Pod::IkiWiki (or something like that)...
+# the code looks very similar to some of the code in this module
+# but it appears to have some list processing methods...
+
 TODO: {
   local $TODO = 'Lists only minimally supported';
   eq_or_diff $markdown, $expect, "this file's POD as markdown";
