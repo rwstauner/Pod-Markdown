@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 1.301
+version 1.320
 
 # SYNOPSIS
 
@@ -53,6 +53,10 @@ enclosed in angle brackets.
 ## format\_header
 
 Formats a header according to the given level.
+
+# SEE ALSO
+
+- [pod2markdown](http://search.cpan.org/perldoc?pod2markdown) - script included for command line usage
 
 # SUPPORT
 

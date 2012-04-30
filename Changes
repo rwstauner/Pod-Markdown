@@ -2,6 +2,8 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+1.320     2012-04-30T23:30:11Z
+
     - End markdown output with a newline to be more consistent with...
       everything.  If this causes a problem for you please report it.
 
