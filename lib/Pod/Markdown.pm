@@ -22,6 +22,7 @@ sub _private {
         Indent    => 0,        # list indent levels counter
         ListType  => '-',      # character on every item
         searching => ''   ,    # what are we searching for? (title, author etc.)
+        sstack    => [] ,      # Stack for searching, needed for nested list
         Title     => undef,    # page title
         Author    => undef,    # page author
     };
@@ -48,9 +49,10 @@ sub _build_markdown_head {
 }
 
 sub _save {
-    my ($parser, $text) = @_;
+    my ($parser, $text, $prelisthead) = @_;
     my $data = $parser->_private;
-    $text = $parser->_indent_text($text);
+    $text = $parser->_indent_text($text, defined($prelisthead));
+    $text = $prelisthead."\n".$text if defined $prelisthead && $prelisthead ne '';
     push @{ $data->{Text} }, $text;
     return;
 }
@@ -62,13 +64,11 @@ sub _unsave {
 }
 
 sub _indent_text {
-    my ($parser, $text) = @_;
+    my ($parser, $text, $listhead) = @_;
     my $data   = $parser->_private;
     my $level  = $data->{Indent};
+    --$level if $listhead;
     my $indent = undef;
-    if ($level > 0) {
-        $level--;
-    }
     $indent = ' ' x ($level * 4);
     my @lines = map { $indent . $_; } split(/\n/, $text);
     return wantarray ? @lines : join("\n", @lines);
@@ -128,13 +128,15 @@ sub command {
 
         # update indent level
         $data->{Indent}++;
+        push @{$data->{sstack}}, $data->{searching};
 
-        # closing a list ?
+    # closing a list ?
     } elsif ($command =~ m{back}xms) {
 
         # decrement indent level
         $data->{Indent}--;
-        $data->{searching} = '';
+        $data->{searching} = pop @{$data->{sstack}};
+
     } elsif ($command =~ m{item}xms) {
         # this strips the POD bullet; the searching=listhead will insert markdown's
         # FIXME: this does not account for numbered or named lists
@@ -193,6 +195,7 @@ sub _escape_non_code {
 sub textblock {
     my ($parser, $paragraph, $line_num) = @_;
     my $data = $parser->_private;
+    my $prelisthead;
 
     # escape markdown characters in text sequences except for inline code
     $paragraph = join '', $parser->parse_text(
@@ -214,9 +217,10 @@ sub textblock {
         my $is_huddled = $1;
         $paragraph = sprintf '%s %s', $data->{ListType}, $paragraph;
         if ($is_huddled) {
-            # FIXME: what does this do?
-            # does this have something to do with preserving an indent?
-            $paragraph = $parser->_unsave() . "\n" . $paragraph;
+            # To compress into an item in order to avoid "\n\n" insertion.
+            $prelisthead = $parser->_unsave();
+        } else {
+            $prelisthead = '';
         }
         $data->{searching} = 'listpara';
     } elsif ($data->{searching} eq 'listpara') {
@@ -224,7 +228,7 @@ sub textblock {
     }
 
     # save the text
-    $parser->_save($paragraph);
+    $parser->_save($paragraph, $prelisthead);
 }
 
 sub interior_sequence {
