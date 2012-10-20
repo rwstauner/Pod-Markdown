@@ -48,6 +48,10 @@ sub _build_markdown_head {
         qw( Title Author );
 }
 
+# $prelisthead:
+#   undef    : not list head
+#   ''       : list head not huddled
+#   otherwise: list head huddled
 sub _save {
     my ($parser, $text, $prelisthead) = @_;
     my $data = $parser->_private;
