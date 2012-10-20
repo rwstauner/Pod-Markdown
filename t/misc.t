@@ -58,11 +58,11 @@ non-breaking code: `\$x&nbsp;?&nbsp;\$y&nbsp;:&nbsp;\$z` foo&nbsp;`bar`&nbsp;baz
 - is
 - a
 
-basic
+    basic
 
 - bulleted
 
-item
+    item
 
 - list
 - test
