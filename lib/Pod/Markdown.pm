@@ -138,9 +138,17 @@ sub command {
         $data->{searching} = pop @{$data->{sstack}};
 
     } elsif ($command =~ m{item}xms) {
-        # this strips the POD bullet; the searching=listhead will insert markdown's
-        # FIXME: this does not account for numbered or named lists
-        $paragraph =~ s{^[ \t]* \* [ \t]*}{}xms;
+        # this strips the POD list head; the searching=listhead will insert markdown's
+        # FIXME: this does not account for named lists
+
+        # Assuming that POD is correctly wrtitten, we just use POD list head as markdown's
+        $data->{ListType} = '-'; # Default
+        if($paragraph =~ m{^[ \t]* \* [ \t]*}xms) {
+            $paragraph =~ s{^[ \t]* \* [ \t]*}{}xms;
+        } elsif($paragraph =~ m{^[ \t]* (\d+\.) [ \t]*}xms) {
+            $data->{ListType} = $1; # For numbered list only
+            $paragraph =~ s{^[ \t]* \d+\. [ \t]*}{}xms;
+        }
 
         if ($data->{searching} eq 'listpara') {
             $data->{searching} = 'listheadhuddled';
