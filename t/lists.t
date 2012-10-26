@@ -38,6 +38,8 @@ my $expect = <<EOMARKDOWN;
 
 ## Unordered nested list
 
+__Note:__ Markdown does not support definition lists (word => text), just bullets or numbers
+
 - Head1
 
     Paragraph should be indented.
@@ -67,8 +69,7 @@ EOMARKDOWN
 # the code looks very similar to some of the code in this module
 # but it appears to have some list processing methods...
 
-TODO: {
-  local $TODO = 'Lists only minimally supported';
+{
   eq_or_diff $markdown, $expect, "this file's POD as markdown";
 }
 
@@ -112,6 +113,8 @@ and I<in> B<paragraph> C<after> L<item>
 =back
 
 =head2 Unordered nested list
+
+B<Note:> Markdown does not support definition lists (word => text), just bullets or numbers
 
 =over 4
 
