@@ -2,6 +2,9 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+    - Improved list handling including support for ordered (numbered)
+      and nested lists.  Thanks Yasutaka ATARASHI!
+
 1.320     2012-04-30T23:30:11Z
 
     - End markdown output with a newline to be more consistent with...
