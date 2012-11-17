@@ -46,6 +46,8 @@ __Nested `codes`__ work, too
 
 Inline `code _need not_ be escaped`.
 
+### Heading `code _need not_ be escaped, either`.
+
 __Nested `c*des` \\_should\\_ be escaped__ (but not code).
 
 non-breaking space: foo&nbsp;bar.
@@ -171,6 +173,8 @@ B<< Nested C<codes> >> work, too
 =head2 _Other_ *Characters* [Should](Be) `Escaped` in headers
 
 Inline C<< code _need not_ be escaped >>.
+
+=head3 Heading C<< code _need not_ be escaped, either >>.
 
 B<< Nested C<c*des> _should_ be escaped >> (but not code).
 

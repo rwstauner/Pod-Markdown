@@ -111,7 +111,11 @@ sub command {
     if ($command =~ m{head(\d)}xms) {
         my $level = $1;
 
-        $paragraph = $parser->_escape($paragraph);
+        # escape markdown characters in text sequences except for inline code
+        $paragraph = join '', $parser->parse_text(
+            { -expand_text => '_escape_non_code' },
+            $paragraph, $line_num
+        )->raw_text;
         $paragraph = $parser->interpolate($paragraph, $line_num);
 
         # the headers never are indented
