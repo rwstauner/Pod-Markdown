@@ -2,6 +2,10 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+    - Fix incorrect escaping of characters
+      that are inside inline code blocks in headers.
+      Thanks to Peter Vereshagin for the pull req (gh-3).
+
 1.321     2012-10-27T01:23:56Z
 
     - Improved list handling including support for ordered (numbered)
