@@ -9,7 +9,8 @@ Revision history for Perl extension {{$dist->name}}
 1.321     2012-10-27T01:23:56Z
 
     - Improved list handling including support for ordered (numbered)
-      and nested lists.  Thanks Yasutaka ATARASHI!
+      and nested lists.
+      Thanks to Yasutaka ATARASHI for the pull req (gh-2).
 
 1.320     2012-04-30T23:30:11Z
 
