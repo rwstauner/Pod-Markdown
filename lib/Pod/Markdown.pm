@@ -148,9 +148,9 @@ sub command {
         $data->{ListType} = '-'; # Default
         if($paragraph =~ m{^[ \t]* \* [ \t]*}xms) {
             $paragraph =~ s{^[ \t]* \* [ \t]*}{}xms;
-        } elsif($paragraph =~ m{^[ \t]* (\d+\.) [ \t]*}xms) {
-            $data->{ListType} = $1; # For numbered list only
-            $paragraph =~ s{^[ \t]* \d+\. [ \t]*}{}xms;
+        } elsif($paragraph =~ m{^[ \t]* (\d+)\.? [ \t]*}xms) {
+            $data->{ListType} = $1.'.'; # For numbered list only
+            $paragraph =~ s{^[ \t]* \d+\.? [ \t]*}{}xms;
         }
 
         if ($data->{searching} eq 'listpara') {
