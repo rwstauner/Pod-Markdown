@@ -47,6 +47,22 @@ to preserve the formatting:
 
     a little short, but valid
 
+# indented blank lines
+
+    one
+    two
+    
+    three
+    four
+
+# nonindented blank lines
+
+    one
+    two
+
+    three
+    four
+
 # THAT'S ENOUGH
 EOMARKDOWN
 
@@ -91,6 +107,22 @@ to preserve the formatting:
 =head1 1 space
 
  a little short, but valid
+
+=head1 indented blank lines
+
+ one
+ two
+ 
+ three
+ four
+
+=head1 nonindented blank lines
+
+ one
+ two
+
+ three
+ four
 
 =head1 THAT'S ENOUGH
 
