@@ -193,6 +193,9 @@ sub verbatim {
         $paragraph = join "\n", map { /^\t/ ? $_ : $indent . $_ } @lines;
     }
 
+    if($parser->{_PREVIOUS} eq 'verbatim' && $parser->_private->{Text}->[-1] =~ /[ \t]+$/) {
+        $paragraph = $parser->_unsave . "\n" . $paragraph;
+    }
     $parser->_save($paragraph);
 }
 
