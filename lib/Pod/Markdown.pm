@@ -213,9 +213,11 @@ sub _escape_and_interpolate {
 
 sub _escape_non_code {
     my ($parser, $text, $ptree) = @_;
-    $text = $parser->_escape($text)
-        unless $ptree->isa('Pod::InteriorSequence') && $ptree->cmd_name eq 'C';
-    return $text;
+
+    if ($ptree->isa('Pod::InteriorSequence') && $ptree->cmd_name =~ /\A[CFL]\z/) {
+        return $text;
+    }
+    return $parser->_escape($text);
 }
 
 sub textblock {
