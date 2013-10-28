@@ -46,6 +46,10 @@ __Nested `codes`__ work, too
 
 Inline `code _need not_ be escaped`.
 
+Inline [link_should_not_be_escaped](http://search.cpan.org/perldoc?link_should_not_be_escaped).
+
+Inline `filename_should_not_be_escaped`.
+
 ### Heading `code _need not_ be escaped, either`.
 
 __Nested `c*des` \\_should\\_ be escaped__ (but not code).
@@ -173,6 +177,10 @@ B<< Nested C<codes> >> work, too
 =head2 _Other_ *Characters* [Should](Be) `Escaped` in headers
 
 Inline C<< code _need not_ be escaped >>.
+
+Inline L<< link_should_not_be_escaped >>.
+
+Inline F<< filename_should_not_be_escaped >>.
 
 =head3 Heading C<< code _need not_ be escaped, either >>.
 
