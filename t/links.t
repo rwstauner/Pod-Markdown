@@ -4,6 +4,9 @@ use warnings;
 use Test::More;
 use Pod::Markdown;
 
+# Test url aliases.
+local $Pod::Markdown::URL_PREFIXES{manny} = 'http://manny.local/page/';
+
 my ($pod_prefix, $man_prefix) =
   map { ($_->perldoc_url_prefix, $_->man_url_prefix) } Pod::Markdown->new;
 
@@ -71,12 +74,31 @@ my @tests = (
 
 ['empty text: |url',             q<|http://foo>,            qq^[http://foo](http://foo)^],
 ['false text: 0|url',            q<0|http://foo>,           qq^[0](http://foo)^],
+
+# Alternate parser options:
+['man url',          q<crontab(1)>, qq^[crontab(1)](file:///docs/man1/crontab)^,              man_url_prefix => 'file:///docs/man'],
+['man alias: manny', q<crontab(1)>, qq^[crontab(1)](http://manny.local/page/1/crontab)^,      man_url_prefix => 'manny'],
+['man alias: man',   q<crontab(1)>, qq^[crontab(1)](http://man.he.net/man1/crontab)^,         man_url_prefix => 'man'],
+
+['pod url',             q<Foo::Bar>, qq^[Foo::Bar](http://localhost/pod/Foo::Bar)^,           perldoc_url_prefix => 'http://localhost/pod/'],
+['pod alias: sco',      q<Foo::Bar>, qq^[Foo::Bar](http://search.cpan.org/perldoc?Foo::Bar)^, perldoc_url_prefix => 'sco'],
+['pod alias: metacpan', q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo::Bar)^,       perldoc_url_prefix => 'metacpan'],
+['pod alias: perldoc',  q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo::Bar)^,       perldoc_url_prefix => 'perldoc'],
+
 );
 
 plan tests => scalar @tests * 2;
 
 foreach my $test ( @tests ){
-  my ($desc, $pod, $mkdn) = @$test;
+  my ($desc, $pod, $mkdn, %opts) = @$test;
+  test_link(
+    (%opts ? Pod::Markdown->new(%opts) : $parser),
+    $pod, $mkdn, $desc,
+  );
+}
+
+sub test_link {
+  my ($parser, $pod, $mkdn, $desc) = @_;
 
   SKIP: {
     skip 'alt text with schemes/absolute URLs not supported until perl 5.12 / Pod::ParseLink 1.10', 1
