@@ -5,7 +5,7 @@ use Test::More;
 use Test::Differences;
 use Pod::Markdown;
 
-my $pod_prefix = $Pod::Markdown::URL_PREFIXES{pod};
+my $pod_prefix = Pod::Markdown->new->perldoc_url_prefix;
 
 { package # no_index
     IOString;

@@ -5,6 +5,7 @@ use warnings;
 
 package Pod::Markdown;
 # ABSTRACT: Convert POD to Markdown
+
 use parent qw(Pod::Parser);
 use Pod::ParseLink (); # core
 
@@ -13,13 +14,29 @@ our %URL_PREFIXES = (
   metacpan => 'https://metacpan.org/pod/',
   man      => 'http://man.he.net/man',
 );
-$URL_PREFIXES{pod} = $URL_PREFIXES{metacpan};
+$URL_PREFIXES{perldoc} = $URL_PREFIXES{metacpan};
 
 sub initialize {
     my $self = shift;
     $self->SUPER::initialize(@_);
+
+    for my $type ( qw( perldoc man ) ){
+        my $attr  = $type . '_url_prefix';
+        my $url = $self->{ $attr } || $type;
+        # Expand alias if defined (otherwise use url as is).
+        $self->{ $attr } = $URL_PREFIXES{ $url } || $url;
+    }
+
     $self->_private;
     $self;
+}
+
+# For consistency with Pod::Simple method names.
+sub perldoc_url_prefix {
+    return $_[0]->{perldoc_url_prefix};
+}
+sub man_url_prefix {
+    return $_[0]->{man_url_prefix};
 }
 
 sub _private {
@@ -328,10 +345,10 @@ sub _resolv_link {
     } elsif ($type eq 'man') {
         # stolen from Pod::Simple::(X)HTML
         my ($page, $part) = $name =~ /\A([^(]+)(?:[(](\S*)[)])?/;
-        $url = $URL_PREFIXES{man} . ($part || 1) . '/' . ($page || $name);
+        $url = $self->man_url_prefix . ($part || 1) . '/' . ($page || $name);
     } else {
         if ($name) {
-            $url = $URL_PREFIXES{pod} . $name;
+            $url = $self->perldoc_url_prefix . $name;
         }
         if ($section){
             # TODO: sites/pod formatters differ on how to transform the section

@@ -4,8 +4,8 @@ use warnings;
 use Test::More;
 use Pod::Markdown;
 
-my $pod_prefix = $Pod::Markdown::URL_PREFIXES{pod};
-my $man_prefix = $Pod::Markdown::URL_PREFIXES{man};
+my ($pod_prefix, $man_prefix) =
+  map { ($_->perldoc_url_prefix, $_->man_url_prefix) } Pod::Markdown->new;
 
 my $parser = Pod::Markdown->new;
 
