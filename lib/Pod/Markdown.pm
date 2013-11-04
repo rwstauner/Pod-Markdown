@@ -155,9 +155,9 @@ sub command {
         $data->{ListType} = '-'; # Default
         if($paragraph =~ m{^[ \t]* \* [ \t]*}xms) {
             $paragraph =~ s{^[ \t]* \* [ \t]*}{}xms;
-        } elsif($paragraph =~ m{^[ \t]* (\d+\.) [ \t]*}xms) {
-            $data->{ListType} = $1; # For numbered list only
-            $paragraph =~ s{^[ \t]* \d+\. [ \t]*}{}xms;
+        } elsif($paragraph =~ m{^[ \t]* (\d+)\.? [ \t]*}xms) {
+            $data->{ListType} = $1.'.'; # For numbered list only
+            $paragraph =~ s{^[ \t]* \d+\.? [ \t]*}{}xms;
         }
 
         if ($data->{searching} eq 'listpara') {
@@ -200,6 +200,9 @@ sub verbatim {
         $paragraph = join "\n", map { /^\t/ ? $_ : $indent . $_ } @lines;
     }
 
+    if($parser->{_PREVIOUS} eq 'verbatim' && $parser->_private->{Text}->[-1] =~ /[ \t]+$/) {
+        $paragraph = $parser->_unsave . "\n" . $paragraph;
+    }
     $parser->_save($paragraph);
 }
 
@@ -220,9 +223,11 @@ sub _escape_and_interpolate {
 
 sub _escape_non_code {
     my ($parser, $text, $ptree) = @_;
-    $text = $parser->_escape($text)
-        unless $ptree->isa('Pod::InteriorSequence') && $ptree->cmd_name eq 'C';
-    return $text;
+
+    if ($ptree->isa('Pod::InteriorSequence') && $ptree->cmd_name =~ /\A[CFL]\z/) {
+        return $text;
+    }
+    return $parser->_escape($text);
 }
 
 sub textblock {

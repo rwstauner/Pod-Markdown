@@ -63,6 +63,11 @@ __Note:__ Markdown does not support definition lists (word => text), just bullet
 
 1. B
 2. D
+
+## Ordered without dot
+
+1. B
+2. D
 EOMARKDOWN
 
 # check out Pod::IkiWiki (or something like that)...
@@ -171,6 +176,20 @@ Finally, this is also a list head.
 B
 
 =item 2.
+
+D
+
+=back
+
+=head2 Ordered without dot
+
+=over
+
+=item 1
+
+B
+
+=item 2
 
 D
 
