@@ -5,8 +5,6 @@ use Test::More;
 use Test::Differences;
 use Pod::Markdown;
 
-my $pod_prefix = Pod::Markdown->new->perldoc_url_prefix;
-
 { package # no_index
     IOString;
   sub new { bless [map { "$_\n" } split /\n/, $_[1] ], $_[0] }

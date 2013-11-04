@@ -66,6 +66,10 @@ my @tests = (
 # varies according to pod-to-html formatter:
 ['other/section name',           q<Other/Section Name>,     qq^["Section Name" in Other](${pod_prefix}Other#Section Name)^],
 
+# Don't insert backslashes (to escape markdown).
+['_underscore_',                 q<_underscore_>,           qq^[_underscore_](${pod_prefix}_underscore_)^],
+['*asterisk*',                   q<*asterisk*>,             qq^[*asterisk*](${pod_prefix}*asterisk*)^],
+
 # is there something better to do?
 ['no url: empty',                q<>,                       qq^L<>^],
 ['no url: pipe',                 q<|>,                      qq^L<|>^],
