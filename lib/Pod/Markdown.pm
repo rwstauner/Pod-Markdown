@@ -13,7 +13,7 @@ our %URL_PREFIXES = (
   metacpan => 'https://metacpan.org/pod/',
   man      => 'http://man.he.net/man',
 );
-$URL_PREFIXES{pod} = $URL_PREFIXES{sco};
+$URL_PREFIXES{pod} = $URL_PREFIXES{metacpan};
 
 sub initialize {
     my $self = shift;
