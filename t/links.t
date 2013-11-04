@@ -12,6 +12,7 @@ my $parser = Pod::Markdown->new;
 my $alt_text_for_urls = (Pod::ParseLink->VERSION >= 1.10);
 
 my @tests = (
+
 # in order of L<> examples in perlpod:
 ['name',                         q<name>,                   qq^[name](${pod_prefix}name)^],
 ['other module',                 q<Other::Pod>,             qq^[Other::Pod](${pod_prefix}Other::Pod)^],
@@ -47,6 +48,10 @@ my @tests = (
 ['/section name',                q</Object Attributes>,     qq^["Object Attributes"](#Object Attributes)^],
 ['http',                         q<http://www.perl.org/>,   qq^[http://www.perl.org/](http://www.perl.org/)^],
 ['text|http',             q<Perl.org|http://www.perl.org/>, qq^[Perl.org](http://www.perl.org/)^],
+
+# man pages
+['man(1)',                       q<crontab(1)>,             qq^[crontab(1)](${man_prefix}1/crontab)^],
+['man(5)',                       q<crontab(5)>,             qq^[crontab(5)](${man_prefix}5/crontab)^],
 
 # how should these be handled?  these are unlikely/contrived occurrences and are mostly here for test coverage
 ['man()',                        q<crontab()>,              qq^[crontab()](${man_prefix}1/crontab)^],
