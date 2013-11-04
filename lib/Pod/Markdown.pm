@@ -8,6 +8,13 @@ package Pod::Markdown;
 use parent qw(Pod::Parser);
 use Pod::ParseLink (); # core
 
+our %URL_PREFIXES = (
+  sco      => 'http://search.cpan.org/perldoc?',
+  metacpan => 'https://metacpan.org/pod/',
+  man      => 'http://man.he.net/man',
+);
+$URL_PREFIXES{pod} = $URL_PREFIXES{sco};
+
 sub initialize {
     my $self = shift;
     $self->SUPER::initialize(@_);
@@ -316,10 +323,10 @@ sub _resolv_link {
     } elsif ($type eq 'man') {
         # stolen from Pod::Simple::(X)HTML
         my ($page, $part) = $name =~ /\A([^(]+)(?:[(](\S*)[)])?/;
-        $url = 'http://man.he.net/man' . ($part || 1) . '/' . ($page || $name);
+        $url = $URL_PREFIXES{man} . ($part || 1) . '/' . ($page || $name);
     } else {
         if ($name) {
-            $url = 'http://search.cpan.org/perldoc?' . $name;
+            $url = $URL_PREFIXES{pod} . $name;
         }
         if ($section){
             # TODO: sites/pod formatters differ on how to transform the section
