@@ -5,7 +5,7 @@ use Test::More;
 use Test::Differences;
 use Pod::Markdown;
 
-my $pod_prefix = 'http://search.cpan.org/perldoc?';
+my $pod_prefix = $Pod::Markdown::URL_PREFIXES{pod};
 
 { package # no_index
     IOString;

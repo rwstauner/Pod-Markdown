@@ -5,7 +5,7 @@ use Test::More tests => 1;
 use Test::Differences;
 use Pod::Markdown;
 
-my $pod_prefix = 'http://search.cpan.org/perldoc?';
+my $pod_prefix = $Pod::Markdown::URL_PREFIXES{pod};
 
 my $parser = Pod::Markdown->new;
 $parser->parse_from_filehandle(\*DATA);

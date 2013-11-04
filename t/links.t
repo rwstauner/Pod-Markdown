@@ -4,8 +4,8 @@ use warnings;
 use Test::More;
 use Pod::Markdown;
 
-my $pod_prefix = 'http://search.cpan.org/perldoc?';
-my $man_prefix = 'http://man.he.net/man';
+my $pod_prefix = $Pod::Markdown::URL_PREFIXES{pod};
+my $man_prefix = $Pod::Markdown::URL_PREFIXES{man};
 
 my $parser = Pod::Markdown->new;
 
