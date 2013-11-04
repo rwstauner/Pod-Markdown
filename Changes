@@ -2,6 +2,17 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+    [Output Changes]
+    - Change perldoc urls to point to metacpan.
+
+    [Bug Fixes]
+    - Recognize numbered pod items that do not have a period.
+      Thanks to Yasutaka ATARASHI for the pull request (gh-4).
+    - Remove extraneous blank line between verbatim paragraphs.
+      Thanks to Graham Ollis for the pull request (gh-5).
+    - Do not escape markdown characters inside links (or file paths).
+      Thanks to Taiki Kawakami for the pull request (gh-6).
+
 1.322     2012-11-17T15:51:36Z
 
     - Fix incorrect escaping of characters
