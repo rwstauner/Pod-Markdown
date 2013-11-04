@@ -46,7 +46,7 @@ __Nested `codes`__ work, too
 
 Inline `code _need not_ be escaped`.
 
-Inline [link_should_not_be_escaped](http://search.cpan.org/perldoc?link_should_not_be_escaped).
+Inline [link_should_not_be_escaped](${pod_prefix}link_should_not_be_escaped).
 
 Inline `filename_should_not_be_escaped`.
 
