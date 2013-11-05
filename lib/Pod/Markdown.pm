@@ -345,8 +345,6 @@ sub _resolv_link {
       Pod::ParseLink::parselink($arg);
     my $url = '';
 
-    # TODO: make url prefixes configurable
-
     if ($type eq 'url') {
         $url = $name;
     } elsif ($type eq 'man') {
@@ -396,8 +394,7 @@ sub format_header {
 This module subclasses L<Pod::Parser> and converts POD to Markdown.
 
 Literal characters in Pod that are special in Markdown
-(like *asterisks*) are backslash-escaped
-(except those in verbatim blocks or C<< CE<lt>codeE<gt> >> sections).
+(like *asterisks*) are backslash-escaped when appropriate.
 
 =method new
 
