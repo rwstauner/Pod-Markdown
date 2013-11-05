@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 1.322
+version 1.400
 
 # SYNOPSIS
 
@@ -14,49 +14,52 @@ version 1.322
 
 # DESCRIPTION
 
-This module subclasses [Pod::Parser](http://search.cpan.org/perldoc?Pod::Parser) and converts POD to Markdown.
+This module subclasses [Pod::Parser](https://metacpan.org/pod/Pod::Parser) and converts POD to Markdown.
 
 Literal characters in Pod that are special in Markdown
-(like \*asterisks\*) are backslash-escaped
-(except those in verbatim blocks or `C<code>` sections).
+(like \*asterisks\*) are backslash-escaped when appropriate.
 
 # METHODS
 
-## initialize
+## perldoc\_url\_prefix
 
-Initializes a newly constructed object.
+Returns the url prefix in use (after resolving shortcuts to urls).
+
+## man\_url\_prefix
+
+Returns the url prefix in use for man pages.
+
+## new
+
+The constructor accepts the following named arguments:
+
+- `perldoc_url_prefix`
+
+    This alters the perldoc urls that are created from `L<>` codes.
+    Can be:
+
+    - `metacpan` (shortcut for `https://metacpan.org/pod/`)
+    - `sco` (shortcut for `http://search.cpan.org/perldoc?`)
+    - any url
+
+    The default is `metacpan`.
+
+        Pod::Markdown->new(perldoc_url_prefix => 'http://localhost/perl/pod');
+
+- `man_url_prefix`
+
+    This alters the man page urls that are created from `L<>` codes.
+
+    The default is `http://man.he.net/man`.
 
 ## as\_markdown
 
 Returns the parsed POD as Markdown. Takes named arguments. If the `with_meta`
 argument is given a positive value, meta tags are generated as well.
 
-## command
-
-Handles POD command paragraphs, denoted by a line beginning with `=`.
-
-## verbatim
-
-Handles verbatim text.
-
-## textblock
-
-Handles normal blocks of POD.
-
-## interior\_sequence
-
-Handles interior sequences in POD. An interior sequence is an embedded command
-within a block of text which appears as a command name - usually a single
-uppercase character - followed immediately by a string of text which is
-enclosed in angle brackets.
-
-## format\_header
-
-Formats a header according to the given level.
-
 # SEE ALSO
 
-- [pod2markdown](http://search.cpan.org/perldoc?pod2markdown) - script included for command line usage
+- [pod2markdown](https://metacpan.org/pod/pod2markdown) - script included for command line usage
 
 # SUPPORT
 
@@ -71,41 +74,11 @@ You can find documentation for this module with the perldoc command.
 The following websites have more information about this module, and may be of help to you. As always,
 in addition to those websites please use your favorite search engine to discover more resources.
 
-- Search CPAN
+- MetaCPAN
 
-    The default CPAN search engine, useful to view POD in HTML format.
+    A modern, open-source CPAN search engine, useful to view POD in HTML format.
 
-    [http://search.cpan.org/dist/Pod-Markdown](http://search.cpan.org/dist/Pod-Markdown)
-
-- RT: CPAN's Bug Tracker
-
-    The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
-
-    [http://rt.cpan.org/NoAuth/Bugs.html?Dist=Pod-Markdown](http://rt.cpan.org/NoAuth/Bugs.html?Dist=Pod-Markdown)
-
-- CPAN Ratings
-
-    The CPAN Ratings is a website that allows community ratings and reviews of Perl modules.
-
-    [http://cpanratings.perl.org/d/Pod-Markdown](http://cpanratings.perl.org/d/Pod-Markdown)
-
-- CPAN Testers
-
-    The CPAN Testers is a network of smokers who run automated tests on uploaded CPAN distributions.
-
-    [http://www.cpantesters.org/distro/P/Pod-Markdown](http://www.cpantesters.org/distro/P/Pod-Markdown)
-
-- CPAN Testers Matrix
-
-    The CPAN Testers Matrix is a website that provides a visual overview of the test results for a distribution on various Perls/platforms.
-
-    [http://matrix.cpantesters.org/?dist=Pod-Markdown](http://matrix.cpantesters.org/?dist=Pod-Markdown)
-
-- CPAN Testers Dependencies
-
-    The CPAN Testers Dependencies is a website that shows a chart of the test results of all dependencies for a distribution.
-
-    [http://deps.cpantesters.org/?module=Pod::Markdown](http://deps.cpantesters.org/?module=Pod::Markdown)
+    [http://metacpan.org/release/Pod-Markdown](http://metacpan.org/release/Pod-Markdown)
 
 ## Bugs / Feature Requests
 
@@ -128,6 +101,16 @@ progress on the request by the system.
 - Ryan C. Thompson <rct at thompsonclan d0t org>
 - Aristotle Pagaltzis <pagaltzis@gmx.de>
 - Randy Stauner <rwstauner@cpan.org>
+
+# CONTRIBUTORS
+
+- Aristotle Pagaltzis <aristotle@cpan.org>
+- Graham Ollis <plicease@cpan.org>
+- Peter Vereshagin <veresc@cpan.org>
+- Ryan C. Thompson <rthompson@cpan.org>
+- Yasutaka ATARASHI <yakex@cpan.org>
+- motemen <motemen@cpan.org>
+- moznion <moznion@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
