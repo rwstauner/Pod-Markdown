@@ -31,6 +31,16 @@ sub initialize {
     $self;
 }
 
+=method perldoc_url_prefix
+
+Returns the url prefix in use (after resolving shortcuts to urls).
+
+=method man_url_prefix
+
+Returns the url prefix in use for man pages.
+
+=cut
+
 # For consistency with Pod::Simple method names.
 sub perldoc_url_prefix {
     return $_[0]->{perldoc_url_prefix};
@@ -382,6 +392,11 @@ sub format_header {
 1;
 
 =for stopwords textblock
+
+=for Pod::Coverage
+format_header
+initialize
+command interior_sequence textblock verbatim
 
 =head1 SYNOPSIS
 
