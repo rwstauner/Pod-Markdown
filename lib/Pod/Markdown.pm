@@ -124,6 +124,7 @@ sub _escape {
     return $_;
 }
 
+# Handles POD command paragraphs, denoted by a line beginning with C<=>.
 sub command {
     my ($parser, $command, $paragraph, $line_num) = @_;
     my $data = $parser->_private;
@@ -193,6 +194,7 @@ sub command {
     return;
 }
 
+# Handles verbatim text.
 sub verbatim {
     my ($parser, $paragraph) = @_;
 
@@ -247,6 +249,7 @@ sub _escape_non_code {
     return $parser->_escape($text);
 }
 
+# Handles normal blocks of POD.
 sub textblock {
     my ($parser, $paragraph, $line_num) = @_;
     my $data = $parser->_private;
@@ -279,6 +282,10 @@ sub textblock {
     $parser->_save($paragraph, $prelisthead);
 }
 
+# An interior sequence is an embedded command
+# within a block of text which appears as a command name - usually a single
+# uppercase character - followed immediately by a string of text which is
+# enclosed in angle brackets.
 sub interior_sequence {
     my ($self, $seq_command, $seq_argument, $pod_seq) = @_;
 
@@ -368,6 +375,7 @@ sub _resolv_link {
     return sprintf '[%s](%s)', ($text || $inferred), $url;
 }
 
+# Formats a header according to the given level.
 sub format_header {
     my ($level, $paragraph) = @_[1,2];
     sprintf '%s %s', '#' x $level, $paragraph;
@@ -421,29 +429,6 @@ The default is C<http://man.he.net/man>.
 
 Returns the parsed POD as Markdown. Takes named arguments. If the C<with_meta>
 argument is given a positive value, meta tags are generated as well.
-
-=method command
-
-Handles POD command paragraphs, denoted by a line beginning with C<=>.
-
-=method verbatim
-
-Handles verbatim text.
-
-=method textblock
-
-Handles normal blocks of POD.
-
-=method interior_sequence
-
-Handles interior sequences in POD. An interior sequence is an embedded command
-within a block of text which appears as a command name - usually a single
-uppercase character - followed immediately by a string of text which is
-enclosed in angle brackets.
-
-=method format_header
-
-Formats a header according to the given level.
 
 =head1 SEE ALSO
 
