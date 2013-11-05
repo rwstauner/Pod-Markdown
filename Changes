@@ -120,7 +120,7 @@ Revision history for Perl extension {{$dist->name}}
     - converted the distribution to Dist::Zilla-style
     - bin/pod2markdown now uses '#!/usr/bin/env perl'
 
-0.02 Sun Oct  4 16:30:06 CEST 2009 (Marcel Gruenauer <marcel@cpan.org>)
+0.02 2009-10-04 16:30:06 CEST
     - E<foo> now outputs '&foo;'
     - only generate meta tags if asked to
 
