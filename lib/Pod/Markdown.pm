@@ -391,9 +391,31 @@ Literal characters in Pod that are special in Markdown
 (like *asterisks*) are backslash-escaped
 (except those in verbatim blocks or C<< CE<lt>codeE<gt> >> sections).
 
-=method initialize
+=method new
 
-Initializes a newly constructed object.
+The constructor accepts the following named arguments:
+
+=begin :list
+
+* C<perldoc_url_prefix>
+This alters the perldoc urls that are created from C<< LE<lt>E<gt> >> codes.
+Can be:
+
+=for :list
+* C<metacpan> (shortcut for C<https://metacpan.org/pod/>)
+* C<sco> (shortcut for C<http://search.cpan.org/perldoc?>)
+* any url
+
+The default is C<metacpan>.
+
+    Pod::Markdown->new(perldoc_url_prefix => 'http://localhost/perl/pod');
+
+* C<man_url_prefix>
+This alters the man page urls that are created from C<< LE<lt>E<gt> >> codes.
+
+The default is C<http://man.he.net/man>.
+
+=end :list
 
 =method as_markdown
 
