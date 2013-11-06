@@ -2,6 +2,8 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+1.401     2013-11-06T05:30:55Z
+
     - Require Pod::Parser 1.51 for bug fixes.
 
 1.400     2013-11-05T14:18:19Z
