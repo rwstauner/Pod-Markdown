@@ -6,6 +6,7 @@ use warnings;
 package Pod::Markdown;
 # ABSTRACT: Convert POD to Markdown
 
+use Pod::Parser 1.51 ();
 use parent qw(Pod::Parser);
 use Pod::ParseLink (); # core
 
@@ -229,9 +230,18 @@ sub verbatim {
         $paragraph = join "\n", map { /^\t/ ? $_ : $indent . $_ } @lines;
     }
 
-    if($parser->{_PREVIOUS} eq 'verbatim' && $parser->_private->{Text}->[-1] =~ /[ \t]+$/) {
+    # FIXME: Checking _PREVIOUS is breaking Pod::Parser encapsulation
+    # but helps solve the extraneous extra blank line b/t verbatim blocks.
+    # We could probably keep track ourselves if need be.
+    # NOTE: This requires Pod::Parser 1.50.
+    # This is another reason to switch to Pod::Simple.
+    my $previous_was_verbatim =
+        $parser->{_PREVIOUS} && $parser->{_PREVIOUS} eq 'verbatim';
+
+    if($previous_was_verbatim && $parser->_private->{Text}->[-1] =~ /[ \t]+$/){
         $paragraph = $parser->_unsave . "\n" . $paragraph;
     }
+
     $parser->_save($paragraph);
 }
 
