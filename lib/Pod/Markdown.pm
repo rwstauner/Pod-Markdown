@@ -1,4 +1,4 @@
-# vim: set ts=4 sts=4 sw=4 expandtab smarttab:
+# vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use 5.008;
 use strict;
 use warnings;
@@ -17,12 +17,45 @@ our %URL_PREFIXES = (
 );
 $URL_PREFIXES{perldoc} = $URL_PREFIXES{metacpan};
 
+=method new
+
+  Pod::Markdown->new(%options);
+
+The constructor accepts the following named arguments:
+
+=begin :list
+
+* C<man_url_prefix>
+Alters the man page urls that are created from C<< L<> >> codes.
+
+The default is C<http://man.he.net/man>.
+
+* C<perldoc_url_prefix>
+Alters the perldoc urls that are created from C<< L<> >> codes.
+Can be:
+
+=for :list
+* C<metacpan> (shortcut for C<https://metacpan.org/pod/>)
+* C<sco> (shortcut for C<http://search.cpan.org/perldoc?>)
+* any url
+
+The default is C<metacpan>.
+
+    Pod::Markdown->new(perldoc_url_prefix => 'http://localhost/perl/pod');
+
+=end :list
+
+=cut
+
+# new() is provided by Pod::Parser (which calls initialize()).
+
 sub initialize {
     my $self = shift;
     $self->SUPER::initialize(@_);
 
     for my $type ( qw( perldoc man ) ){
         my $attr  = $type . '_url_prefix';
+        # Use provided argument or default alias.
         my $url = $self->{ $attr } || $type;
         # Expand alias if defined (otherwise use url as is).
         $self->{ $attr } = $URL_PREFIXES{ $url } || $url;
@@ -62,6 +95,13 @@ sub _private {
         Author    => undef,    # page author
     };
 }
+
+=method as_markdown
+
+Returns the parsed POD as Markdown. Takes named arguments. If the C<with_meta>
+argument is given a positive value, meta tags are generated as well.
+
+=cut
 
 sub as_markdown {
     my ($parser, %args) = @_;
@@ -420,37 +460,6 @@ This module subclasses L<Pod::Parser> and converts POD to Markdown.
 
 Literal characters in Pod that are special in Markdown
 (like *asterisks*) are backslash-escaped when appropriate.
-
-=method new
-
-The constructor accepts the following named arguments:
-
-=begin :list
-
-* C<perldoc_url_prefix>
-This alters the perldoc urls that are created from C<< LE<lt>E<gt> >> codes.
-Can be:
-
-=for :list
-* C<metacpan> (shortcut for C<https://metacpan.org/pod/>)
-* C<sco> (shortcut for C<http://search.cpan.org/perldoc?>)
-* any url
-
-The default is C<metacpan>.
-
-    Pod::Markdown->new(perldoc_url_prefix => 'http://localhost/perl/pod');
-
-* C<man_url_prefix>
-This alters the man page urls that are created from C<< LE<lt>E<gt> >> codes.
-
-The default is C<http://man.he.net/man>.
-
-=end :list
-
-=method as_markdown
-
-Returns the parsed POD as Markdown. Takes named arguments. If the C<with_meta>
-argument is given a positive value, meta tags are generated as well.
 
 =head1 SEE ALSO
 
