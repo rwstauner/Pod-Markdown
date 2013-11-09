@@ -181,6 +181,12 @@ sub _escape {
     return $_;
 }
 
+# Formats a header according to the given level.
+sub format_header {
+    my ($self, $level, $paragraph) = @_;
+    sprintf '%s %s', '#' x $level, $paragraph;
+}
+
 # Handles POD command paragraphs, denoted by a line beginning with C<=>.
 sub command {
     my ($parser, $command, $paragraph, $line_num) = @_;
@@ -437,12 +443,6 @@ sub _resolv_link {
     }
 
     return sprintf '[%s](%s)', ($text || $inferred), $url;
-}
-
-# Formats a header according to the given level.
-sub format_header {
-    my ($level, $paragraph) = @_[1,2];
-    sprintf '%s %s', '#' x $level, $paragraph;
 }
 
 1;
