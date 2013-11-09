@@ -65,23 +65,29 @@ sub initialize {
     $self;
 }
 
-=method perldoc_url_prefix
-
-Returns the url prefix in use (after resolving shortcuts to urls).
-
 =method man_url_prefix
 
 Returns the url prefix in use for man pages.
 
+=method perldoc_url_prefix
+
+Returns the url prefix in use (after resolving shortcuts to urls).
+
+
 =cut
 
-# For consistency with Pod::Simple method names.
-sub perldoc_url_prefix {
-    return $_[0]->{perldoc_url_prefix};
+my @attr = qw(
+  man_url_prefix
+  perldoc_url_prefix
+);
+
+{
+  no strict 'refs';
+  foreach my $attr ( @attr ){
+    *$attr = sub { return $_[0]->{ $attr } };
+  }
 }
-sub man_url_prefix {
-    return $_[0]->{man_url_prefix};
-}
+
 
 sub _private {
     my $self = shift;
