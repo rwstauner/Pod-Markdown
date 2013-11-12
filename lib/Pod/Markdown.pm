@@ -43,6 +43,30 @@ The default is C<metacpan>.
 
     Pod::Markdown->new(perldoc_url_prefix => 'http://localhost/perl/pod');
 
+* C<perldoc_fragment_format>
+Alters the format of the url fragment for any C<< L<> >> links
+that point to a section of an external document (C<< L<name/section> >>).
+The default will be chosen according to the destination L</perldoc_url_prefix>.
+Alternatively you can specify one of the following:
+
+=for :list
+* C<metacpan>
+* C<sco>
+* C<pod_simple_xhtml>
+* C<pod_simple_html>
+* A code ref
+
+* C<markdown_fragment_format>
+Alters the format of the url fragment for any C<< L<> >> links
+that point to an internal section of this document (C<< L</section> >>).
+
+Unfortunately the format of the id attributes produced
+by whatever system translates the markdown into html is unknown at the time
+the markdown is generated so we do some simple clean up.
+
+B<Note:> C<markdown_fragment_format> and C<perldoc_fragment_format> accept
+the same values: a (shortcut to a) method name or a code ref.
+
 =end :list
 
 =cut
@@ -61,6 +85,8 @@ sub initialize {
         $self->{ $attr } = $URL_PREFIXES{ $url } || $url;
     }
 
+    $self->_prepare_fragment_formats;
+
     $self->_private;
     $self;
 }
@@ -73,12 +99,23 @@ Returns the url prefix in use for man pages.
 
 Returns the url prefix in use (after resolving shortcuts to urls).
 
+=method perldoc_fragment_format
+
+Returns the coderef or format name used to format a url fragment
+to a section in an external document.
+
+=method markdown_fragment_format
+
+Returns the coderef or format name used to format a url fragment
+to an internal section in this document.
 
 =cut
 
 my @attr = qw(
   man_url_prefix
   perldoc_url_prefix
+  perldoc_fragment_format
+  markdown_fragment_format
 );
 
 {
@@ -88,6 +125,49 @@ my @attr = qw(
   }
 }
 
+sub _prepare_fragment_formats {
+  my ($self) = @_;
+
+  foreach my $attr ( @attr ){
+    next unless $attr =~ /^(\w+)_fragment_format/;
+    my $type = $1;
+    my $format = $self->{ $attr };
+
+    # If one was provided.
+    if( $format ){
+      # If the attribute is a coderef just use it.
+      next if ref($format) eq 'CODE';
+    }
+    # Else determine a default.
+    else {
+      if( $type eq 'perldoc' ){
+        # Choose a default that matches the destination url.
+        my $target = $self->{perldoc_url_prefix};
+        foreach my $alias ( qw( metacpan sco ) ){
+          if( $target eq $URL_PREFIXES{ $alias } ){
+            $format = $alias;
+          }
+        }
+        # This seems like a reasonable fallback.
+        $format ||= 'pod_simple_xhtml';
+      }
+      else {
+        $format = $type;
+      }
+    }
+
+    # The short name should become a method name with the prefix prepended.
+    my $prefix = 'format_fragment_';
+    $format =~ s/^$prefix//;
+    die "Unknown fragment format '$format'"
+      unless $self->can($prefix . $format);
+
+    # Save it.
+    $self->{ $attr } = $format;
+  }
+
+  return;
+}
 
 sub _private {
     my $self = shift;
@@ -420,21 +500,9 @@ sub _resolv_link {
     if ($type eq 'url') {
         $url = $name;
     } elsif ($type eq 'man') {
-        # stolen from Pod::Simple::(X)HTML
-        my ($page, $part) = $name =~ /\A([^(]+)(?:[(](\S*)[)])?/;
-        $url = $self->man_url_prefix . ($part || 1) . '/' . ($page || $name);
+        $url = $self->format_man_url($name);
     } else {
-        if ($name) {
-            $url = $self->perldoc_url_prefix . $name;
-        }
-        if ($section){
-            # TODO: sites/pod formatters differ on how to transform the section
-            # TODO: we could do it according to specified url prefix or pod formatter
-            # TODO: or allow a coderef?
-            # TODO: (Pod::Simple::XHTML:idify() for metacpan)
-            # TODO: (Pod::Simple::HTML section_escape/unicode_escape_url/section_url_escape for s.c.o.)
-            $url .= '#' . $section;
-        }
+        $url = $self->format_perldoc_url($name, $section);
     }
 
     # if we don't know how to handle the url just print the pod back out
@@ -444,6 +512,195 @@ sub _resolv_link {
 
     return sprintf '[%s](%s)', ($text || $inferred), $url;
 }
+
+=method format_man_url
+
+Used internally to create a url (using L</man_url_prefix>)
+from a string like C<man(1)>.
+
+=cut
+
+sub format_man_url {
+    my ($self, $to) = @_;
+    my ($page, $part) = ($to =~ /^ ([^(]+) (?: \( (\S+) \) )? /x);
+    return $self->man_url_prefix . ($part || 1) . '/' . ($page || $to);
+}
+
+=method format_perldoc_url
+
+    # With $name and section being the two parts of L<name/section>.
+    my $url = $parser->format_perldoc_url($name, $section);
+
+Used internally to create a url from
+the name (of a module or script)
+and a possible section (heading).
+
+The format of the url fragment (when pointing to a section in a document)
+varies depending on the destination url
+so L</perldoc_fragment_format> is used (which can be customized).
+
+If the module name portion of the link is blank
+then the section is treated as an internal fragment link
+(to a section of the generated markdown document)
+and L</markdown_fragment_format> is used (which can be customized).
+
+=cut
+
+sub format_perldoc_url {
+  my ($self, $name, $section) = @_;
+
+  my $url_prefix = $self->perldoc_url_prefix;
+  my $url = '';
+
+  # If the link is to another module (external link).
+  if ($name) {
+    $url = $url_prefix . $name;
+  }
+
+  # See https://rt.cpan.org/Ticket/Display.html?id=57776
+  # for a discussion on the need to mangle the section.
+  if ($section){
+
+    my $method = $url
+      # If we already have a prefix on the url it's external.
+      ? $self->perldoc_fragment_format
+      # Else an internal link points to this markdown doc.
+      : $self->markdown_fragment_format;
+
+    $method = 'format_fragment_' . $method
+      unless ref($method);
+
+    {
+      # Set topic to enable code refs to be simple.
+      local $_ = $section;
+      $section = $self->$method($section);
+    }
+
+    $url .= '#' . $section;
+  }
+
+  return $url;
+}
+
+=method format_fragment_markdown
+
+Format url fragment for an internal link
+by replacing non-word characters with dashes.
+
+=cut
+
+# TODO: simple, pandoc, etc?
+
+sub format_fragment_markdown {
+  my ($self, $section) = @_;
+
+  # If this is an internal link (to another section in this doc)
+  # we can't be sure what the heading id's will look like
+  # (it depends on what is rendering the markdown to html)
+  # but we can try to follow popular conventions.
+
+  # http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html#header-identifiers-in-html-latex-and-context
+  #$section =~ s/(?![-_.])[[:punct:]]//g;
+  #$section =~ s/\s+/-/g;
+  $section =~ s/\W+/-/g;
+  $section =~ s/-+$//;
+  $section =~ s/^-+//;
+  $section = lc $section;
+  #$section =~ s/^[^a-z]+//;
+  $section ||= 'section';
+
+  return $section;
+}
+
+=method format_fragment_pod_simple_xhtml
+
+Format url fragment like L<Pod::Simple::XHTML/idify>.
+
+=cut
+
+{
+  # From Pod::Simple::XHTML 3.28.
+  # The strings gets passed through encode_entities() before idify().
+  # If we don't do it here the substitutions below won't operate consistently.
+
+  # encode_entities {
+    my %entities = (
+      q{>} => 'gt',
+      q{<} => 'lt',
+      q{'} => '#39',
+      q{"} => 'quot',
+      q{&} => 'amp',
+    );
+
+    my
+      $ents = join '', keys %entities;
+  # }
+
+  sub format_fragment_pod_simple_xhtml {
+    my ($self, $t) = @_;
+
+    # encode_entities {
+      $t =~ s/([$ents])/'&' . ($entities{$1} || sprintf '#x%X', ord $1) . ';'/ge;
+    # }
+
+    # idify {
+      for ($t) {
+          s/<[^>]+>//g;            # Strip HTML.
+          s/&[^;]+;//g;            # Strip entities.
+          s/^\s+//; s/\s+$//;      # Strip white space.
+          s/^([^a-zA-Z]+)$/pod$1/; # Prepend "pod" if no valid chars.
+          s/^[^a-zA-Z]+//;         # First char must be a letter.
+          s/[^-a-zA-Z0-9_:.]+/-/g; # All other chars must be valid.
+          s/[-:.]+$//;             # Strip trailing punctuation.
+      }
+    # }
+
+    return $t;
+  }
+}
+
+=method format_fragment_pod_simple_html
+
+Format url fragment like L<Pod::Simple::HTML/section_name_tidy>.
+
+=cut
+
+sub format_fragment_pod_simple_html {
+  my ($self, $section) = @_;
+
+  # From Pod::Simple::HTML 3.28.
+
+  # section_name_tidy {
+    $section =~ s/^\s+//;
+    $section =~ s/\s+$//;
+    $section =~ tr/ /_/;
+    $section =~ tr/\x00-\x1F\x80-\x9F//d if 'A' eq chr(65); # drop crazy characters
+
+    #$section = $self->unicode_escape_url($section);
+      # unicode_escape_url {
+      $section =~ s/([^\x00-\xFF])/'('.ord($1).')'/eg;
+        #  Turn char 1234 into "(1234)"
+      # }
+
+    $section = '_' unless length $section;
+    return $section;
+  # }
+}
+
+=method format_fragment_metacpan
+
+Format fragment for L<metacpan.org>
+(uses L</format_fragment_pod_simple_xhtml>).
+
+=method format_fragment_sco
+
+Format fragment for L<search.cpan.org>
+(uses L</format_fragment_pod_simple_html>).
+
+=cut
+
+sub format_fragment_metacpan { shift->format_fragment_pod_simple_xhtml(@_); }
+sub format_fragment_sco      { shift->format_fragment_pod_simple_html(@_);  }
 
 1;
 
