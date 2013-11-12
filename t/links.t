@@ -97,7 +97,83 @@ my @tests = (
 
 );
 
-plan tests => scalar @tests * 2;
+# Most of these examples were internal links
+# so we add the perldoc name to make testing easier.
+
+test_fragments(
+  q^perlvar/$.^,
+  {
+    # It's unfortunate that Pod::Simple::XHTML can't do links to just symbols:
+    # https://rt.cpan.org/Ticket/Display.html?id=90207
+    metacpan => q^["$." in perlvar](:perlvar#pod)^,
+    sco      => q^["$." in perlvar](:perlvar#$.)^,
+  },
+  'section with only symbols',
+);
+
+test_fragments(
+  q^perlop/"IE<sol>O Operators"^,
+  {
+    metacpan => q^["I/O Operators" in perlop](:perlop#I-O-Operators)^,
+    sco      => q^["I/O Operators" in perlop](:perlop#I/O_Operators)^,
+  },
+  'perlvar.pod: external section with symbols',
+);
+
+test_fragments(
+  q^perlpodspec/"About LE<lt>...E<gt> Codes"^,
+  {
+    metacpan => q^["About L<...> Codes" in perlpodspec](:perlpodspec#About-L...-Codes)^,
+    sco      => q^["About L<...> Codes" in perlpodspec](:perlpodspec#About_L<...>_Codes)^,
+    markdown => q^["About L<...> Codes" in perlpodspec](:perlpodspec#about-l-codes)^,
+  },
+  'section with pod escapes',
+);
+
+test_fragments(
+  q^perlpodspec/About Data Paragraphs and "=beginE<sol>=end" Regions^,
+  {
+    metacpan => q^["About Data Paragraphs and "=begin/=end" Regions" in perlpodspec](:perlpodspec#About-Data-Paragraphs-and-begin-end-Regions)^,
+    sco      => q^["About Data Paragraphs and "=begin/=end" Regions" in perlpodspec](:perlpodspec#About_Data_Paragraphs_and_"=begin/=end"_Regions)^,
+  },
+  'section with pod commands',
+);
+
+test_fragments(
+  q^detach|Catalyst/"$c->detach( $action [, \@arguments ] )"^,
+  {
+    metacpan => q^[detach](:Catalyst#c-detach-action-arguments)^,
+    sco      => q^[detach](:Catalyst#$c->detach(_$action_[,_\@arguments_]_))^,
+  },
+  'section with sigils and syntax',
+);
+
+test_fragments(
+  q^perlpod/"Formatting Codes"^,
+  {
+    metacpan => q^["Formatting Codes" in perlpod](:perlpod#Formatting-Codes)^,
+    sco      => q^["Formatting Codes" in perlpod](:perlpod#Formatting_Codes)^,
+  },
+  'quoted section in other doc',
+);
+
+
+test_fragments(
+  q</Some, OTHER Section!>,
+  {
+    markdown => q^["Some, OTHER Section!"](#some-other-section)^,
+  },
+  'complicated section',
+);
+
+test_fragments(
+  q</"If you have a setup working, share your 'definition' with me. That would be fun!">,
+  {
+    markdown => qq^["If you have a setup working, share your 'definition' with me. That would be fun!"](#if-you-have-a-setup-working-share-your-definition-with-me-that-would-be-fun)^,
+  },
+  'extra long real life example complicated section',
+);
+
 
 foreach my $test ( @tests ){
   my ($desc, $pod, $mkdn, %opts) = @$test;
@@ -120,3 +196,23 @@ sub test_link {
     is $parser->interpolate("L<<< $pod >>>"), $mkdn, $desc . ' (interpolate)';
   }
 }
+
+sub test_fragments {
+  my ($pod, $tests, $desc) = @_;
+  foreach my $format ( sort keys %$tests ){
+    test_link(
+      # Only some combinations of these will normally make sense
+      # but it makes the function reusable.
+      Pod::Markdown->new(
+        perldoc_fragment_format => $format,
+        perldoc_url_prefix      => ':', # easier
+        markdown_fragment_format => $format,
+      ),
+      $pod,
+      $tests->{$format},
+      "$desc: $format",
+    );
+  }
+}
+
+done_testing;
