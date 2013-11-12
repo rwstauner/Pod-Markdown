@@ -5,9 +5,12 @@ use Test::More tests => 1;
 use Test::Differences;
 use Pod::Markdown;
 
-my $pod_prefix = Pod::Markdown->new->perldoc_url_prefix;
+my $parser = Pod::Markdown->new(
+  # Just return the raw fragment so we know that it isn't unexpectedly mangled.
+  perldoc_fragment_format => sub { $_ },
+);
+my $pod_prefix = $parser->perldoc_url_prefix;
 
-my $parser = Pod::Markdown->new;
 $parser->parse_from_filehandle(\*DATA);
 my $markdown = $parser->as_markdown;
 my $expect = <<EOMARKDOWN;

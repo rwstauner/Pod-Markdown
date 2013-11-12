@@ -7,10 +7,16 @@ use Pod::Markdown;
 # Test url aliases.
 local $Pod::Markdown::URL_PREFIXES{manny} = 'http://manny.local/page/';
 
-my ($pod_prefix, $man_prefix) =
-  map { ($_->perldoc_url_prefix, $_->man_url_prefix) } Pod::Markdown->new;
+my $parser = Pod::Markdown->new(
+  # We'll test the various formats later
+  # so for the first set just pass them through.
+  perldoc_fragment_format  => sub { $_ },
+  markdown_fragment_format => sub { $_ },
+);
 
-my $parser = Pod::Markdown->new;
+my ($pod_prefix, $man_prefix) =
+  map { ($_->perldoc_url_prefix, $_->man_url_prefix) }
+    $parser->new;
 
 my $alt_text_for_urls = (Pod::ParseLink->VERSION >= 1.10);
 
