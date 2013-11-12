@@ -270,6 +270,8 @@ sub _escape {
 # Formats a header according to the given level.
 sub format_header {
     my ($self, $level, $paragraph) = @_;
+    # TODO: put a name="" if $self->{embed_anchor_tags}; ?
+    # https://rt.cpan.org/Ticket/Display.html?id=57776
     sprintf '%s %s', '#' x $level, $paragraph;
 }
 
