@@ -56,6 +56,12 @@ Alternatively you can specify one of the following:
 * C<pod_simple_html>
 * A code ref
 
+The code ref can expect to receive two arguments:
+the parser object (C<$self>) and the section text.
+For convenience the topic variable (C<$_>) is also set to the section text:
+
+  perldoc_fragment_format => sub { s/\W+/-/g; }
+
 * C<markdown_fragment_format>
 Alters the format of the url fragment for any C<< L<> >> links
 that point to an internal section of this document (C<< L</section> >>).
