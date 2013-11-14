@@ -457,7 +457,7 @@ sub interior_sequence {
     my %interiors = (
         'I' => sub { return '_'  . $_[$i] . '_'  },      # italic
         'B' => sub { return '__' . $_[$i] . '__' },      # bold
-        'C' => sub { return '`'  . $_[$i] . '`'  },      # monospace
+        'C' => \&_wrap_code_span,                        # monospace
         'F' => sub { return '`'  . $_[$i] . '`'  },      # system path
         # non-breaking space
         'S' => sub {
@@ -519,6 +519,21 @@ sub _resolv_link {
     }
 
     return sprintf '[%s](%s)', ($text || $inferred), $url;
+}
+
+# A code span can be delimited by multiple backticks (and a space)
+# similar to pod codes (C<< code >>), so ensure we use a big enough
+# delimiter to not have it broken by embedded backticks.
+sub _wrap_code_span {
+  my ($self, $cmd, $arg) = @_;
+  my $longest = 0;
+  while( $arg =~ /([`]+)/g ){
+    my $len = length($1);
+    $longest = $len if $longest < $len;
+  }
+  my $delim = '`' x ($longest + 1);
+  my $pad = $longest > 0 ? ' ' : '';
+  return $delim . $pad . $arg . $pad . $delim;
 }
 
 =method format_man_url

@@ -7,6 +7,10 @@ Revision history for Perl extension {{$dist->name}}
       This makes links to sections work where they probably never did before.
       They are also customizable.
 
+    [Bug Fixes]
+    - Use multiple backticks to delimit code spans
+      that contain literal backticks.
+
 1.401     2013-11-06T05:30:55Z
 
     - Require Pod::Parser 1.51 for bug fixes.

@@ -63,6 +63,10 @@ non-breaking code: `\$x&nbsp;?&nbsp;\$y&nbsp;:&nbsp;\$z` foo&nbsp;`bar`&nbsp;baz
 
     verbatim para B<with> C<< E<verbar> >> codes
 
+A `` code span with `backticks` inside ``.
+
+A ```` code span with triple ``` inside ````.
+
 - This
 - is
 - a
@@ -194,6 +198,10 @@ non-breaking space: S<foo bar>.
 non-breaking code: S<C<$x ? $y : $z>> S<foo C<bar> baz>
 
  verbatim para B<with> C<< E<verbar> >> codes
+
+A C<< code span with `backticks` inside >>.
+
+A C<< code span with triple ``` inside >>.
 
 =over 4
 
