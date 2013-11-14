@@ -51,7 +51,7 @@ Inline `code _need not_ be escaped`.
 
 Inline [link_should_not_be_escaped](${pod_prefix}link_should_not_be_escaped).
 
-Inline `filename_should_not_be_escaped`.
+Inline `filename_should_not_be_escaped` because it is a code span.
 
 ### Heading `code _need not_ be escaped, either`.
 
@@ -187,7 +187,7 @@ Inline C<< code _need not_ be escaped >>.
 
 Inline L<< link_should_not_be_escaped >>.
 
-Inline F<< filename_should_not_be_escaped >>.
+Inline F<< filename_should_not_be_escaped >> because it is a code span.
 
 =head3 Heading C<< code _need not_ be escaped, either >>.
 

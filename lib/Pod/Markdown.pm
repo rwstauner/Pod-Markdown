@@ -458,7 +458,7 @@ sub interior_sequence {
         'I' => sub { return '_'  . $_[$i] . '_'  },      # italic
         'B' => sub { return '__' . $_[$i] . '__' },      # bold
         'C' => \&_wrap_code_span,                        # monospace
-        'F' => sub { return '`'  . $_[$i] . '`'  },      # system path
+        'F' => \&_wrap_code_span,                        # system path
         # non-breaking space
         'S' => sub {
             (my $s = $_[$i]) =~ s/ /&nbsp;/g;
