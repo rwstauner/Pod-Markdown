@@ -404,7 +404,7 @@ sub _escape_and_interpolate {
 sub _escape_non_code {
     my ($parser, $text, $ptree) = @_;
 
-    if ($ptree->isa('Pod::InteriorSequence') && $ptree->cmd_name =~ /\A[CFL]\z/) {
+    if ($ptree->isa('Pod::InteriorSequence') && $ptree->cmd_name =~ /\A[CF]\z/) {
         return $text;
     }
     return $parser->_escape($text);
