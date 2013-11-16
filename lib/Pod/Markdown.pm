@@ -483,6 +483,7 @@ sub interior_sequence {
             return "&$charname;";
         },
         'L' => \&_resolv_link,
+        # TODO: create `a name=` if configured?
         'X' => sub { '' },
         'Z' => sub { '' },
     );
