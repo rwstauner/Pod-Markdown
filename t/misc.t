@@ -8,6 +8,7 @@ use Pod::Markdown;
 my $parser = Pod::Markdown->new(
   # Just return the raw fragment so we know that it isn't unexpectedly mangled.
   perldoc_fragment_format => sub { $_ },
+  markdown_fragment_format => sub { $_ },
 );
 my $pod_prefix = $parser->perldoc_url_prefix;
 
@@ -84,6 +85,8 @@ A ```` code span with triple ``` inside ````.
 # Links
 
 [Formatting `C`odes](${pod_prefix}Links#L<...>)
+
+[back \\`tick](${pod_prefix}inside#a link)
 EOMARKDOWN
 $expect .= <<'EOMARKDOWN';
 
@@ -234,6 +237,8 @@ list
 =head1 Links
 
 L<<< FormattZ<>ing C<C>odes|Links/"LE<lt>...E<gt>" >>>
+
+L<<< back `tick|inside/"a link" >>>
 
 =head1 *Special* characters
 
