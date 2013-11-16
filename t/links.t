@@ -174,6 +174,16 @@ test_fragments(
   'extra long real life example complicated section',
 );
 
+test_fragments(
+  q<A [charclass] is \\* bad|page/section with (Parens) and \\Escapes *star*>,
+  {
+    metacpan => q^[A \[charclass\] is \\\\* bad](:page#section-with-Parens-and-Escapes-star)^,
+    sco      => q^[A \[charclass\] is \\\\* bad](:page#section_with_\(Parens\)_and_\Escapes_\*star\*)^,
+  },
+  { unescape => 0 },
+  'extra long real life example complicated section',
+);
+
 
 foreach my $test ( @tests ){
   my ($desc, $pod, $mkdn, %opts) = @$test;

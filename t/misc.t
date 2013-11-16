@@ -50,7 +50,7 @@ __Nested `codes`__ work, too
 
 Inline `code _need not_ be escaped`.
 
-Inline [link_should_not_be_escaped](${pod_prefix}link_should_not_be_escaped).
+Inline [link \\*should\\* \\\\\\_ be\\_escaped](#or\\\\things\\(can\\)go\\\\\\*wrong).
 
 Inline `filename_should_not_be_escaped` because it is a code span.
 
@@ -188,7 +188,7 @@ B<< Nested C<codes> >> work, too
 
 Inline C<< code _need not_ be escaped >>.
 
-Inline L<< link_should_not_be_escaped >>.
+Inline L<< link *should* \_ be_escaped|/or\things(can)go\*wrong >>.
 
 Inline F<< filename_should_not_be_escaped >> because it is a code span.
 
