@@ -252,6 +252,7 @@ sub _clean_text {
     return wantarray ? @trimmed : join("\n", @trimmed);
 }
 
+# Backslash escape markdown characters to avoid having them interpreted.
 sub _escape {
     local $_ = $_[1];
 
@@ -519,6 +520,7 @@ sub _resolv_link {
         return sprintf '%s<%s>', $cmd, $arg;
     }
 
+    # TODO: put unescaped section into link title? [a](b "c")
     return sprintf '[%s](%s)', ($text || $inferred), $url;
 }
 
