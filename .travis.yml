@@ -9,10 +9,12 @@ perl:
 # This dist is bundled by Dist::Zilla
 # but we don't need to build in order to test.
 
-before_install:
+install:
   # There are so few non-core dependencies just list them explicitly for laziness.
   - cpanm -n Pod::ParseLink~1.10 Pod::Parser~1.51
   - cpanm -n App::Prove Test::Differences
+
+before_install:
   - cpanm -n Devel::Cover::Report::Coveralls
 
 script:
