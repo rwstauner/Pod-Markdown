@@ -1,0 +1,22 @@
+language: perl
+perl:
+  - "5.18"
+  - "5.16"
+  - "5.14"
+  - "5.12"
+  - "5.10"
+
+# This dist is bundled by Dist::Zilla
+# but we don't need to build in order to test.
+
+before_install:
+  # There are so few non-core dependencies just list them explicitly for laziness.
+  - cpanm -n Pod::ParseLink~1.10 Pod::Parser~1.51
+  - cpanm -n App::Prove Test::Differences
+  - cpanm -n Devel::Cover::Report::Coveralls
+
+script:
+  - 'HARNESS_PERL_SWITCHES="-MDevel::Cover" prove --color -lr t'
+
+after_success:
+  cover -report coveralls
