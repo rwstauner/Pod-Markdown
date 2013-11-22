@@ -26,12 +26,12 @@ The constructor accepts the following named arguments:
 =begin :list
 
 * C<man_url_prefix>
-Alters the man page urls that are created from C<< L<> >> codes.
+Alters the man page urls that are created from C<< LE<lt>E<gt> >> codes.
 
 The default is C<http://man.he.net/man>.
 
 * C<perldoc_url_prefix>
-Alters the perldoc urls that are created from C<< L<> >> codes.
+Alters the perldoc urls that are created from C<< LE<lt>E<gt> >> codes.
 Can be:
 
 =for :list
@@ -44,7 +44,7 @@ The default is C<metacpan>.
     Pod::Markdown->new(perldoc_url_prefix => 'http://localhost/perl/pod');
 
 * C<perldoc_fragment_format>
-Alters the format of the url fragment for any C<< L<> >> links
+Alters the format of the url fragment for any C<< LE<lt>E<gt> >> links
 that point to a section of an external document (C<< L<name/section> >>).
 The default will be chosen according to the destination L</perldoc_url_prefix>.
 Alternatively you can specify one of the following:
@@ -63,7 +63,7 @@ For convenience the topic variable (C<$_>) is also set to the section text:
   perldoc_fragment_format => sub { s/\W+/-/g; }
 
 * C<markdown_fragment_format>
-Alters the format of the url fragment for any C<< L<> >> links
+Alters the format of the url fragment for any C<< LE<lt>E<gt> >> links
 that point to an internal section of this document (C<< L</section> >>).
 
 Unfortunately the format of the id attributes produced
