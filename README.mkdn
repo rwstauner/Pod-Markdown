@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 1.401
+version 1.500
 
 # SYNOPSIS
 
@@ -21,21 +21,21 @@ Literal characters in Pod that are special in Markdown
 
 # METHODS
 
-## perldoc\_url\_prefix
-
-Returns the url prefix in use (after resolving shortcuts to urls).
-
-## man\_url\_prefix
-
-Returns the url prefix in use for man pages.
-
 ## new
+
+    Pod::Markdown->new(%options);
 
 The constructor accepts the following named arguments:
 
+- `man_url_prefix`
+
+    Alters the man page urls that are created from `L<>` codes.
+
+    The default is `http://man.he.net/man`.
+
 - `perldoc_url_prefix`
 
-    This alters the perldoc urls that are created from `L<>` codes.
+    Alters the perldoc urls that are created from `L<>` codes.
     Can be:
 
     - `metacpan` (shortcut for `https://metacpan.org/pod/`)
@@ -46,16 +46,105 @@ The constructor accepts the following named arguments:
 
         Pod::Markdown->new(perldoc_url_prefix => 'http://localhost/perl/pod');
 
-- `man_url_prefix`
+- `perldoc_fragment_format`
 
-    This alters the man page urls that are created from `L<>` codes.
+    Alters the format of the url fragment for any `L<>` links
+    that point to a section of an external document (`["section" in name](https://metacpan.org/pod/name#section)`).
+    The default will be chosen according to the destination ["perldoc_url_prefix"](#perldoc_url_prefix).
+    Alternatively you can specify one of the following:
 
-    The default is `http://man.he.net/man`.
+    - `metacpan`
+    - `sco`
+    - `pod_simple_xhtml`
+    - `pod_simple_html`
+    - A code ref
+
+    The code ref can expect to receive two arguments:
+    the parser object (`$self`) and the section text.
+    For convenience the topic variable (`$_`) is also set to the section text:
+
+        perldoc_fragment_format => sub { s/\W+/-/g; }
+
+- `markdown_fragment_format`
+
+    Alters the format of the url fragment for any `L<>` links
+    that point to an internal section of this document (`["section"](#section)`).
+
+    Unfortunately the format of the id attributes produced
+    by whatever system translates the markdown into html is unknown at the time
+    the markdown is generated so we do some simple clean up.
+
+    __Note:__ `markdown_fragment_format` and `perldoc_fragment_format` accept
+    the same values: a (shortcut to a) method name or a code ref.
+
+## man\_url\_prefix
+
+Returns the url prefix in use for man pages.
+
+## perldoc\_url\_prefix
+
+Returns the url prefix in use (after resolving shortcuts to urls).
+
+## perldoc\_fragment\_format
+
+Returns the coderef or format name used to format a url fragment
+to a section in an external document.
+
+## markdown\_fragment\_format
+
+Returns the coderef or format name used to format a url fragment
+to an internal section in this document.
 
 ## as\_markdown
 
 Returns the parsed POD as Markdown. Takes named arguments. If the `with_meta`
 argument is given a positive value, meta tags are generated as well.
+
+## format\_man\_url
+
+Used internally to create a url (using ["man_url_prefix"](#man_url_prefix))
+from a string like `man(1)`.
+
+## format\_perldoc\_url
+
+    # With $name and section being the two parts of L<name/section>.
+    my $url = $parser->format_perldoc_url($name, $section);
+
+Used internally to create a url from
+the name (of a module or script)
+and a possible section (heading).
+
+The format of the url fragment (when pointing to a section in a document)
+varies depending on the destination url
+so ["perldoc_fragment_format"](#perldoc_fragment_format) is used (which can be customized).
+
+If the module name portion of the link is blank
+then the section is treated as an internal fragment link
+(to a section of the generated markdown document)
+and ["markdown_fragment_format"](#markdown_fragment_format) is used (which can be customized).
+
+## format\_fragment\_markdown
+
+Format url fragment for an internal link
+by replacing non-word characters with dashes.
+
+## format\_fragment\_pod\_simple\_xhtml
+
+Format url fragment like ["idify" in Pod::Simple::XHTML](https://metacpan.org/pod/Pod::Simple::XHTML#idify).
+
+## format\_fragment\_pod\_simple\_html
+
+Format url fragment like ["section_name_tidy" in Pod::Simple::HTML](https://metacpan.org/pod/Pod::Simple::HTML#section_name_tidy).
+
+## format\_fragment\_metacpan
+
+Format fragment for [metacpan.org](https://metacpan.org/pod/metacpan.org)
+(uses ["format_fragment_pod_simple_xhtml"](#format_fragment_pod_simple_xhtml)).
+
+## format\_fragment\_sco
+
+Format fragment for [search.cpan.org](https://metacpan.org/pod/search.cpan.org)
+(uses ["format_fragment_pod_simple_html"](#format_fragment_pod_simple_html)).
 
 # SEE ALSO
 

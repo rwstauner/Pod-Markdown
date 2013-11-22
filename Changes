@@ -2,12 +2,13 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+1.500     2013-11-22T15:05:31Z
+
     - Format url fragments (in links to perldoc sections)
       according to the destination site (perldoc_url_prefix).
       This makes links to sections work where they probably never did before.
       They are also customizable.
 
-    [Bug Fixes]
     - Use multiple backticks to delimit code spans
       that contain literal backticks.
 
