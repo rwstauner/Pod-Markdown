@@ -125,7 +125,7 @@ my @attr = qw(
 );
 
 {
-  no strict 'refs';
+  no strict 'refs'; ## no critic
   foreach my $attr ( @attr ){
     *$attr = sub { return $_[0]->{ $attr } };
   }
@@ -528,7 +528,7 @@ sub _resolv_link {
 # similar to pod codes (C<< code >>), so ensure we use a big enough
 # delimiter to not have it broken by embedded backticks.
 sub _wrap_code_span {
-  my ($self, $cmd, $arg) = @_;
+  my ($self, undef, $arg) = @_;
   my $longest = 0;
   while( $arg =~ /([`]+)/g ){
     my $len = length($1);
@@ -731,6 +731,7 @@ sub format_fragment_sco      { shift->format_fragment_pod_simple_html(@_);  }
 1;
 
 =for stopwords textblock
+html
 
 =for Pod::Coverage
 format_header
