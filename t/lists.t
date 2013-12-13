@@ -5,13 +5,13 @@ use Test::More tests => 1;
 use Test::Differences;
 use Pod::Markdown;
 
-my $pod_prefix = Pod::Markdown->new->perldoc_url_prefix;
-
-my $parser = Pod::Markdown->new;
+my $parser = Pod::Markdown->new(
+  perldoc_url_prefix => 'pod:',
+);
 $parser->parse_from_filehandle(\*DATA);
 my $markdown = $parser->as_markdown;
 
-my $expect = <<EOMARKDOWN;
+my $expect = <<'EOMARKDOWN';
 # Lists
 
 ## Unordered
@@ -28,9 +28,9 @@ my $expect = <<EOMARKDOWN;
 
 - list
 - test
-- and _Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in list item
+- and _Italics_, __Bold__, `Code`, and [Links](pod:Links) should work in list item
 
-    and _in_ __paragraph__ `after` [item](${pod_prefix}item)
+    and _in_ __paragraph__ `after` [item](pod:item)
 
 - verbatim paragraphs
 
