@@ -7,8 +7,21 @@ use Pod::Markdown;
 
 { package # no_index
     IOString;
-  sub new { bless [map { "$_\n" } split /\n/, $_[1] ], $_[0] }
-  sub getline { shift @{ $_[0] } }
+  use Symbol ();
+  sub new {
+    my $class = ref($_[0]) || $_[0];
+    my $s = $_[1];
+    my $self = Symbol::gensym;
+    tie *$self, $class, $self;
+    *$self->{lines} = [map { "$_\n" } split /\n/, $s ];
+    $self;
+  }
+  sub READLINE { shift @{ *{$_[0]}->{lines} } }
+  sub TIEHANDLE {
+    my ($class, $s) = @_;
+    bless $s, $class;
+  }
+  { no warnings 'once'; *getline = \&READLINE; }
 }
 
 my @tests;
