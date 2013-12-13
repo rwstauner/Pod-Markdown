@@ -1,0 +1,5 @@
+=pod
+
+This is I<pod>.
+
+=cut
