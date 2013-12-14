@@ -11,7 +11,7 @@ perl:
 
 install:
   # There are so few non-core dependencies just list them explicitly for laziness.
-  - cpanm -n Pod::ParseLink~1.10 Pod::Parser~1.51
+  - cpanm -n Pod::Simple~3.14
   - cpanm -n App::Prove Test::Differences
 
 before_install:

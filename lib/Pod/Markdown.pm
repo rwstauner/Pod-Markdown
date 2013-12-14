@@ -6,8 +6,8 @@ use warnings;
 package Pod::Markdown;
 # ABSTRACT: Convert POD to Markdown
 
-use Pod::Parser 1.51 ();
-use parent qw(Pod::Parser);
+use Pod::Simple 3.14 (); # external links with text
+use parent qw(Pod::Simple::Methody);
 use Pod::ParseLink (); # core
 
 our %URL_PREFIXES = (
@@ -77,25 +77,32 @@ the same values: a (shortcut to a) method name or a code ref.
 
 =cut
 
-# new() is provided by Pod::Parser (which calls initialize()).
+sub new {
+  my $class = shift;
+  my %args = @_;
 
-sub initialize {
-    my $self = shift;
-    $self->SUPER::initialize(@_);
+  my $self = $class->SUPER::new();
+  # Call setter for each arg passed in.
+  while( my ($attr, $val) = each %args ){
+    $self->$attr($val);
+  }
 
     for my $type ( qw( perldoc man ) ){
         my $attr  = $type . '_url_prefix';
         # Use provided argument or default alias.
-        my $url = $self->{ $attr } || $type;
+        my $url = $self->$attr || $type;
         # Expand alias if defined (otherwise use url as is).
-        $self->{ $attr } = $URL_PREFIXES{ $url } || $url;
+        $self->$attr($URL_PREFIXES{ $url } || $url);
     }
 
     $self->_prepare_fragment_formats;
 
     $self->_private;
-    $self;
+
+  return $self;
 }
+
+# Attribute getter/setters:
 
 =method man_url_prefix
 
@@ -124,12 +131,8 @@ my @attr = qw(
   markdown_fragment_format
 );
 
-{
-  no strict 'refs'; ## no critic
-  foreach my $attr ( @attr ){
-    *$attr = sub { return $_[0]->{ $attr } };
-  }
-}
+# I don't think this is a documented feature of Pod::Simple.
+__PACKAGE__->_accessorize(@attr);
 
 sub _prepare_fragment_formats {
   my ($self) = @_;
@@ -137,7 +140,7 @@ sub _prepare_fragment_formats {
   foreach my $attr ( @attr ){
     next unless $attr =~ /^(\w+)_fragment_format/;
     my $type = $1;
-    my $format = $self->{ $attr };
+    my $format = $self->$attr;
 
     # If one was provided.
     if( $format ){
@@ -148,7 +151,7 @@ sub _prepare_fragment_formats {
     else {
       if( $type eq 'perldoc' ){
         # Choose a default that matches the destination url.
-        my $target = $self->{perldoc_url_prefix};
+        my $target = $self->perldoc_url_prefix;
         foreach my $alias ( qw( metacpan sco ) ){
           if( $target eq $URL_PREFIXES{ $alias } ){
             $format = $alias;
@@ -169,7 +172,7 @@ sub _prepare_fragment_formats {
       unless $self->can($prefix . $format);
 
     # Save it.
-    $self->{ $attr } = $format;
+    $self->$attr($format);
   }
 
   return;
@@ -746,7 +749,7 @@ command interior_sequence textblock verbatim
 
 =head1 DESCRIPTION
 
-This module subclasses L<Pod::Parser> and converts POD to Markdown.
+This module uses L<Pod::Simple> to convert POD to Markdown.
 
 Literal characters in Pod that are special in Markdown
 (like *asterisks*) are backslash-escaped when appropriate.
