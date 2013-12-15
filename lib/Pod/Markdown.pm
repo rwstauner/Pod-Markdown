@@ -178,17 +178,29 @@ sub _prepare_fragment_formats {
   return;
 }
 
+## Document state ##
+
 sub _private {
-    my $self = shift;
-    $self->{_MyParser} ||= {
-        Text      => [],       # final text
-        Indent    => 0,        # list indent levels counter
-        ListType  => '-',      # character on every item
-        searching => ''   ,    # what are we searching for? (title, author etc.)
-        sstack    => [] ,      # Stack for searching, needed for nested list
-        Title     => undef,    # page title
-        Author    => undef,    # page author
-    };
+  my ($self) = @_;
+  $self->{_Pod_Markdown_} ||= {
+    indent      => 0,
+    stacks      => [],
+    states      => [{}],
+  };
+}
+
+sub _new_stack {
+  push @{ $_[0]->_private->{stacks} }, [];
+}
+
+sub _pop_stack_text {
+  join '', @{ pop @{ $_[0]->_private->{stacks} } };
+}
+
+sub _save {
+  my ($self, $text) = @_;
+  push @{ $self->_private->{stacks}->[-1] }, $text;
+  # return $text; # DEBUG
 }
 
 =method as_markdown
@@ -218,42 +230,6 @@ sub _build_markdown_head {
         qw( Title Author );
 }
 
-# $prelisthead:
-#   undef    : not list head
-#   ''       : list head not huddled
-#   otherwise: list head huddled
-sub _save {
-    my ($parser, $text, $prelisthead) = @_;
-    my $data = $parser->_private;
-    $text = $parser->_indent_text($text, defined($prelisthead));
-    $text = $prelisthead."\n".$text if defined $prelisthead && $prelisthead ne '';
-    push @{ $data->{Text} }, $text;
-    return;
-}
-
-sub _unsave {
-    my $parser = shift;
-    my $data = $parser->_private;
-    return pop @{ $data->{Text} };
-}
-
-sub _indent_text {
-    my ($parser, $text, $listhead) = @_;
-    my $data   = $parser->_private;
-    my $level  = $data->{Indent};
-    --$level if $listhead;
-    my $indent = undef;
-    $indent = ' ' x ($level * 4);
-    my @lines = map { $indent . $_; } split(/\n/, $text);
-    return wantarray ? @lines : join("\n", @lines);
-}
-
-sub _clean_text {
-    my $text    = $_[1];
-    my @trimmed = grep { $_; } split(/\n/, $text);
-
-    return wantarray ? @trimmed : join("\n", @trimmed);
-}
 
 # Backslash escape markdown characters to avoid having them interpreted.
 sub _escape {
@@ -269,6 +245,24 @@ sub _escape {
     s/^( (?:>\s+)? \d+ ) (\.\x20)/$1\\$2/xgm;
 
     return $_;
+}
+
+sub start_Document {
+  my ($self) = @_;
+  $self->_new_stack;
+}
+
+sub   end_Document {
+  my ($self) = @_;
+  $self->_check_search_header;
+  my $end = pop @{ $self->_private->{stacks} };
+
+  @{ $self->_private->{stacks} } == 0
+    or die 'Document ended with stacks remaining';
+
+  my $doc = join('', @$end);
+
+  print { $self->{output_fh} } $doc . $/;
 }
 
 # Formats a header according to the given level.
