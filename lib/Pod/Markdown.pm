@@ -81,6 +81,7 @@ sub new {
   my %args = @_;
 
   my $self = $class->SUPER::new();
+  $self->preserve_whitespace(1);
   # Call setter for each arg passed in.
   while( my ($attr, $val) = each %args ){
     $self->$attr($val);
@@ -384,7 +385,7 @@ sub   end_Document {
   @{ $self->_private->{stacks} } == 0
     or die 'Document ended with stacks remaining';
 
-  my $doc = join('', @$end);
+  my $doc = $self->_chomp_all(join('', @$end));
 
   print { $self->{output_fh} } $doc . $/;
 }
