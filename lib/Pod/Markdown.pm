@@ -381,17 +381,6 @@ sub command {
         $data->{searching} = pop @{$data->{sstack}};
 
     } elsif ($command =~ m{item}xms) {
-        # this strips the POD list head; the searching=listhead will insert markdown's
-        # FIXME: this does not account for named lists
-
-        # Assuming that POD is correctly wrtitten, we just use POD list head as markdown's
-        $data->{ListType} = '-'; # Default
-        if($paragraph =~ m{^[ \t]* \* [ \t]*}xms) {
-            $paragraph =~ s{^[ \t]* \* [ \t]*}{}xms;
-        } elsif($paragraph =~ m{^[ \t]* (\d+)\.? [ \t]*}xms) {
-            $data->{ListType} = $1.'.'; # For numbered list only
-            $paragraph =~ s{^[ \t]* \d+\.? [ \t]*}{}xms;
-        }
 
         if ($data->{searching} eq 'listpara') {
             $data->{searching} = 'listheadhuddled';
@@ -523,6 +512,61 @@ sub textblock {
     # save the text
     $parser->_save($paragraph, $prelisthead);
 }
+
+## Lists ##
+
+# TODO: over_empty
+
+sub _start_list {
+  my ($self) = @_;
+  $self->_new_stack;
+}
+
+sub   _end_list {
+  my ($self) = @_;
+  my $text = $self->_pop_stack_text;
+
+  # FIXME:
+  $_[0]->_save_line($text . $/);
+}
+
+sub _start_item {
+  my ($self) = @_;
+  $self->_new_stack;
+}
+
+sub   _end_item {
+  my ($self, $marker) = @_;
+  $self->_save_line($self->_indent($marker . ' ' . $self->_pop_stack_text));
+}
+
+sub start_over_bullet { $_[0]->_start_list }
+sub   end_over_bullet { $_[0]->_end_list }
+
+sub start_item_bullet { $_[0]->_start_item }
+sub   end_item_bullet { $_[0]->_end_item('-') }
+
+sub start_over_number { $_[0]->_start_list }
+sub   end_over_number { $_[0]->_end_list }
+
+sub start_item_number {
+  $_[0]->_start_item;
+  $_[0]->_private->{item_number} = $_[1]->{number};
+}
+
+sub   end_item_number {
+  my ($self) = @_;
+  $self->_end_item($self->_private->{item_number} . '.');
+}
+
+# Markdown doesn't support definition lists
+# so do regular (unordered) lists with indented paragraphs.
+sub start_over_text { $_[0]->_start_list }
+sub   end_over_text { $_[0]->_end_list }
+
+sub start_item_text { $_[0]->_start_item }
+sub   end_item_text { $_[0]->_end_item('-')}
+
 
 ## Codes ##
 
