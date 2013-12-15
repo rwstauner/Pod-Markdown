@@ -189,6 +189,15 @@ sub _private {
   };
 }
 
+sub _increase_indent {
+  ++$_[0]->_private->{indent} >= 1
+    or die 'Invalid state: indent < 0';
+}
+sub _decrease_indent {
+  --$_[0]->_private->{indent} >= 0
+    or die 'Invalid state: indent < 0';
+}
+
 sub _new_stack {
   push @{ $_[0]->_private->{stacks} }, [];
   push @{ $_[0]->_private->{states} }, {};
@@ -220,7 +229,29 @@ sub _save_block {
 
   $self->_stack_state->{blocks}++;
 
-  $self->_save_line($text . $/);
+  $self->_save_line($self->_indent($text) . $/);
+}
+
+## Formatting ##
+
+sub _chomp_all {
+  my ($self, $text) = @_;
+  1 while chomp $text;
+  return $text;
+}
+
+sub _indent {
+  my ($self, $text) = @_;
+  my $level = $self->_private->{indent};
+
+  if( $level ){
+    my $indent = ' ' x ($level * 4);
+
+    # Capture text on the line so that we don't indent blank lines (/^\x20{4}$/).
+    $text =~ s/^(.+)/$indent$1/mg;
+  }
+
+  return $text;
 }
 
 =method as_markdown
@@ -381,34 +412,6 @@ sub command {
         }
     }
 
-    # opening a list ?
-    elsif ($command =~ m{over}xms) {
-
-        # update indent level
-        $data->{Indent}++;
-        push @{$data->{sstack}}, $data->{searching};
-
-    # closing a list ?
-    } elsif ($command =~ m{back}xms) {
-
-        # decrement indent level
-        $data->{Indent}--;
-        $data->{searching} = pop @{$data->{sstack}};
-
-    } elsif ($command =~ m{item}xms) {
-
-        if ($data->{searching} eq 'listpara') {
-            $data->{searching} = 'listheadhuddled';
-        }
-        else {
-            $data->{searching} = 'listhead';
-        }
-
-        if (length $paragraph) {
-            $parser->textblock($paragraph, $line_num);
-        }
-    }
-
     # ignore other commands
     return;
 }
@@ -512,18 +515,6 @@ sub textblock {
     if ($data->{searching} =~ m{title|author}xms) {
         $data->{ ucfirst $data->{searching} } = $paragraph;
         $data->{searching} = '';
-    } elsif ($data->{searching} =~ m{listhead(huddled)?$}xms) {
-        my $is_huddled = $1;
-        $paragraph = sprintf '%s %s', $data->{ListType}, $paragraph;
-        if ($is_huddled) {
-            # To compress into an item in order to avoid "\n\n" insertion.
-            $prelisthead = $parser->_unsave();
-        } else {
-            $prelisthead = '';
-        }
-        $data->{searching} = 'listpara';
-    } elsif ($data->{searching} eq 'listpara') {
-        $data->{searching} = '';
     }
 
     # save the text
@@ -537,24 +528,61 @@ sub textblock {
 sub _start_list {
   my ($self) = @_;
   $self->_new_stack;
+
+  # Nest again b/c start_item will pop this to look for preceding content.
+  $self->_increase_indent;
+  $self->_new_stack;
 }
 
 sub   _end_list {
   my ($self) = @_;
-  my $text = $self->_pop_stack_text;
+  $self->_handle_between_item_content;
+
+  # Finish the list.
+
+  # All the child elements should be blocks,
+  # but don't end with a double newline.
+  my $text = $self->_chomp_all($self->_pop_stack_text);
 
   # FIXME:
   $_[0]->_save_line($text . $/);
 }
 
+sub _handle_between_item_content {
+  my ($self) = @_;
+
+  # This might be empty (if the list item had no additional content).
+  if( my $text = $self->_pop_stack_text ){
+    # Else it's a sub-document.
+    # If there are blocks we need to separate with blank lines.
+    if( $self->_private->{last_state}->{blocks} ){
+      $text = $/ . $text;
+    }
+    # If not, we can condense the text.
+    # In this module's history there was a patch contributed to specifically
+    # produce "huddled" lists so we'll try to maintain that functionality.
+    else {
+      $text = $self->_chomp_all($text) . $/;
+    }
+    $self->_save($text)
+  }
+
+  $self->_decrease_indent;
+}
+
 sub _start_item {
   my ($self) = @_;
+  $self->_handle_between_item_content;
   $self->_new_stack;
 }
 
 sub   _end_item {
   my ($self, $marker) = @_;
   $self->_save_line($self->_indent($marker . ' ' . $self->_pop_stack_text));
+
+  # Store any possible contents in a new stack (like a sub-document).
+  $self->_increase_indent;
+  $self->_new_stack;
 }
 
 sub start_over_bullet { $_[0]->_start_list }
