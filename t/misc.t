@@ -106,7 +106,14 @@ lists:
 \- b
 
 \# fake headings
-\#\#\# fake headings \#\#\#
+
+\### fake headings ###
+
+Setext fake
+&#x3d;==========
+
+Another fake
+\------------
 
 \> Quote
 \> blocks
@@ -256,7 +263,14 @@ lists:
 - b
 
 # fake headings
+
 ### fake headings ###
+
+Setext fake
+===========
+
+Another fake
+------------
 
 > Quote
 > blocks
