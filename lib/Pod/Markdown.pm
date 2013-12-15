@@ -203,6 +203,10 @@ sub _new_stack {
   push @{ $_[0]->_private->{states} }, {};
 }
 
+sub _last_string {
+  $_[0]->_private->{stacks}->[-1][-1];
+}
+
 sub _pop_stack_text {
   $_[0]->_private->{last_state} = pop @{ $_[0]->_private->{states} };
   join '', @{ pop @{ $_[0]->_private->{stacks} } };
@@ -385,36 +389,6 @@ sub   end_Document {
   print { $self->{output_fh} } $doc . $/;
 }
 
-# Handles POD command paragraphs, denoted by a line beginning with C<=>.
-sub command {
-    my ($parser, $command, $paragraph, $line_num) = @_;
-    my $data = $parser->_private;
-
-    # cleaning the text
-    $paragraph = $parser->_clean_text($paragraph);
-
-    # is it a header ?
-    if ($command =~ m{head(\d)}xms) {
-        my $level = $1;
-
-        $paragraph = $parser->_escape_and_interpolate($paragraph, $line_num);
-
-        # the headers never are indented
-        $parser->_save($parser->format_header($level, $paragraph));
-        if ($level == 1) {
-            if ($paragraph =~ m{NAME}xmsi) {
-                $data->{searching} = 'title';
-            } elsif ($paragraph =~ m{AUTHOR}xmsi) {
-                $data->{searching} = 'author';
-            } else {
-                $data->{searching} = '';
-            }
-        }
-    }
-
-    # ignore other commands
-    return;
-}
 
 sub start_Verbatim {
   my ($self, $attr) = @_;
@@ -476,6 +450,7 @@ sub   end_Para {
   $self->_save_block($text);
 }
 
+
 ## Headings ##
 
 sub start_head1 { $_[0]->_start_head(1) }
@@ -487,8 +462,19 @@ sub   end_head3 { $_[0]->_end_head(3) }
 sub start_head4 { $_[0]->_start_head(4) }
 sub   end_head4 { $_[0]->_end_head(4) }
 
+sub _check_search_header {
+  my ($self) = @_;
+  # Save the text since the last heading if we want it for metadata.
+  if( my $last = $self->_private->{search_header} ){
+    for( $self->_private->{$last} = $self->_last_string ){
+      s/\A\s+//;
+      s/\s+\z//;
+    }
+  }
+}
 sub _start_head {
   my ($self, $num) = @_;
+  $self->_check_search_header;
   $self->_new_stack;
 }
 
@@ -497,28 +483,15 @@ sub   _end_head {
   my $h = '#' x $num;
 
   my $text = $self->_pop_stack_text;
+  $self->_private->{search_header} =
+      $text =~ /NAME/   ? 'Title'
+    : $text =~ /AUTHOR/ ? 'Author'
+    : undef;
 
   # TODO: option for $h suffix
   # TODO: put a name="" if $self->{embed_anchor_tags}; ?
   # https://rt.cpan.org/Ticket/Display.html?id=57776
   $self->_save_block(join(' ', $h, $text));
-}
-
-
-# Handles normal blocks of POD.
-sub textblock {
-    my ($parser, $paragraph, $line_num) = @_;
-    my $data = $parser->_private;
-    my $prelisthead;
-
-    # searching ?
-    if ($data->{searching} =~ m{title|author}xms) {
-        $data->{ ucfirst $data->{searching} } = $paragraph;
-        $data->{searching} = '';
-    }
-
-    # save the text
-    $parser->_save($paragraph, $prelisthead);
 }
 
 ## Lists ##
