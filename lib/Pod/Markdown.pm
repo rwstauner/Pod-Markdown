@@ -389,10 +389,12 @@ sub   end_Document {
   print { $self->{output_fh} } $doc . $/;
 }
 
+## Blocks ##
 
 sub start_Verbatim {
   my ($self, $attr) = @_;
   $self->_new_stack;
+  $self->_private->{no_escape} = 1;
 }
 
 sub end_Verbatim {
@@ -402,6 +404,7 @@ sub end_Verbatim {
 
   $text = $self->_indent_verbatim($text);
 
+  $self->_private->{no_escape} = 0;
 
   # Verbatim blocks do not generate a separate "Para" event.
   $self->_save_block($text);
@@ -411,6 +414,8 @@ sub _indent_verbatim {
   my ($self, $paragraph) = @_;
 
     # NOTE: Pod::Simple expands the tabs for us (as suggested by perlpodspec).
+    # Pod::Simple also has a 'strip_verbatim_indent' attribute
+    # but it doesn't sound like it gains us anything over this method.
 
     # POD verbatim can start with any number of spaces (or tabs)
     # markdown should be 4 spaces (or a tab)
