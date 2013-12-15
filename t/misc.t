@@ -50,7 +50,7 @@ __Nested `codes`__ work, too
 
 Inline `code _need not_ be escaped`.
 
-Inline [link \\*should\\* \\\\\\_ be\\_escaped](#or\\\\things\\(can\\)go\\\\\\*wrong).
+Inline [link \\*should\\* \\\\\\_ be\\_escaped](#or\\\\things\\(can\\)go\\\\*wrong).
 
 Inline `filename_should_not_be_escaped` because it is a code span.
 
@@ -86,7 +86,7 @@ A ```` code span with triple ``` inside ````.
 
 [Formatting `C`odes](${pod_prefix}Links#L<...>)
 
-[back \\`tick](${pod_prefix}inside#a link)
+[back \\`tick](${pod_prefix}inside#a&#x20;link)
 EOMARKDOWN
 $expect .= <<'EOMARKDOWN';
 

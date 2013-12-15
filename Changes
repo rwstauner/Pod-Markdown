@@ -2,7 +2,13 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+  [Enhancements]
+  - Improve escaping of markdown characters.
+
   [Backward Incompatible Changes]
+  - E<> codes used to produce equivalent html entities (&foo;).
+    These now simply print the corresponding unicode character as utf-8.
+    If you desire alternate behavior please report a bug.
   - Tabs are now expanded.
 
 1.500     2013-11-22T15:05:31Z

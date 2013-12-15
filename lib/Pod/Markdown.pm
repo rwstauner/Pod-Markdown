@@ -300,8 +300,23 @@ sub _escape_paragraph_markdown {
 sub handle_text {
   my ($self, $text) = @_;
 
-  # Don't let literal characters be interpreted as markdown.
-  $text = $self->_escape_inline_markdown($text);
+  # Markdown is for html, so use html entities.
+  $text =~ s/ /&nbsp;/g
+    if $self->_private->{nbsp};
+
+  # Unless we're in a code span or verbatim block.
+  unless( $self->_private->{no_escape} ){
+
+    # We could, in theory, alter what gets escaped according to context
+    # (for example, escape square brackets (but not parens) inside link text).
+    # The markdown produced might look slightly nicer but either way you're
+    # at the whim of the markdown processor to interpret things correctly.
+    # For now just escape everything.
+
+    # Don't let literal characters be interpreted as markdown.
+    $text = $self->_escape_inline_markdown($text);
+
+  }
 
   $self->_save($text);
 }
@@ -509,92 +524,107 @@ sub textblock {
     $parser->_save($paragraph, $prelisthead);
 }
 
-# An interior sequence is an embedded command
-# within a block of text which appears as a command name - usually a single
-# uppercase character - followed immediately by a string of text which is
-# enclosed in angle brackets.
-sub interior_sequence {
-    my ($self, $seq_command, $seq_argument, $pod_seq) = @_;
+## Codes ##
 
-    # nested links are not allowed
-    return sprintf '%s<%s>', $seq_command, $seq_argument
-        if $seq_command eq 'L' && $self->_private->{InsideLink};
+# TODO: change to '**' ?
+sub start_B { $_[0]->_save('__') }
+sub   end_B { $_[0]->start_B()   }
 
-    my $i = 2;
-    my %interiors = (
-        'I' => sub { return '_'  . $_[$i] . '_'  },      # italic
-        'B' => sub { return '__' . $_[$i] . '__' },      # bold
-        'C' => \&_wrap_code_span,                        # monospace
-        'F' => \&_wrap_code_span,                        # system path
-        # non-breaking space
-        'S' => sub {
-            (my $s = $_[$i]) =~ s/ /&nbsp;/g;
-            return $s;
-        },
-        'E' => sub {
-            my $charname = $_[$i];
-            return '<' if $charname eq 'lt';
-            return '>' if $charname eq 'gt';
-            return '|' if $charname eq 'verbar';
-            return '/' if $charname eq 'sol';
+sub start_I { $_[0]->_save('_') }
+sub   end_I { $_[0]->start_I()  }
 
-            # convert legacy charnames to more modern ones (see perlpodspec)
-            $charname =~ s/\A([lr])chevron\z/${1}aquo/;
-
-            return "&#$1;" if $charname =~ /^0(x[0-9a-fA-Z]+)$/;
-
-            $charname = oct($charname) if $charname =~ /^0\d+$/;
-
-            return "&#$charname;"      if $charname =~ /^\d+$/;
-
-            return "&$charname;";
-        },
-        'L' => \&_resolv_link,
-        # TODO: create `a name=` if configured?
-        'X' => sub { '' },
-        'Z' => sub { '' },
-    );
-    if (exists $interiors{$seq_command}) {
-        my $code = $interiors{$seq_command};
-        return $code->($self, $seq_command, $seq_argument, $pod_seq);
-    } else {
-        return sprintf '%s<%s>', $seq_command, $seq_argument;
-    }
+sub start_C {
+  my ($self, $attr) = @_;
+  $self->_new_stack;
+  $self->_private->{no_escape}++;
 }
 
-sub _resolv_link {
-    my ($self, $cmd, $arg) = @_;
+sub   end_C {
+  my ($self) = @_;
+  $self->_private->{no_escape}--;
+  $self->_save( $self->_wrap_code_span($self->_pop_stack_text) );
+}
 
-    local $self->_private->{InsideLink} = 1;
+# Use code spans for F<>.
+sub start_F { shift->start_C(@_); }
+sub   end_F { shift  ->end_C(@_); }
 
-    my ($text, $inferred, $name, $section, $type) =
-      # perlpodspec says formatting codes can occur in all parts of an L<>
-      map { $_ && $self->interpolate($_, 1) }
-      Pod::ParseLink::parselink($arg);
-    my $url = '';
+sub start_S { $_[0]->_private->{nbsp}++; }
+sub   end_S { $_[0]->_private->{nbsp}--; }
 
-    if ($type eq 'url') {
-        $url = $name;
-    } elsif ($type eq 'man') {
-        $url = $self->format_man_url($name);
-    } else {
-        $url = $self->format_perldoc_url($name, $section);
-    }
+sub start_L {
+  my ($self, $flags) = @_;
+  $self->_new_stack;
+  push @{ $self->_private->{link} }, $flags;
+}
 
-    # if we don't know how to handle the url just print the pod back out
-    if (!$url) {
-        return sprintf '%s<%s>', $cmd, $arg;
-    }
+sub   end_L {
+  my ($self) = @_;
+  my $flags = pop @{ $self->_private->{link} }
+    or die 'Invalid state: link end with no link start';
 
-    # TODO: put unescaped section into link title? [a](b "c")
-    return sprintf '[%s](%s)', ($text || $inferred), $url;
+  my ($type, $to, $section) = @{$flags}{qw( type to section )};
+
+  my $url = (
+    $type eq 'url' ? $to
+      : $type eq 'man' ? $self->format_man_url($to, $section)
+      : $type eq 'pod' ? $self->format_perldoc_url($to, $section)
+      :                  undef
+  );
+
+  my $text = $self->_pop_stack_text;
+
+  # NOTE: I don't think the perlpodspec says what to do with L<|blah>
+  # but it seems like a blank link text just doesn't make sense
+  if( !length($text) ){
+    $text =
+      $section ?
+        $to ? sprintf('"%s" in %s', $section, $to)
+        : ('"' . $section . '"')
+      : $to;
+  }
+
+  # FIXME: What does Pod::Simple::X?HTML do for this?
+  # if we don't know how to handle the url just print the pod back out
+  if (!$url) {
+    $self->_save(sprintf 'L<%s>', $flags->{raw});
+    return;
+  }
+
+  # In the url we need to escape quotes and parentheses lest markdown
+  # break the url (cut it short and/or wrongfully interpret a title).
+
+  # Backslash escapes do not work for the space and quotes.
+  # URL-encoding the space is not sufficient
+  # (the quotes confuse some parsers and produce invalid html).
+  # I've arbitratily chosen HTML encoding to hide them from markdown
+  # while mangling the url as litle as possible.
+  $url =~ s/([ '"])/sprintf '&#x%x;', ord($1)/ge;
+
+  # We also need to double any backslashes that may be present
+  # (lest they be swallowed up) and stop parens from breaking the url.
+  $url =~ s/([\\()])/\\$1/g;
+
+  # TODO: put section name in title if not the same as $text
+  $self->_save('[' . $text . '](' . $url . ')');
+}
+
+sub start_X {
+  $_[0]->_new_stack;
+}
+
+sub   end_X {
+  my ($self) = @_;
+  my $text = $self->_pop_stack_text;
+  # TODO: mangle $text?
+  # TODO: put <a name="$text"> if configured
 }
 
 # A code span can be delimited by multiple backticks (and a space)
 # similar to pod codes (C<< code >>), so ensure we use a big enough
 # delimiter to not have it broken by embedded backticks.
 sub _wrap_code_span {
-  my ($self, undef, $arg) = @_;
+  my ($self, $arg) = @_;
   my $longest = 0;
   while( $arg =~ /([`]+)/g ){
     my $len = length($1);

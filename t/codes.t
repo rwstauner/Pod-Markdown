@@ -1,12 +1,11 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
+use utf8;
 use strict;
 use warnings;
 use Test::More;
 use Pod::Markdown;
 
 my $pod_prefix = Pod::Markdown->new->perldoc_url_prefix;
-
-my $parser = Pod::Markdown->new;
 
 my @tests = (
   [I => q<italic>,          q{_italic_}],
@@ -16,41 +15,43 @@ my @tests = (
 
   # links tested extensively in t/links.t
   [L => q<link>,             "[link](${pod_prefix}link)"],
-  [L => q<star*>,            "[star*](${pod_prefix}star*)"],
+  [L => q<star*>,            "[star\\*](${pod_prefix}star*)"],
 
+  # Pod::Simple handles the E<> entirely (Pod::Markdown never sees them).
   [E => q<lt>,              q{<}],
   [E => q<gt>,              q{>}],
   [E => q<verbar>,          q{|}],
   [E => q<sol>,             q{/}],
 
-  [E => q<eacute>,          q{&eacute;}],
-  [E => q<0x201E>,          q{&#x201E;},  'E hex'],
-  [E => q<075>,             q{&#61;},     'E octal'],
-  [E => q<181>,             q{&#181;},    'E decimal'],
+  [E => q<eacute>,          q{é}],
+  [E => q<0x201E>,          q{„},  'E hex'],
+  [E => q<075>,             q{=},  'E octal'],
+  [E => q<181>,             q{µ},  'E decimal'],
 
   # legacy charnames specifically mentioned by perlpodspec
-  [E => q<lchevron>,        q{&laquo;}],
-  [E => q<rchevron>,        q{&raquo;}],
-  [E => q<zchevron>,        q{&zchevron;}],
-  [E => q<rchevrony>,       q{&rchevrony;}],
+  [E => q<lchevron>,        q{«}],
+  [E => q<rchevron>,        q{»}],
 
   [F => q<file.ext>,        q{`file.ext`}],
   [F => q<file_path.ext>,   q{`file_path.ext`}],
   [S => q<$x ? $y : $z>,    q{$x&nbsp;?&nbsp;$y&nbsp;:&nbsp;$z}],
   [X => q<index>,           q{}],
-  [Z => q<null>,            q{}],
+  [Z => q<>,                q{}],
 
-  [Q => q<unknown>,         q{Q<unknown>}, 'uknown code (Q<>)' ],
+  #[Q => q<unknown>,         q{Q<unknown>}, 'uknown code (Q<>)' ],
 );
 
-plan tests => scalar @tests * 2;
+plan tests => scalar @tests;
 
 foreach my $test ( @tests ){
   my ($code, $text, $exp, $desc) = @$test;
   $desc ||= "$code<$text>";
 
-    # explicitly test interior_sequence (which is what we've defined)
-    is $parser->interior_sequence($code => $text), $exp, $desc . ' (interior_sequence)';
-    # also test parsing it as pod
-    is $parser->interpolate("$code<<< $text >>>"), $exp, $desc . ' (interpolate)';
+  my $parser = Pod::Markdown->new;
+  $parser->output_string(\(my $got));
+  # Prefix line to avoid escaping beginning-of-line characters (like `>`).
+  my $prefix = 'Code:';
+  $parser->parse_string_document("=pod\n\n$prefix $code<<< $text >>>");
+  chomp($got);
+  is $got, "$prefix $exp", $desc;
 }
