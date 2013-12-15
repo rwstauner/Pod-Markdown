@@ -191,10 +191,16 @@ sub _private {
 
 sub _new_stack {
   push @{ $_[0]->_private->{stacks} }, [];
+  push @{ $_[0]->_private->{states} }, {};
 }
 
 sub _pop_stack_text {
+  $_[0]->_private->{last_state} = pop @{ $_[0]->_private->{states} };
   join '', @{ pop @{ $_[0]->_private->{stacks} } };
+}
+
+sub _stack_state {
+  $_[0]->_private->{states}->[-1];
 }
 
 sub _save {
@@ -206,6 +212,15 @@ sub _save {
 sub _save_line {
   my ($self, $text) = @_;
   $self->_save($text . $/);
+}
+
+# For paragraphs, etc.
+sub _save_block {
+  my ($self, $text) = @_;
+
+  $self->_stack_state->{blocks}++;
+
+  $self->_save_line($text . $/);
 }
 
 =method as_markdown
@@ -410,7 +425,9 @@ sub end_Verbatim {
 
   $text = $self->_indent_verbatim($text);
 
-  $self->_save_line($text);
+
+  # Verbatim blocks do not generate a separate "Para" event.
+  $self->_save_block($text);
 }
 
 sub _indent_verbatim {
@@ -453,7 +470,7 @@ sub   end_Para {
 
   $text = $self->_escape_paragraph_markdown($text);
 
-  $self->_save_line($text);
+  $self->_save_block($text);
 }
 
 ## Headings ##
@@ -481,7 +498,7 @@ sub   _end_head {
   # TODO: option for $h suffix
   # TODO: put a name="" if $self->{embed_anchor_tags}; ?
   # https://rt.cpan.org/Ticket/Display.html?id=57776
-  $self->_save_line(join(' ', $h, $text));
+  $self->_save_block(join(' ', $h, $text));
 }
 
 
