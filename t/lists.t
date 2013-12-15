@@ -11,6 +11,7 @@ my $parser = Pod::Markdown->new(
 $parser->parse_from_filehandle(\*DATA);
 my $markdown = $parser->as_markdown;
 
+# TODO: Verify this list behavior in html and perlpod(spec).
 my $expect = <<'EOMARKDOWN';
 # Lists
 
@@ -43,6 +44,7 @@ __Note:__ Markdown does not support definition lists (word => text), just bullet
 - Head1
 
     Paragraph should be indented.
+    \* And escaped.
 
     - Head2
 
@@ -58,6 +60,12 @@ __Note:__ Markdown does not support definition lists (word => text), just bullet
 - This is a list head, too.
     - Again, this is a list head.
 - Finally, this is also a list head.
+
+And
+
+- A list item
+\\with a line that starts with a markdown char.
+- item 2
 
 ## Ordered
 
@@ -126,6 +134,7 @@ B<Note:> Markdown does not support definition lists (word => text), just bullets
 =item Head1
 
 Paragraph should be indented.
+* And escaped.
 
 =over 4
 
@@ -164,6 +173,21 @@ Again, this is a list head.
 =item *
 
 Finally, this is also a list head.
+
+=back
+
+And
+
+=over
+
+=item *
+
+A list item
+\with a line that starts with a markdown char.
+
+=item *
+
+item 2
 
 =back
 
