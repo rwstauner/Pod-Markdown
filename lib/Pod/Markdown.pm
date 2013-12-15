@@ -235,21 +235,75 @@ sub _build_markdown_head {
         qw( Title Author );
 }
 
+## Escaping ##
+
+# http://daringfireball.net/projects/markdown/syntax#backslash
+# Markdown provides backslash escapes for the following characters:
+#
+# \   backslash
+# `   backtick
+# *   asterisk
+# _   underscore
+# {}  curly braces
+# []  square brackets
+# ()  parentheses
+# #   hash mark
+# +   plus sign
+# -   minus sign (hyphen)
+# .   dot
+# !   exclamation mark
+
+# However some of those only need to be escaped in certain places:
+# * Backslashes *do* need to be escaped or they may be swallowed by markdown.
+# * Word-surrounding characters (/[`*_]/) *do* need to be escaped mid-word
+# because the markdown spec explicitly allows mid-word em*pha*sis.
+# * I don't actually see anything that curly braces are used for.
+# * Escaping square brackets is enough to avoid accidentally
+# creating links and images (so we don't need to escape plain parentheses
+# or exclamation points as that would generate a lot of unnecesary noise).
+# Parentheses will be escaped in urls (&end_L) to avoid premature termination.
+# * We don't need a backslash for every hash mark or every hyphen found mid-word,
+# just the ones that start a line (likewise for plus and dot).
+# (Those will all be handled by _escape_paragraph_markdown).
 
 # Backslash escape markdown characters to avoid having them interpreted.
-sub _escape {
+sub _escape_inline_markdown {
+  local $_ = $_[1];
+
+# s/([\\`*_{}\[\]()#+-.!])/\\$1/g; # See comments above.
+  s/([\\`*_\[\]])/\\$1/g;
+
+  return $_;
+}
+
+# Escape markdown characters that would be interpreted
+# at the start of a line.
+sub _escape_paragraph_markdown {
     local $_ = $_[1];
 
-    # do inline characters first
-    s/([][\\`*_#])/\\$1/g;
+    # Escape headings, horizontal rules, (unordered) lists, and blockquotes.
+    s/^([-+*#>])/\\$1/mg;
 
-    # escape unordered lists and blockquotes
-    s/^([-+*>])/\\$1/mg;
+    # Markdown doesn't support backslash escapes for equal signs
+    # even though they can be used to underline a header.
+    # So use html to escape them to avoid having them interpreted.
+    s/^([=])/sprintf '&#x%x;', ord($1)/mge;
 
-    # escape dots that would wrongfully create numbered lists
+    # Escape the dots that would wrongfully create numbered lists.
     s/^( (?:>\s+)? \d+ ) (\.\x20)/$1\\$2/xgm;
 
     return $_;
+}
+
+## Parsing ##
+
+sub handle_text {
+  my ($self, $text) = @_;
+
+  # Don't let literal characters be interpreted as markdown.
+  $text = $self->_escape_inline_markdown($text);
+
+  $self->_save($text);
 }
 
 sub start_Document {
@@ -393,41 +447,25 @@ sub _indent_verbatim {
   return $paragraph;
 }
 
-
-sub _escape_and_interpolate {
-    my ($parser, $paragraph, $line_num) = @_;
-
-    # escape markdown characters in text sequences except for inline code
-    $paragraph = join '', $parser->parse_text(
-        { -expand_text => '_escape_non_code' },
-        $paragraph, $line_num
-    )->raw_text;
-
-    # interpolate the paragraph for embedded sequences
-    $paragraph = $parser->interpolate($paragraph, $line_num);
-
-    return $paragraph;
+sub start_Para {
+  $_[0]->_new_stack;
 }
 
-sub _escape_non_code {
-    my ($parser, $text, $ptree) = @_;
+sub   end_Para {
+  my ($self) = @_;
+  my $text = $self->_pop_stack_text;
 
-    if ($ptree->isa('Pod::InteriorSequence') && $ptree->cmd_name =~ /\A[CF]\z/) {
-        return $text;
-    }
-    return $parser->_escape($text);
+  $text = $self->_escape_paragraph_markdown($text);
+
+  $self->_save_line($text);
 }
+
 
 # Handles normal blocks of POD.
 sub textblock {
     my ($parser, $paragraph, $line_num) = @_;
     my $data = $parser->_private;
     my $prelisthead;
-
-    $paragraph = $parser->_escape_and_interpolate($paragraph, $line_num);
-
-    # clean the empty lines
-    $paragraph = $parser->_clean_text($paragraph);
 
     # searching ?
     if ($data->{searching} =~ m{title|author}xms) {
