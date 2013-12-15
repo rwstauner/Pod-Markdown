@@ -16,8 +16,8 @@ my $expect = <<'EOMARKDOWN';
 
 # TABS
 
-	These tabs
-	can be left alone
+        These tabs
+        will be expanded.
 
 # 3 SPACES
 
@@ -34,7 +34,7 @@ Mixed paragraphs should all get the same indentation added
 to preserve the formatting:
 
       4 spaces (+ 2 = 6)
-	a tab
+          a tab
      3 spaces (+ 2 = 5)
     2 spaces (+ 2 = 4) (the minimum)
 
@@ -78,7 +78,7 @@ __DATA__
 =head1 TABS
 
 	These tabs
-	can be left alone
+	will be expanded.
 
 =head1 3 SPACES
 

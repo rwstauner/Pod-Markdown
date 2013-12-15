@@ -203,6 +203,11 @@ sub _save {
   # return $text; # DEBUG
 }
 
+sub _save_line {
+  my ($self, $text) = @_;
+  $self->_save($text . $/);
+}
+
 =method as_markdown
 
 Returns the parsed POD as Markdown. Takes named arguments. If the C<with_meta>
@@ -343,13 +348,25 @@ sub command {
     return;
 }
 
-# Handles verbatim text.
-sub verbatim {
-    my ($parser, $paragraph) = @_;
+sub start_Verbatim {
+  my ($self, $attr) = @_;
+  $self->_new_stack;
+}
 
-    # NOTE: perlpodspec says parsers should expand tabs by default
-    # NOTE: Apparently Pod::Parser does not.  should we?
-    # NOTE: this might be s/^\t/" " x 8/e, but what about tabs inside the para?
+sub end_Verbatim {
+  my ($self) = @_;
+
+  my $text = $self->_pop_stack_text;
+
+  $text = $self->_indent_verbatim($text);
+
+  $self->_save_line($text);
+}
+
+sub _indent_verbatim {
+  my ($self, $paragraph) = @_;
+
+    # NOTE: Pod::Simple expands the tabs for us (as suggested by perlpodspec).
 
     # POD verbatim can start with any number of spaces (or tabs)
     # markdown should be 4 spaces (or a tab)
@@ -364,24 +381,18 @@ sub verbatim {
     if( (my $smallest = length($indent)) < 4 ){
         # invert to get what needs to be prepended
         $indent = ' ' x (4 - $smallest);
-        # leave tabs alone
-        $paragraph = join "\n", map { /^\t/ ? $_ : $indent . $_ } @lines;
+
+        # Prepend indent to each line.
+        # We could check /\S/ to only indent non-blank lines,
+        # but it's backward compatible to respect the whitespace.
+        # Additionally, both pod and markdown say they ignore blank lines
+        # so it shouldn't hurt to leave them in.
+        $paragraph = join "\n", map { length($_) ? $indent . $_ : '' } @lines;
     }
 
-    # FIXME: Checking _PREVIOUS is breaking Pod::Parser encapsulation
-    # but helps solve the extraneous extra blank line b/t verbatim blocks.
-    # We could probably keep track ourselves if need be.
-    # NOTE: This requires Pod::Parser 1.50.
-    # This is another reason to switch to Pod::Simple.
-    my $previous_was_verbatim =
-        $parser->{_PREVIOUS} && $parser->{_PREVIOUS} eq 'verbatim';
-
-    if($previous_was_verbatim && $parser->_private->{Text}->[-1] =~ /[ \t]+$/){
-        $paragraph = $parser->_unsave . "\n" . $paragraph;
-    }
-
-    $parser->_save($paragraph);
+  return $paragraph;
 }
+
 
 sub _escape_and_interpolate {
     my ($parser, $paragraph, $line_num) = @_;
