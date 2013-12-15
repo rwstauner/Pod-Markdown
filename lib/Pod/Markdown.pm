@@ -324,14 +324,6 @@ sub   end_Document {
   print { $self->{output_fh} } $doc . $/;
 }
 
-# Formats a header according to the given level.
-sub format_header {
-    my ($self, $level, $paragraph) = @_;
-    # TODO: put a name="" if $self->{embed_anchor_tags}; ?
-    # https://rt.cpan.org/Ticket/Display.html?id=57776
-    sprintf '%s %s', '#' x $level, $paragraph;
-}
-
 # Handles POD command paragraphs, denoted by a line beginning with C<=>.
 sub command {
     my ($parser, $command, $paragraph, $line_num) = @_;
@@ -458,6 +450,34 @@ sub   end_Para {
   $text = $self->_escape_paragraph_markdown($text);
 
   $self->_save_line($text);
+}
+
+## Headings ##
+
+sub start_head1 { $_[0]->_start_head(1) }
+sub   end_head1 { $_[0]->_end_head(1) }
+sub start_head2 { $_[0]->_start_head(2) }
+sub   end_head2 { $_[0]->_end_head(2) }
+sub start_head3 { $_[0]->_start_head(3) }
+sub   end_head3 { $_[0]->_end_head(3) }
+sub start_head4 { $_[0]->_start_head(4) }
+sub   end_head4 { $_[0]->_end_head(4) }
+
+sub _start_head {
+  my ($self, $num) = @_;
+  $self->_new_stack;
+}
+
+sub   _end_head {
+  my ($self, $num) = @_;
+  my $h = '#' x $num;
+
+  my $text = $self->_pop_stack_text;
+
+  # TODO: option for $h suffix
+  # TODO: put a name="" if $self->{embed_anchor_tags}; ?
+  # https://rt.cpan.org/Ticket/Display.html?id=57776
+  $self->_save_line(join(' ', $h, $text));
 }
 
 
