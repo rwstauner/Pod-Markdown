@@ -15,8 +15,8 @@ convert($in_fh, $out_fh);
 sub convert {
     my ($in_file, $out_file) = @_;
     my $parser = Pod::Markdown->new;
-    $parser->parse_from_filehandle($in_file);
-    print $out_file $parser->as_markdown;
+    $parser->output_fh($out_file);
+    $parser->parse_file($in_file);
 }
 
 sub get_handle {

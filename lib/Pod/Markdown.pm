@@ -102,7 +102,7 @@ sub new {
   return $self;
 }
 
-# Attribute getter/setters:
+## Attribute accessors ##
 
 =method man_url_prefix
 
@@ -177,6 +177,23 @@ sub _prepare_fragment_formats {
 
   return;
 }
+
+## Backward compatible API ##
+
+# For backward compatibility (previously based on Pod::Parser):
+# While Pod::Simple provides a parse_from_file() method
+# it's primarily for Pod::Parser compatibility.
+# When called without an output handle it will print to STDOUT
+# but the old Pod::Markdown never printed to a handle
+# so we don't want to start now.
+sub parse_from_file {
+  my ($self, $file) = @_;
+  $self->output_string(\($self->{_as_markdown_}));
+  $self->parse_file($file);
+}
+
+# Likewise, though Pod::Simple doesn't define this method at all.
+sub parse_from_filehandle { shift->parse_from_file(@_) }
 
 ## Document state ##
 
@@ -269,12 +286,11 @@ argument is given a positive value, meta tags are generated as well.
 sub as_markdown {
     my ($parser, %args) = @_;
     my $data  = $parser->_private;
-    my $lines = $data->{Text};
     my @header;
     if ($args{with_meta}) {
         @header = $parser->_build_markdown_head;
     }
-    join("\n" x 2, @header, @{$lines}) . "\n";
+    return join("\n" x 2, @header, $parser->{_as_markdown_});
 }
 
 sub _build_markdown_head {
@@ -721,6 +737,8 @@ sub _wrap_code_span {
   return $delim . $pad . $arg . $pad . $delim;
 }
 
+## Link Formatting (TODO: Move this to another module) ##
+
 =method format_man_url
 
 Used internally to create a url (using L</man_url_prefix>)
@@ -922,9 +940,23 @@ command interior_sequence textblock verbatim
 
 =head1 SYNOPSIS
 
-    my $parser = Pod::Markdown->new;
-    $parser->parse_from_filehandle(\*STDIN);
-    print $parser->as_markdown;
+  # Pod::Simple API is supported.
+
+  # Parse a pod file and print to STDOUT:
+  Pod::Markdown->new->filter($pod_file);
+
+  # Work with strings:
+  my $markdown;
+  my $parser = Pod::Markdown->new;
+  $parser->output_string(\$markdown);
+  $parser->parse_string_document($pod_string);
+
+  # See Pod::Simple docs for more.
+
+  # Legacy (Pod::Parser-based) API is supported for backward compatibility:
+  my $parser = Pod::Markdown->new;
+  $parser->parse_from_filehandle(\*STDIN);
+  print $parser->as_markdown;
 
 =head1 DESCRIPTION
 

@@ -3,6 +3,9 @@ Revision history for Perl extension {{$dist->name}}
 {{$NEXT}}
 
   [Enhancements]
+  - Change backend from Pod::Parser to Pod::Simple.
+    Previous documented API has been ported
+    however the Pod::Simple API should be preferred for new code.
   - Improve escaping of markdown characters.
   - Represent over/back regions without items as blockquotes.
 
