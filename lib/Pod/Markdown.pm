@@ -185,6 +185,7 @@ sub _private {
     indent      => 0,
     stacks      => [],
     states      => [{}],
+    link        => [],
   };
 }
 
