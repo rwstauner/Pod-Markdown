@@ -38,6 +38,9 @@ This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](${pod
 
 And see ["foobar"](#foobar) as well.
 
+> Quote some poetry
+> or say something special.
+
 # MORE TESTS
 
 ## _Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in headers
@@ -182,6 +185,13 @@ HTTP is at L<http://univie.ac.at/baz/>.
 This program is strongly based on C<pod2mdwn> from L<Module::Build::IkiWiki>.
 
 And see L</foobar> as well.
+
+=over
+
+Quote some poetry
+or say something special.
+
+=back
 
 =head1 MORE TESTS
 

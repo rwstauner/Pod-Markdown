@@ -591,6 +591,24 @@ sub start_item_text { $_[0]->_start_item }
 sub   end_item_text { $_[0]->_end_item('-')}
 
 
+# perlpodspec equates an over/back region with no items to a blockquote.
+sub start_over_block {
+  # NOTE: We don't actually need to indent for a blockquote.
+  $_[0]->_new_stack;
+}
+
+sub   end_over_block {
+  my ($self) = @_;
+
+  # Chomp first to avoid prefixing a blank line with a `>`.
+  my $text = $self->_chomp_all($self->_pop_stack_text);
+
+  # NOTE: Paragraphs will already be escaped.
+  $text =~ s/^/> /mg;
+
+  $self->_save_block($text);
+}
+
 ## Codes ##
 
 # TODO: change to '**' ?
