@@ -8,7 +8,6 @@ package Pod::Markdown;
 
 use Pod::Simple 3.14 (); # external links with text
 use parent qw(Pod::Simple::Methody);
-use Pod::ParseLink (); # core
 
 our %URL_PREFIXES = (
   sco      => 'http://search.cpan.org/perldoc?',
