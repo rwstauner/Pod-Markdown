@@ -1032,3 +1032,7 @@ To change which regions are accepted use the L<Pod::Simple> API:
 
 =for :list
 * L<pod2markdown> - script included for command line usage
+* L<Pod::Simple> - Super class that handles Pod parsing
+* L<perlpod> - For writing POD
+* L<perlpodspec> - For parsing POD
+* L<http://daringfireball.net/projects/markdown/syntax> - Markdown spec
