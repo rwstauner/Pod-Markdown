@@ -18,7 +18,7 @@ before_install:
   - cpanm -n Devel::Cover::Report::Coveralls
 
 script:
-  - 'HARNESS_PERL_SWITCHES="-MDevel::Cover" prove --color -lr t'
+  - 'HARNESS_PERL_SWITCHES="-MDevel::Cover" prove --color -lvr t'
 
 after_success:
   cover -report coveralls
