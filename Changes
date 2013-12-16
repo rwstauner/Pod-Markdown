@@ -7,6 +7,7 @@ Revision history for Perl extension {{$dist->name}}
     Previous documented API has been ported
     however the Pod::Simple API should be preferred for new code.
   - Improve escaping of markdown characters.
+  - Accept for/begin 'markdown' and 'html' regions by default.
   - Represent over/back regions without items as blockquotes.
 
   [Backward Incompatible Changes]

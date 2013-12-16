@@ -82,6 +82,8 @@ sub new {
 
   my $self = $class->SUPER::new();
   $self->preserve_whitespace(1);
+  $self->accept_targets(qw( markdown html ));
+
   # Call setter for each arg passed in.
   while( my ($attr, $val) = each %args ){
     $self->$attr($val);
@@ -626,6 +628,27 @@ sub   end_over_block {
   $self->_save_block($text);
 }
 
+## Custom Formats ##
+
+# Data events will be emitted for any formatted regions that have been enabled
+# (by default, `markdown` and `html`).
+# We also get `start_for` and `end_for`
+# but I'm not sure that there's anything to do for those.
+
+sub start_Data {
+  my ($self, $attr) = @_;
+  # TODO: limit this to what's in attr?
+  $self->_private->{no_escape}++;
+  $self->_new_stack;
+}
+
+sub   end_Data {
+  my ($self) = @_;
+  my $text = $self->_pop_stack_text;
+  $self->_private->{no_escape}--;
+  $self->_save_block($text);
+}
+
 ## Codes ##
 
 # TODO: change to '**' ?
@@ -964,6 +987,12 @@ This module uses L<Pod::Simple> to convert POD to Markdown.
 
 Literal characters in Pod that are special in Markdown
 (like *asterisks*) are backslash-escaped when appropriate.
+
+By default C<markdown> and C<html> formatted regions are accepted.
+To change this use the L<Pod::Simple> API:
+
+  my $parser = Pod::Markdown->new;
+  $parser->unaccept_targets(qw( markdown html ));
 
 =head1 SEE ALSO
 
