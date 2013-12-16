@@ -83,6 +83,25 @@ convert_ok(
   <<'POD',
 Some I<pod>
 
+=begin markdown
+
+**BOLD**! B<not pod>
+
+=end markdown
+POD
+  <<'MKDN',
+Some _pod_
+
+**BOLD**! B<not pod>
+MKDN
+  '=begin/end markdown passed through',
+);
+
+
+convert_ok(
+  <<'POD',
+Some I<pod>
+
 =for :markdown **BOLD**! B<real bold>
 
 =for :other `ignored`
@@ -93,6 +112,25 @@ Some _pod_
 \*\*BOLD\*\*! __real bold__
 MKDN
   '=for :markdown gets processed and escaped',
+);
+
+
+convert_ok(
+  <<'POD',
+Some I<pod>
+
+=begin :markdown
+
+**BOLD**! B<real bold>
+
+=end :markdown
+POD
+  <<'MKDN',
+Some _pod_
+
+\*\*BOLD\*\*! __real bold__
+MKDN
+  '=begin/end :markdown gets processed and escaped',
 );
 
 
