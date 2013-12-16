@@ -630,10 +630,40 @@ sub   end_over_block {
 
 ## Custom Formats ##
 
+sub start_for {
+  my ($self, $attr) = @_;
+  $self->_new_stack;
+
+  if( $attr->{target} eq 'html' ){
+    # Use another stack so we can indent
+    # (not syntactily necessary but seems appropriate).
+    $self->_new_stack;
+    $self->_increase_indent;
+    $self->_private->{no_escape} = 1;
+    # Mark this so we know to undo it.
+    $self->_stack_state->{for_html} = 1;
+  }
+}
+
+sub end_for {
+  my ($self) = @_;
+  # Data gets saved as a block (which will handle indents),
+  # but if there was html we'll alter this, so chomp and save a block again.
+  my $text = $self->_chomp_all($self->_pop_stack_text);
+
+  if( $self->_private->{last_state}->{for_html} ){
+    $self->_private->{no_escape} = 0;
+    # Save it to the next stack up so we can pop it again (we made two stacks).
+    $self->_save($text);
+    $self->_decrease_indent;
+    $text = join "\n", '<div>', $self->_chomp_all($self->_pop_stack_text), '</div>';
+  }
+
+  $self->_save_block($text);
+}
+
 # Data events will be emitted for any formatted regions that have been enabled
 # (by default, `markdown` and `html`).
-# We also get `start_for` and `end_for`
-# but I'm not sure that there's anything to do for those.
 
 sub start_Data {
   my ($self, $attr) = @_;
@@ -989,7 +1019,11 @@ Literal characters in Pod that are special in Markdown
 (like *asterisks*) are backslash-escaped when appropriate.
 
 By default C<markdown> and C<html> formatted regions are accepted.
-To change this use the L<Pod::Simple> API:
+Regions of C<markdown> will be passed through unchanged.
+Regions of C<html> will be placed inside a C<< E<lt>divE<gt> >> tag
+so that markdown characters won't be processed.
+Regions of C<:markdown> or C<:html> will be processed as POD and included.
+To change which regions are accepted use the L<Pod::Simple> API:
 
   my $parser = Pod::Markdown->new;
   $parser->unaccept_targets(qw( markdown html ));

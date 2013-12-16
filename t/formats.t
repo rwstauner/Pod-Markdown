@@ -52,7 +52,9 @@ POD
   <<'MKDN',
 Some _pod_
 
-foo
+<div>
+    foo
+</div>
 
 bar
 
@@ -134,9 +136,6 @@ MKDN
 );
 
 
-# TODO: I haven't entirely decided if html should escape markdown characters or not.
-
-
 convert_ok(
   <<'POD',
 Some I<pod>
@@ -146,7 +145,9 @@ POD
   <<'MKDN',
 Some _pod_
 
-<i>not</i> I<pod> *text*
+<div>
+    <i>not</i> I<pod> *text*
+</div>
 MKDN
   '=for html passes through',
 );
