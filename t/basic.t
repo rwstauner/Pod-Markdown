@@ -1,9 +1,8 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More tests => 1;
-use Test::Differences;
-use Pod::Markdown;
+use lib 't/lib';
+use MarkdownTests tests => 1;
 
 # Test a small, easy section of pod just to show when the parser
 # is working.  We'll test more of the details in other scripts.

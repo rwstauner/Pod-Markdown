@@ -1,19 +1,8 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More 0.88;
-use Test::Differences;
-use Pod::Markdown;
-
-sub convert_ok {
-  my ($pod, $exp, $desc, $code) = @_;
-  my $parser = Pod::Markdown->new;
-  $code->($parser) if $code;
-  $parser->output_string(\(my $got));
-  $parser->parse_string_document("=pod\n\n$pod\n\n=cut\n");
-  chomp for ($got, $exp);
-  eq_or_diff($got, $exp, $desc);
-}
+use lib 't/lib';
+use MarkdownTests;
 
 convert_ok(
   <<'POD',

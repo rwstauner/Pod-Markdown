@@ -2,8 +2,8 @@
 use utf8;
 use strict;
 use warnings;
-use Test::More;
-use Pod::Markdown;
+use lib 't/lib';
+use MarkdownTests;
 
 my $pod_prefix = Pod::Markdown->new->perldoc_url_prefix;
 

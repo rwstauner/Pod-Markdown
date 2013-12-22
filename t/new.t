@@ -1,8 +1,8 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More 0.88;
-use Pod::Markdown;
+use lib 't/lib';
+use MarkdownTests;
 
 sub test_args {
   my $desc = pop;

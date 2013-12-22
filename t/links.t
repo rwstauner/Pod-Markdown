@@ -1,8 +1,8 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More;
-use Pod::Markdown;
+use lib 't/lib';
+use MarkdownTests;
 
 # Test url aliases.
 local $Pod::Markdown::URL_PREFIXES{manny} = 'http://manny.local/page/';

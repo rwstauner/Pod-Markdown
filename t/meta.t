@@ -1,28 +1,8 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More;
-use Test::Differences;
-use Pod::Markdown;
-
-{ package # no_index
-    IOString;
-  use Symbol ();
-  sub new {
-    my $class = ref($_[0]) || $_[0];
-    my $s = $_[1];
-    my $self = Symbol::gensym;
-    tie *$self, $class, $self;
-    *$self->{lines} = [map { "$_\n" } split /\n/, $s ];
-    $self;
-  }
-  sub READLINE { shift @{ *{$_[0]}->{lines} } }
-  sub TIEHANDLE {
-    my ($class, $s) = @_;
-    bless $s, $class;
-  }
-  { no warnings 'once'; *getline = \&READLINE; }
-}
+use lib 't/lib';
+use MarkdownTests;
 
 my @tests;
 
@@ -99,7 +79,7 @@ foreach my $test ( @tests ) {
   my ($desc, $pod, $exp) = @$test;
 
   my $parser = Pod::Markdown->new;
-  $parser->parse_from_filehandle( IOString->new($pod) );
+  $parser->parse_from_filehandle( io_string($pod) );
   my $markdown = $parser->as_markdown(with_meta => ($desc ne 'none'));
 
   eq_or_diff $markdown, $exp, "meta tags: $desc";

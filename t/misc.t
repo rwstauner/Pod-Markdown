@@ -1,9 +1,8 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More tests => 1;
-use Test::Differences;
-use Pod::Markdown;
+use lib 't/lib';
+use MarkdownTests tests => 1;
 
 my $parser = Pod::Markdown->new(
   # Just return the raw fragment so we know that it isn't unexpectedly mangled.

@@ -1,9 +1,8 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More;
-use Test::Differences;
-use Pod::Markdown;
+use lib 't/lib';
+use MarkdownTests;
 
 use File::Temp qw{ tempfile }; # core
 use File::Spec::Functions qw( catfile ); # core

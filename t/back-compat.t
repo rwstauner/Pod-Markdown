@@ -1,9 +1,8 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More;
-use Test::Differences;
-use Pod::Markdown;
+use lib 't/lib';
+use MarkdownTests;
 use File::Spec ();
 
 # Explicitly test using a real file.
