@@ -593,6 +593,10 @@ sub   end_over_number { $_[0]->_end_list }
 
 sub start_item_number {
   $_[0]->_start_item;
+  # It seems like this should be a stack,
+  # but from testing it appears that the corresponding 'end' event
+  # comes right after the text (it doesn't surround any embedded content).
+  # See t/nested.t which shows start-item, text, end-item, para, start-item....
   $_[0]->_private->{item_number} = $_[1]->{number};
 }
 
