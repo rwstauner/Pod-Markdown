@@ -28,12 +28,32 @@ sub import {
   goto &Exporter::import;
 }
 
-sub convert_ok {
-  my ($pod, $exp, $desc, @args) = @_;
-  my $parser = Pod::Markdown->new;
-  my $after = (@args % 2 && ref($args[-1]) eq 'CODE') ? pop @args : 0;
+sub diag_xml {
+  diag_with('Pod::Simple::DumpAsXML', @_);
+}
 
-  $after->($parser) if $after;
+sub diag_text {
+  diag_with('Pod::Simple::DumpAsText', @_);
+}
+
+sub diag_with {
+  my ($class, $pod) = @_;
+  $class =~ /[^a-zA-Z0-9:]/ and die "Invalid class name '$class'";
+  eval "require $class" or die $@;
+  my $parser = $class->new;
+  $parser->output_string(\(my $got));
+  $parser->parse_string_document("=pod\n\n$pod\n");
+  diag $got;
+}
+
+sub convert_ok {
+  my ($pod, $exp, $desc, %opts) = @_;
+  my $parser = Pod::Markdown->new;
+
+  diag_xml($pod)  if $opts{diag_xml};
+  diag_text($pod) if $opts{diag_text};
+
+  $opts{init}->($parser) if $opts{init};
 
   $parser->output_string(\(my $got));
   $parser->parse_string_document("=pod\n\n$pod\n\n=cut\n");

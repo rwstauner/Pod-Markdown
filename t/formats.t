@@ -18,7 +18,7 @@ POD
 Some _pod_
 MKDN
   'disable html and markdown targets',
-  sub { $_[0]->unaccept_targets(qw(markdown html)) },
+  init => sub { $_[0]->unaccept_targets(qw(markdown html)) },
 );
 
 
