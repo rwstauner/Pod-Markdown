@@ -91,4 +91,56 @@ MKDN
   'indent content of numbered list items',
 );
 
+convert_ok(
+  # NOTE: Pod::Simple considers a heading inside over/back an error.
+  <<'POD',
+=over
+
+Quote:
+
+=over
+
+line 1
+line 2
+
+=over
+
+=item *
+
+a
+
+=over
+
+=item *
+
+b
+
+para
+
+ verbatim
+
+=back
+
+=back
+
+=back
+
+=back
+POD
+  <<'MKDN',
+> Quote:
+>
+> > line 1
+> > line 2
+> >
+> > - a
+> >     - b
+> >
+> >         para
+> >
+> >             verbatim
+MKDN
+  'test nesting inside blockquotes'
+);
+
 done_testing;

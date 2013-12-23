@@ -627,7 +627,12 @@ sub   end_over_block {
   my $text = $self->_chomp_all($self->_pop_stack_text);
 
   # NOTE: Paragraphs will already be escaped.
-  $text =~ s/^/> /mg;
+
+  # I don't really like either of these implementations
+  # but the join/map/split seems a little better and benches a little faster.
+  # You would lose the last newline but we've already chomped.
+  #$text =~ s{^(.)?}{'>' . (defined($1) && length($1) ? (' ' . $1) : '')}mge;
+  $text = join $/, map { length($_) ? '> ' . $_ : '>' } split qr-$/-, $text;
 
   $self->_save_block($text);
 }
