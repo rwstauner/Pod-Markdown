@@ -13,6 +13,8 @@ install:
   # There are so few non-core dependencies just list them explicitly for laziness.
   - cpanm -n Pod::Simple~3.14
   - cpanm -n App::Prove Test::Differences
+  # Optional modules for back-compat tests.
+  - cpanm -n IO::Scalar
 
 before_install:
   - cpanm -n Devel::Cover::Report::Coveralls
