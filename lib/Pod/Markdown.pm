@@ -209,6 +209,12 @@ sub parse_from_file {
 # Likewise, though Pod::Simple doesn't define this method at all.
 sub parse_from_filehandle { shift->parse_from_file(@_) }
 
+=for Pod::Coverage
+parse_from_file
+parse_from_filehandle
+
+=cut
+
 ## Document state ##
 
 sub _private {
@@ -299,7 +305,6 @@ argument is given a positive value, meta tags are generated as well.
 
 sub as_markdown {
     my ($parser, %args) = @_;
-    my $data  = $parser->_private;
     my @header;
     # Don't add meta tags again if we've already done it.
     if( $args{with_meta} && !$parser->include_meta_tags ){
@@ -428,7 +433,7 @@ sub   end_Document {
 ## Blocks ##
 
 sub start_Verbatim {
-  my ($self, $attr) = @_;
+  my ($self) = @_;
   $self->_new_stack;
   $self->_private->{no_escape} = 1;
 }
@@ -514,7 +519,7 @@ sub _check_search_header {
   }
 }
 sub _start_head {
-  my ($self, $num) = @_;
+  my ($self) = @_;
   $self->_check_search_header;
   $self->_new_stack;
 }
@@ -692,7 +697,7 @@ sub end_for {
 # (by default, `markdown` and `html`).
 
 sub start_Data {
-  my ($self, $attr) = @_;
+  my ($self) = @_;
   # TODO: limit this to what's in attr?
   $self->_private->{no_escape}++;
   $self->_new_stack;
@@ -715,7 +720,7 @@ sub start_I { $_[0]->_save('_') }
 sub   end_I { $_[0]->start_I()  }
 
 sub start_C {
-  my ($self, $attr) = @_;
+  my ($self) = @_;
   $self->_new_stack;
   $self->_private->{no_escape}++;
 }
@@ -1009,13 +1014,16 @@ sub format_fragment_sco      { shift->format_fragment_pod_simple_html(@_);  }
 
 1;
 
-=for stopwords textblock
+=for stopwords
 html
 
 =for Pod::Coverage
-format_header
-initialize
-command interior_sequence textblock verbatim
+handle_text
+end_.+
+start_.+
+
+=for test_synopsis
+my ($pod_file, $pod_string);
 
 =head1 SYNOPSIS
 
