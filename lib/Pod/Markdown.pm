@@ -131,6 +131,7 @@ my @attr = qw(
   perldoc_url_prefix
   perldoc_fragment_format
   markdown_fragment_format
+  include_meta_tags
 );
 
 # I don't think this is a documented feature of Pod::Simple.
@@ -289,7 +290,8 @@ sub as_markdown {
     my ($parser, %args) = @_;
     my $data  = $parser->_private;
     my @header;
-    if ($args{with_meta}) {
+    # Don't add meta tags again if we've already done it.
+    if( $args{with_meta} && !$parser->include_meta_tags ){
         @header = $parser->_build_markdown_head;
     }
     return join("\n" x 2, @header, $parser->{_as_markdown_});
@@ -403,9 +405,13 @@ sub   end_Document {
   @{ $self->_private->{stacks} } == 0
     or die 'Document ended with stacks remaining';
 
-  my $doc = $self->_chomp_all(join('', @$end));
+  my @doc = $self->_chomp_all(join('', @$end)) . $/;
 
-  print { $self->{output_fh} } $doc . $/;
+  if( $self->include_meta_tags ){
+    unshift @doc, $self->_build_markdown_head, ($/ x 2);
+  }
+
+  print { $self->{output_fh} } @doc;
 }
 
 ## Blocks ##
