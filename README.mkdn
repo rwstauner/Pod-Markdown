@@ -4,20 +4,44 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 1.500
+version 1.990
 
 # SYNOPSIS
 
+    # Pod::Simple API is supported.
+
+    # Parse a pod file and print to STDOUT:
+    Pod::Markdown->new->filter($pod_file);
+
+    # Work with strings:
+    my $markdown;
+    my $parser = Pod::Markdown->new;
+    $parser->output_string(\$markdown);
+    $parser->parse_string_document($pod_string);
+
+    # See Pod::Simple docs for more.
+
+    # Legacy (Pod::Parser-based) API is supported for backward compatibility:
     my $parser = Pod::Markdown->new;
     $parser->parse_from_filehandle(\*STDIN);
     print $parser->as_markdown;
 
 # DESCRIPTION
 
-This module subclasses [Pod::Parser](https://metacpan.org/pod/Pod::Parser) and converts POD to Markdown.
+This module uses [Pod::Simple](https://metacpan.org/pod/Pod::Simple) to convert POD to Markdown.
 
 Literal characters in Pod that are special in Markdown
 (like \*asterisks\*) are backslash-escaped when appropriate.
+
+By default `markdown` and `html` formatted regions are accepted.
+Regions of `markdown` will be passed through unchanged.
+Regions of `html` will be placed inside a `<div>` tag
+so that markdown characters won't be processed.
+Regions of `:markdown` or `:html` will be processed as POD and included.
+To change which regions are accepted use the [Pod::Simple](https://metacpan.org/pod/Pod::Simple) API:
+
+    my $parser = Pod::Markdown->new;
+    $parser->unaccept_targets(qw( markdown html ));
 
 # METHODS
 
@@ -50,7 +74,7 @@ The constructor accepts the following named arguments:
 
     Alters the format of the url fragment for any `L<>` links
     that point to a section of an external document (`["section" in name](https://metacpan.org/pod/name#section)`).
-    The default will be chosen according to the destination ["perldoc_url_prefix"](#perldoc_url_prefix).
+    The default will be chosen according to the destination ["perldoc\_url\_prefix"](#perldoc_url_prefix).
     Alternatively you can specify one of the following:
 
     - `metacpan`
@@ -77,6 +101,11 @@ The constructor accepts the following named arguments:
     __Note:__ `markdown_fragment_format` and `perldoc_fragment_format` accept
     the same values: a (shortcut to a) method name or a code ref.
 
+- `include_meta_tags`
+
+    Specifies whether or not to print author/title meta tags at the top of the document.
+    Default is false.
+
 ## man\_url\_prefix
 
 Returns the url prefix in use for man pages.
@@ -95,6 +124,11 @@ to a section in an external document.
 Returns the coderef or format name used to format a url fragment
 to an internal section in this document.
 
+## include\_meta\_tags
+
+Returns the boolean value indicating
+whether or not meta tags will be printed.
+
 ## as\_markdown
 
 Returns the parsed POD as Markdown. Takes named arguments. If the `with_meta`
@@ -102,7 +136,7 @@ argument is given a positive value, meta tags are generated as well.
 
 ## format\_man\_url
 
-Used internally to create a url (using ["man_url_prefix"](#man_url_prefix))
+Used internally to create a url (using ["man\_url\_prefix"](#man_url_prefix))
 from a string like `man(1)`.
 
 ## format\_perldoc\_url
@@ -116,12 +150,12 @@ and a possible section (heading).
 
 The format of the url fragment (when pointing to a section in a document)
 varies depending on the destination url
-so ["perldoc_fragment_format"](#perldoc_fragment_format) is used (which can be customized).
+so ["perldoc\_fragment\_format"](#perldoc_fragment_format) is used (which can be customized).
 
 If the module name portion of the link is blank
 then the section is treated as an internal fragment link
 (to a section of the generated markdown document)
-and ["markdown_fragment_format"](#markdown_fragment_format) is used (which can be customized).
+and ["markdown\_fragment\_format"](#markdown_fragment_format) is used (which can be customized).
 
 ## format\_fragment\_markdown
 
@@ -134,21 +168,25 @@ Format url fragment like ["idify" in Pod::Simple::XHTML](https://metacpan.org/po
 
 ## format\_fragment\_pod\_simple\_html
 
-Format url fragment like ["section_name_tidy" in Pod::Simple::HTML](https://metacpan.org/pod/Pod::Simple::HTML#section_name_tidy).
+Format url fragment like ["section\_name\_tidy" in Pod::Simple::HTML](https://metacpan.org/pod/Pod::Simple::HTML#section_name_tidy).
 
 ## format\_fragment\_metacpan
 
 Format fragment for [metacpan.org](https://metacpan.org/pod/metacpan.org)
-(uses ["format_fragment_pod_simple_xhtml"](#format_fragment_pod_simple_xhtml)).
+(uses ["format\_fragment\_pod\_simple\_xhtml"](#format_fragment_pod_simple_xhtml)).
 
 ## format\_fragment\_sco
 
 Format fragment for [search.cpan.org](https://metacpan.org/pod/search.cpan.org)
-(uses ["format_fragment_pod_simple_html"](#format_fragment_pod_simple_html)).
+(uses ["format\_fragment\_pod\_simple\_html"](#format_fragment_pod_simple_html)).
 
 # SEE ALSO
 
 - [pod2markdown](https://metacpan.org/pod/pod2markdown) - script included for command line usage
+- [Pod::Simple](https://metacpan.org/pod/Pod::Simple) - Super class that handles Pod parsing
+- [perlpod](https://metacpan.org/pod/perlpod) - For writing POD
+- [perlpodspec](https://metacpan.org/pod/perlpodspec) - For parsing POD
+- [http://daringfireball.net/projects/markdown/syntax](http://daringfireball.net/projects/markdown/syntax) - Markdown spec
 
 # SUPPORT
 
@@ -176,8 +214,6 @@ the web interface at [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Pod-Markdow
 progress on the request by the system.
 
 ## Source Code
-
-
 
 [https://github.com/rwstauner/Pod-Markdown](https://github.com/rwstauner/Pod-Markdown)
 
