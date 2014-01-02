@@ -84,8 +84,9 @@ foreach my $test ( @tests ) {
 sub as_markdown_with_meta {
   my ($desc, $pod, $exp, $use_attr) = @_;
 
-  my $parser = Pod::Markdown->new;
-  $parser->include_meta_tags(1) if $use_attr;
+  my $parser = Pod::Markdown->new(
+    include_meta_tags => $use_attr,
+  );
   $parser->parse_from_filehandle( io_string($pod) );
   my $markdown = $parser->as_markdown(with_meta => ($desc ne 'none'));
 
@@ -96,8 +97,9 @@ sub as_markdown_with_meta {
 sub output_string_include_meta_tags {
   my ($desc, $pod, $exp) = @_;
 
-  my $parser = Pod::Markdown->new;
-  $parser->include_meta_tags(1) if $desc ne 'none';
+  my $parser = Pod::Markdown->new(
+    include_meta_tags => ($desc ne 'none'),
+  );
   $parser->output_string(\(my $markdown));
   $parser->parse_string_document($pod);
 

@@ -72,6 +72,10 @@ the markdown is generated so we do some simple clean up.
 B<Note:> C<markdown_fragment_format> and C<perldoc_fragment_format> accept
 the same values: a (shortcut to a) method name or a code ref.
 
+* C<include_meta_tags>
+Specifies whether or not to print author/title meta tags at the top of the document.
+Default is false.
+
 =end :list
 
 =cut
@@ -84,9 +88,9 @@ sub new {
   $self->preserve_whitespace(1);
   $self->accept_targets(qw( markdown html ));
 
-  # Call setter for each arg passed in.
+  my $data = $self->_private;
   while( my ($attr, $val) = each %args ){
-    $self->$attr($val);
+    $data->{ $attr } = $val;
   }
 
     for my $type ( qw( perldoc man ) ){
@@ -94,12 +98,10 @@ sub new {
         # Use provided argument or default alias.
         my $url = $self->$attr || $type;
         # Expand alias if defined (otherwise use url as is).
-        $self->$attr($URL_PREFIXES{ $url } || $url);
+        $data->{ $attr } = $URL_PREFIXES{ $url } || $url;
     }
 
     $self->_prepare_fragment_formats;
-
-    $self->_private;
 
   return $self;
 }
@@ -124,6 +126,11 @@ to a section in an external document.
 Returns the coderef or format name used to format a url fragment
 to an internal section in this document.
 
+=method include_meta_tags
+
+Returns the boolean value indicating
+whether or not meta tags will be printed.
+
 =cut
 
 my @attr = qw(
@@ -134,8 +141,12 @@ my @attr = qw(
   include_meta_tags
 );
 
-# I don't think this is a documented feature of Pod::Simple.
-__PACKAGE__->_accessorize(@attr);
+{
+  no strict 'refs'; ## no critic
+  foreach my $attr ( @attr ){
+    *$attr = sub { return $_[0]->_private->{ $attr } };
+  }
+}
 
 sub _prepare_fragment_formats {
   my ($self) = @_;
@@ -175,7 +186,7 @@ sub _prepare_fragment_formats {
       unless $self->can($prefix . $format);
 
     # Save it.
-    $self->$attr($format);
+    $self->_private->{ $attr } = $format;
   }
 
   return;
