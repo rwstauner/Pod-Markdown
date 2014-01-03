@@ -2,6 +2,8 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+1.991-TRIAL 2014-01-03T04:07:49Z
+
   [Test Fixes]
   - Ignore worthless testing of empty links that fail with Pod::Simple 3.16.
 
