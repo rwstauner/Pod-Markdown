@@ -1,30 +1,31 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More tests => 1;
-use Test::Differences;
-use Pod::Markdown;
+use lib 't/lib';
+use MarkdownTests tests => 1;
 
 my $parser = Pod::Markdown->new(
+  perldoc_url_prefix => 'pod://',
   # Just return the raw fragment so we know that it isn't unexpectedly mangled.
   perldoc_fragment_format => sub { $_ },
+  markdown_fragment_format => sub { $_ },
 );
 my $pod_prefix = $parser->perldoc_url_prefix;
 
 $parser->parse_from_filehandle(\*DATA);
 my $markdown = $parser->as_markdown;
-my $expect = <<EOMARKDOWN;
+my $expect = <<'EOMARKDOWN';
 # POD
 
 pod2markdown - Convert POD text to Markdown
 
 # SYNOPSIS
 
-    \$ pod2markdown < POD_File > Markdown_File
+    $ pod2markdown < POD_File > Markdown_File
 
 # DESCRIPTION
 
-This program uses [Pod::Markdown](${pod_prefix}Pod::Markdown) to convert POD into Markdown sources. It is
+This program uses [Pod::Markdown](pod://Pod::Markdown) to convert POD into Markdown sources. It is
 a filter that expects POD on STDIN and outputs Markdown on STDOUT.
 
 FTP is at [ftp://ftp.univie.ac.at/foo/bar](ftp://ftp.univie.ac.at/foo/bar).
@@ -33,33 +34,36 @@ HTTP is at [http://univie.ac.at/baz/](http://univie.ac.at/baz/).
 
 # SEE ALSO
 
-This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](${pod_prefix}Module::Build::IkiWiki).
+This program is strongly based on `pod2mdwn` from [Module::Build::IkiWiki](pod://Module::Build::IkiWiki).
 
 And see ["foobar"](#foobar) as well.
 
+> Quote some poetry
+> or say something special.
+
 # MORE TESTS
 
-## _Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in headers
+## _Italics_, __Bold__, `Code`, and [Links](pod://Links) should work in headers
 
-_Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in body text.
+_Italics_, __Bold__, `Code`, and [Links](pod://Links) should work in body text.
 
 __Nested `codes`__ work, too
 
-## \\_Other\\_ \\*Characters\\* \\[Should\\](Be) \\`Escaped\\` in headers
+## \_Other\_ \*Characters\* \[Should\](Be) \`Escaped\` in headers
 
 Inline `code _need not_ be escaped`.
 
-Inline [link_should_not_be_escaped](${pod_prefix}link_should_not_be_escaped).
+Inline [link \*should\* \\\_ be\_escaped](#or\\things\(can\)go\\*wrong).
 
 Inline `filename_should_not_be_escaped` because it is a code span.
 
 ### Heading `code _need not_ be escaped, either`.
 
-__Nested `c*des` \\_should\\_ be escaped__ (but not code).
+__Nested `c*des` \_should\_ be escaped__ (but not code).
 
 non-breaking space: foo&nbsp;bar.
 
-non-breaking code: `\$x&nbsp;?&nbsp;\$y&nbsp;:&nbsp;\$z` foo&nbsp;`bar`&nbsp;baz
+non-breaking code: `$x&nbsp;?&nbsp;$y&nbsp;:&nbsp;$z` foo&nbsp;`bar`&nbsp;baz
 
     verbatim para B<with> C<< E<verbar> >> codes
 
@@ -79,13 +83,13 @@ A ```` code span with triple ``` inside ````.
 
 - list
 - test
-- and _Italics_, __Bold__, `Code`, and [Links](${pod_prefix}Links) should work in list item
+- and _Italics_, __Bold__, `Code`, and [Links](pod://Links) should work in list item
 
 # Links
 
-[Formatting `C`odes](${pod_prefix}Links#L<...>)
-EOMARKDOWN
-$expect .= <<'EOMARKDOWN';
+[Formatting `C`odes](pod://Links#L<...>)
+
+[back \`tick](pod://inside#a&#x20;link)
 
 # \*Special\* characters
 
@@ -103,7 +107,14 @@ lists:
 \- b
 
 \# fake headings
-\#\#\# fake headings \#\#\#
+
+\### fake headings ###
+
+Setext fake
+&#x3d;==========
+
+Another fake
+\------------
 
 \> Quote
 \> blocks
@@ -173,6 +184,13 @@ This program is strongly based on C<pod2mdwn> from L<Module::Build::IkiWiki>.
 
 And see L</foobar> as well.
 
+=over
+
+Quote some poetry
+or say something special.
+
+=back
+
 =head1 MORE TESTS
 
 =head2 I<Italics>, B<Bold>, C<Code>, and L<Links> should work in headers
@@ -185,7 +203,7 @@ B<< Nested C<codes> >> work, too
 
 Inline C<< code _need not_ be escaped >>.
 
-Inline L<< link_should_not_be_escaped >>.
+Inline L<< link *should* \_ be_escaped|/or\things(can)go\*wrong >>.
 
 Inline F<< filename_should_not_be_escaped >> because it is a code span.
 
@@ -235,6 +253,8 @@ list
 
 L<<< FormattZ<>ing C<C>odes|Links/"LE<lt>...E<gt>" >>>
 
+L<<< back `tick|inside/"a link" >>>
+
 =head1 *Special* characters
 
     foo_bar is the result of 4 * 4
@@ -251,7 +271,14 @@ lists:
 - b
 
 # fake headings
+
 ### fake headings ###
+
+Setext fake
+===========
+
+Another fake
+------------
 
 > Quote
 > blocks

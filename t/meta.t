@@ -1,15 +1,8 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
 use strict;
 use warnings;
-use Test::More;
-use Test::Differences;
-use Pod::Markdown;
-
-{ package # no_index
-    IOString;
-  sub new { bless [map { "$_\n" } split /\n/, $_[1] ], $_[0] }
-  sub getline { shift @{ $_[0] } }
-}
+use lib 't/lib';
+use MarkdownTests;
 
 my @tests;
 
@@ -80,14 +73,39 @@ MKDN
   push @tests, [ 'name, author', $pod, $mkdn ];
 }
 
-plan tests => scalar @tests;
+plan tests => scalar @tests * 3;
 
 foreach my $test ( @tests ) {
-  my ($desc, $pod, $exp) = @$test;
+  as_markdown_with_meta(@$test);
+  output_string_include_meta_tags(@$test);
+  both(@$test);
+}
 
-  my $parser = Pod::Markdown->new;
-  $parser->parse_from_filehandle( IOString->new($pod) );
+sub as_markdown_with_meta {
+  my ($desc, $pod, $exp, $use_attr) = @_;
+
+  my $parser = Pod::Markdown->new(
+    include_meta_tags => $use_attr,
+  );
+  $parser->parse_from_filehandle( io_string($pod) );
   my $markdown = $parser->as_markdown(with_meta => ($desc ne 'none'));
 
-  eq_or_diff $markdown, $exp, "meta tags: $desc";
+  my $prefix = $use_attr ? 'both' : 'with_meta';
+  eq_or_diff $markdown, $exp, "${prefix}: $desc";
+}
+
+sub output_string_include_meta_tags {
+  my ($desc, $pod, $exp) = @_;
+
+  my $parser = Pod::Markdown->new(
+    include_meta_tags => ($desc ne 'none'),
+  );
+  $parser->output_string(\(my $markdown));
+  $parser->parse_string_document($pod);
+
+  eq_or_diff $markdown, $exp, "include_meta_tags: $desc";
+}
+
+sub both {
+  as_markdown_with_meta(@_, $_[0] ne 'none');
 }

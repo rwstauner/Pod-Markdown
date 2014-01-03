@@ -2,6 +2,27 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+1.991-TRIAL 2014-01-03T04:07:49Z
+
+  [Test Fixes]
+  - Ignore worthless testing of empty links that fail with Pod::Simple 3.16.
+
+1.990-TRIAL 2014-01-02T14:13:40Z
+
+  [Enhancements]
+  - Change backend from Pod::Parser to Pod::Simple.
+    Previous documented API has been ported
+    however the Pod::Simple API should be preferred for new code.
+  - Improve escaping of markdown characters.
+  - Accept for/begin 'markdown' and 'html' regions by default.
+  - Represent over/back regions without items as blockquotes.
+
+  [Backward Incompatible Changes]
+  - E<> codes used to produce equivalent html entities (&foo;).
+    These now simply print the corresponding unicode character as utf-8.
+    If you desire alternate behavior please report a bug.
+  - Tabs are now expanded.
+
 1.500     2013-11-22T15:05:31Z
 
     - Format url fragments (in links to perldoc sections)
