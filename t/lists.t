@@ -28,9 +28,9 @@ my $expect = <<'EOMARKDOWN';
 
 - list
 - test
-- and _Italics_, __Bold__, `Code`, and [Links](pod:Links) should work in list item
+- and _Italics_, **Bold**, `Code`, and [Links](pod:Links) should work in list item
 
-    and _in_ __paragraph__ `after` [item](pod:item)
+    and _in_ **paragraph** `after` [item](pod:item)
 
 - verbatim paragraphs
 
@@ -38,7 +38,7 @@ my $expect = <<'EOMARKDOWN';
 
 ## Unordered nested list
 
-__Note:__ Markdown does not support definition lists (word => text), just bullets or numbers
+**Note:** Markdown does not support definition lists (word => text), just bullets or numbers
 
 - Head1
 

@@ -9,7 +9,7 @@ my $pod_prefix = Pod::Markdown->new->perldoc_url_prefix;
 
 my @tests = (
   [I => q<italic>,          q{_italic_}],
-  [B => q<bold>,            q{__bold__}],
+  [B => q<bold>,            q{**bold**}],
   [C => q<code>,            q{`code`}],
   [C => q<c*de>,            q{`c*de`}],
 
