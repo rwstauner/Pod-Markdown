@@ -100,7 +100,7 @@ POD
   <<'MKDN',
 Some _pod_
 
-\*\*BOLD\*\*! __real bold__
+\*\*BOLD\*\*! **real bold**
 MKDN
   '=for :markdown gets processed and escaped',
 );
@@ -119,7 +119,7 @@ POD
   <<'MKDN',
 Some _pod_
 
-\*\*BOLD\*\*! __real bold__
+\*\*BOLD\*\*! **real bold**
 MKDN
   '=begin/end :markdown gets processed and escaped',
 );

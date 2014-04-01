@@ -30,7 +30,7 @@ Another paragraph.
 - Again
 
 `ode`
-__old__
+**old**
 _talic_
 EOMARKDOWN
 

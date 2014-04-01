@@ -43,11 +43,11 @@ And see ["foobar"](#foobar) as well.
 
 # MORE TESTS
 
-## _Italics_, __Bold__, `Code`, and [Links](pod://Links) should work in headers
+## _Italics_, **Bold**, `Code`, and [Links](pod://Links) should work in headers
 
-_Italics_, __Bold__, `Code`, and [Links](pod://Links) should work in body text.
+_Italics_, **Bold**, `Code`, and [Links](pod://Links) should work in body text.
 
-__Nested `codes`__ work, too
+**Nested `codes`** work, too
 
 ## \_Other\_ \*Characters\* \[Should\](Be) \`Escaped\` in headers
 
@@ -59,7 +59,7 @@ Inline `filename_should_not_be_escaped` because it is a code span.
 
 ### Heading `code _need not_ be escaped, either`.
 
-__Nested `c*des` \_should\_ be escaped__ (but not code).
+**Nested `c*des` \_should\_ be escaped** (but not code).
 
 non-breaking space: foo&nbsp;bar.
 
@@ -83,7 +83,7 @@ A ```` code span with triple ``` inside ````.
 
 - list
 - test
-- and _Italics_, __Bold__, `Code`, and [Links](pod://Links) should work in list item
+- and _Italics_, **Bold**, `Code`, and [Links](pod://Links) should work in list item
 
 # Links
 

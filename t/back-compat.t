@@ -29,7 +29,7 @@ SKIP: {
   $parser->parse_from_filehandle($input_handle);
   my $content = $parser->as_markdown();
 
-  compare $content, '__foo__',
+  compare $content, '**foo**',
     'parse_from_filehandle( IO::Scalar->new(\$string) )';
 }
 
