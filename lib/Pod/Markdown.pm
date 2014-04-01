@@ -369,7 +369,7 @@ sub _escape_paragraph_markdown {
     local $_ = $_[1];
 
     # Escape headings, horizontal rules, (unordered) lists, and blockquotes.
-    s/^([-+*#>])/\\$1/mg;
+    s/^([-+#>])/\\$1/mg;
 
     # Markdown doesn't support backslash escapes for equal signs
     # even though they can be used to underline a header.
@@ -712,8 +712,7 @@ sub   end_Data {
 
 ## Codes ##
 
-# TODO: change to '**' ?
-sub start_B { $_[0]->_save('__') }
+sub start_B { $_[0]->_save('**') }
 sub   end_B { $_[0]->start_B()   }
 
 sub start_I { $_[0]->_save('_') }
