@@ -106,6 +106,10 @@ lists:
 \- a
 \- b
 
+\* A line that starts with an asterisk
+\*should\* be escaped to avoid incorrectly interpreting
+the line as a list item.
+
 \# fake headings
 
 \### fake headings ###
@@ -269,6 +273,10 @@ lists:
 
 - a
 - b
+
+* A line that starts with an asterisk
+*should* be escaped to avoid incorrectly interpreting
+the line as a list item.
 
 # fake headings
 
