@@ -2,6 +2,12 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+2.001     2014-04-20T02:40:11Z
+
+  - Use double-asterisk instead of double-underscore for bold Markdown.
+    This allows bold and italic to be nested without confusing parsers.
+    Thanks to Mike Covington for the great pull request (gh-9)!
+
 2.000     2014-02-01T14:38:27Z
 
   - Releasing previous (1.99[01]) as stable

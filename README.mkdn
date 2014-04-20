@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 2.000
+version 2.001
 
 # SYNOPSIS
 
@@ -98,7 +98,7 @@ The constructor accepts the following named arguments:
     by whatever system translates the markdown into html is unknown at the time
     the markdown is generated so we do some simple clean up.
 
-    __Note:__ `markdown_fragment_format` and `perldoc_fragment_format` accept
+    **Note:** `markdown_fragment_format` and `perldoc_fragment_format` accept
     the same values: a (shortcut to a) method name or a code ref.
 
 - `include_meta_tags`
@@ -231,6 +231,7 @@ progress on the request by the system.
 
 - Aristotle Pagaltzis <aristotle@cpan.org>
 - Graham Ollis <plicease@cpan.org>
+- Mike Covington <mfcovington@gmail.com>
 - Peter Vereshagin <veresc@cpan.org>
 - Ryan C. Thompson <rthompson@cpan.org>
 - Yasutaka ATARASHI <yakex@cpan.org>
