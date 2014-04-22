@@ -2,6 +2,9 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+  - metadata and test added to look for incompatibilities with downstream
+    consumers
+
 2.001     2014-04-20T02:40:11Z
 
   - Use double-asterisk instead of double-underscore for bold Markdown.
