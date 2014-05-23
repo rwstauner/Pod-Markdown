@@ -1028,6 +1028,9 @@ my ($pod_file, $pod_string);
 
   # Pod::Simple API is supported.
 
+  # command line usage
+  $ perl -MPod::Markdown -e 'Pod::Markdown->new->filter(@ARGV)' path/to/POD/file > README.md
+
   # Parse a pod file and print to STDOUT:
   Pod::Markdown->new->filter($pod_file);
 
