@@ -1022,17 +1022,14 @@ end_.+
 start_.+
 
 =for test_synopsis
-my ($pod_file, $pod_string);
+my ($pod_string);
 
 =head1 SYNOPSIS
 
   # Pod::Simple API is supported.
 
-  # command line usage
-  $ perl -MPod::Markdown -e 'Pod::Markdown->new->filter(@ARGV)' path/to/POD/file > README.md
-
-  # Parse a pod file and print to STDOUT:
-  Pod::Markdown->new->filter($pod_file);
+  # Command line usage: Parse a pod file and print to STDOUT:
+  # $ perl -MPod::Markdown -e 'Pod::Markdown->new->filter(@ARGV)' path/to/POD/file > README.md
 
   # Work with strings:
   my $markdown;
