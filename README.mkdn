@@ -4,17 +4,14 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 2.001
+version 2.002
 
 # SYNOPSIS
 
     # Pod::Simple API is supported.
 
-    # command line usage
-    $ perl -MPod::Markdown -e 'Pod::Markdown->new->filter(@ARGV)' path/to/POD/file > README.md
-
-    # Parse a pod file and print to STDOUT:
-    Pod::Markdown->new->filter($pod_file);
+    # Command line usage: Parse a pod file and print to STDOUT:
+    # $ perl -MPod::Markdown -e 'Pod::Markdown->new->filter(@ARGV)' path/to/POD/file > README.md
 
     # Work with strings:
     my $markdown;
@@ -233,6 +230,7 @@ progress on the request by the system.
 # CONTRIBUTORS
 
 - Aristotle Pagaltzis <aristotle@cpan.org>
+- Cindy Wang (CindyLinz) <cindylinz@gmail.com>
 - Graham Ollis <plicease@cpan.org>
 - Mike Covington <mfcovington@gmail.com>
 - Peter Vereshagin <veresc@cpan.org>

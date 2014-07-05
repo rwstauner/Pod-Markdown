@@ -2,6 +2,11 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+2.002     2014-07-05T15:20:40Z
+
+  - Docs: Add example of command line usage to Synopsis.
+    Thanks, Cindy Wang!
+
 2.001     2014-04-20T02:40:11Z
 
   - Use double-asterisk instead of double-underscore for bold Markdown.
