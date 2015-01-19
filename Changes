@@ -36,7 +36,7 @@ Revision history for Perl extension {{$dist->name}}
 
   [Backward Incompatible Changes]
   - E<> codes used to produce equivalent html entities (&foo;).
-    These now simply print the corresponding unicode character as utf-8.
+    These now simply insert the corresponding unicode character.
     If you desire alternate behavior please report a bug.
   - Tabs are now expanded.
 
