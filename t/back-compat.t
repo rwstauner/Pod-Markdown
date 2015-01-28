@@ -15,6 +15,12 @@ sub compare {
   eq_or_diff $got, $exp, $desc;
 }
 
+# NOTE: With Pod::Parser apparently as_markdown would return
+# strings with html-encoded entities and no utf8 flag.
+# We could add that functionality into the parse_file/as_markdown subs
+# if needed, but it's been based on Pod::Simple for over a year so far
+# with no reports so it likely isn't (needed).
+
 # Dist::Zilla::Plugin::ReadmeAnyFromPod
 SKIP: {
   eval 'require IO::Scalar'
