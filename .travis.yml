@@ -1,26 +1,9 @@
 language: perl
 perl:
+  - "5.20"
   - "5.18"
-  - "5.16"
-  - "5.14"
-  - "5.12"
   - "5.10"
-
-# This dist is bundled by Dist::Zilla
-# but we don't need to build in order to test.
-
-install:
-  # There are so few non-core dependencies just list them explicitly for laziness.
-  - cpanm -n Pod::Simple~3.14
-  - cpanm -n App::Prove Test::Differences
-  # Optional modules for back-compat tests.
-  - cpanm -n IO::Scalar
+  - "5.8"
 
 before_install:
-  - cpanm -n Devel::Cover::Report::Coveralls
-
-script:
-  - 'HARNESS_PERL_SWITCHES="-MDevel::Cover" prove --color -lvr t'
-
-after_success:
-  cover -report coveralls
+  - eval $(curl https://travis-perl.github.io/init) --auto
