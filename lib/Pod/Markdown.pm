@@ -201,10 +201,14 @@ sub _prepare_fragment_formats {
 # but the old Pod::Markdown never printed to a handle
 # so we don't want to start now.
 sub parse_from_file {
-  my ($self, $file) = @_;
+  my ($self, $file, $outfh) = @_;
   $self->output_string(\($self->{_as_markdown_}));
   $self->parse_file($file);
+
+  print $outfh $self->{_as_markdown_} if defined $outfh;
 }
+
+sub output_extension { 'md' }
 
 # Likewise, though Pod::Simple doesn't define this method at all.
 sub parse_from_filehandle { shift->parse_from_file(@_) }
@@ -212,6 +216,7 @@ sub parse_from_filehandle { shift->parse_from_file(@_) }
 =for Pod::Coverage
 parse_from_file
 parse_from_filehandle
+output_extension
 
 =cut
 

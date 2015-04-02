@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 2.002
+version 2.003
 
 # SYNOPSIS
 
@@ -215,9 +215,9 @@ progress on the request by the system.
 
 ## Source Code
 
-[https://github.com/rwstauner/Pod-Markdown](https://github.com/rwstauner/Pod-Markdown)
+[https://github.com/ambs/Pod-Markdown](https://github.com/ambs/Pod-Markdown)
 
-    git clone https://github.com/rwstauner/Pod-Markdown.git
+    git clone https://github.com/ambs/Pod-Markdown.git
 
 # AUTHORS
 
