@@ -407,14 +407,16 @@ sub _escape_paragraph_markdown {
 ## Parsing ##
 
 sub handle_text {
-  my ($self, $text) = @_;
+  my $self  = $_[0];
+  my $stash = $self->_private;
+  local $_  = $_[1];
 
   # Markdown is for html, so use html entities.
-  $text =~ s/ /&nbsp;/g
-    if $self->_private->{nbsp};
+  s/ /&nbsp;/g
+    if $stash->{nbsp};
 
   # Unless we're in a code span or verbatim block.
-  unless( $self->_private->{no_escape} ){
+  unless( $stash->{no_escape} ){
 
     # We could, in theory, alter what gets escaped according to context
     # (for example, escape square brackets (but not parens) inside link text).
@@ -423,11 +425,11 @@ sub handle_text {
     # For now just escape everything.
 
     # Don't let literal characters be interpreted as markdown.
-    $text = $self->_escape_inline_markdown($text);
+    $_ = $self->_escape_inline_markdown($_);
 
   }
 
-  $self->_save($text);
+  $self->_save($_);
 }
 
 sub start_Document {
