@@ -15,6 +15,7 @@ our @EXPORT = (
     convert_ok
     io_string
     eq_or_diff
+    warning
   ),
   @Test::More::EXPORT
 );
@@ -84,6 +85,14 @@ sub convert_ok {
 
 sub io_string {
   MarkdownTests::IOString->new(@_);
+}
+
+# Similar interface to Test::Fatal;
+sub warning (&) { ## no critic (Prototypes)
+  my @warnings;
+  local $SIG{__WARN__} = sub { push @warnings, $_[0] };
+  $_[0]->();
+  pop @warnings;
 }
 
 1;

@@ -16,6 +16,16 @@ our %URL_PREFIXES = (
 );
 $URL_PREFIXES{perldoc} = $URL_PREFIXES{metacpan};
 
+# Use hash for simple "exists" check in `new` (much more accurate than `->can`).
+my %attributes = map { ($_ => 1) }
+  qw(
+    man_url_prefix
+    perldoc_url_prefix
+    perldoc_fragment_format
+    markdown_fragment_format
+    include_meta_tags
+  );
+
 =method new
 
   Pod::Markdown->new(%options);
@@ -88,17 +98,33 @@ sub new {
   $self->preserve_whitespace(1);
   $self->accept_targets(qw( markdown html ));
 
-  my $data = $self->_private;
   while( my ($attr, $val) = each %args ){
-    $data->{ $attr } = $val;
+    # NOTE: Checking exists on a private var means we don't allow Pod::Simple
+    # attributes to be set this way.  It's not very consistent, but I think
+    # I'm ok with that for now since there probably aren't many Pod::Simple attributes
+    # being changed besides `output_*` which feel like API rather than attributes.
+    # We'll see.
+    # This is currently backward-compatible as we previously just put the attribute
+    # into the private stash so anything unknown was silently ignored.
+    # We could open this up to `$self->can($attr)` in the future if that seems better
+    # but it tricked me when I was testing a misspelled attribute name
+    # which also happened to be a Pod::Simple method.
+
+    exists $attributes{ $attr } or
+      # Provide a more descriptive message than "Can't locate object method".
+      warn("Unknown argument to ${class}->new(): '$attr'"), next;
+
+    # Call setter.
+    $self->$attr($val);
   }
 
+    # TODO: move this logic to setter (and call _prepare_fragment_format).
     for my $type ( qw( perldoc man ) ){
         my $attr  = $type . '_url_prefix';
         # Use provided argument or default alias.
         my $url = $self->$attr || $type;
         # Expand alias if defined (otherwise use url as is).
-        $data->{ $attr } = $URL_PREFIXES{ $url } || $url;
+        $self->$attr( $URL_PREFIXES{ $url } || $url );
     }
 
     $self->_prepare_fragment_formats;
@@ -133,25 +159,16 @@ whether or not meta tags will be printed.
 
 =cut
 
-my @attr = qw(
-  man_url_prefix
-  perldoc_url_prefix
-  perldoc_fragment_format
-  markdown_fragment_format
-  include_meta_tags
-);
+# I prefer ro-accessors (immutability!) but it can be confusing
+# to not support the same API as other Pod::Simple classes.
 
-{
-  no strict 'refs'; ## no critic
-  foreach my $attr ( @attr ){
-    *$attr = sub { return $_[0]->_private->{ $attr } };
-  }
-}
+# NOTE: Pod::Simple::_accessorize is not a documented public API.
+__PACKAGE__->_accessorize(keys %attributes);
 
 sub _prepare_fragment_formats {
   my ($self) = @_;
 
-  foreach my $attr ( @attr ){
+  foreach my $attr ( keys %attributes ){
     next unless $attr =~ /^(\w+)_fragment_format/;
     my $type = $1;
     my $format = $self->$attr;
@@ -186,7 +203,7 @@ sub _prepare_fragment_formats {
       unless $self->can($prefix . $format);
 
     # Save it.
-    $self->_private->{ $attr } = $format;
+    $self->$attr($format);
   }
 
   return;
