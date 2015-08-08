@@ -9,6 +9,8 @@ package Pod::Markdown;
 use Pod::Simple 3.14 (); # external links with text
 use parent qw(Pod::Simple::Methody);
 
+my $NBSP = chr(0xA0);
+
 our %URL_PREFIXES = (
   sco      => 'http://search.cpan.org/perldoc?',
   metacpan => 'https://metacpan.org/pod/',
@@ -411,8 +413,7 @@ sub handle_text {
   my $stash = $self->_private;
   local $_  = $_[1];
 
-  # Markdown is for html, so use html entities.
-  s/ /&nbsp;/g
+  s/ /$NBSP/g
     if $stash->{nbsp};
 
   # Unless we're in a code span or verbatim block.

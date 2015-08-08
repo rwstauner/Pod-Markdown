@@ -1,4 +1,5 @@
 # vim: set ts=2 sts=2 sw=2 expandtab smarttab:
+use utf8;
 use strict;
 use warnings;
 use lib 't/lib';
@@ -62,9 +63,9 @@ Inline `filename_should_not_be_escaped` because it is a code span.
 
 **Nested `c*des` \_should\_ be escaped** (but not code).
 
-non-breaking space: foo&nbsp;bar.
+non-breaking space: foo bar.
 
-non-breaking code: `$x&nbsp;?&nbsp;$y&nbsp;:&nbsp;$z` foo&nbsp;`bar`&nbsp;baz
+non-breaking code: `$x ? $y : $z` foo `bar` baz
 
     verbatim para B<with> C<< E<verbar> >> codes
 

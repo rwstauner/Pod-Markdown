@@ -7,6 +7,9 @@ Revision history for Perl extension {{$dist->name}}
     for consistency with Pod::Simple classes.
   - Passing unknown arguments to the constructor now produces a warning
     and in the future may throw an error.
+  - For consistency with the other html-entity changes, NBSP characters (U+00A0)
+    are now used literally for S<> sequences.
+    This also fixes a bug with code spans nested inside of S<> sequences.
 
   [Documentation]
   - Remove documentation for deprecated API

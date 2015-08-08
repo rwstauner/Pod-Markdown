@@ -34,7 +34,7 @@ my @tests = (
 
   [F => q<file.ext>,        q{`file.ext`}],
   [F => q<file_path.ext>,   q{`file_path.ext`}],
-  [S => q<$x ? $y : $z>,    q{$x&nbsp;?&nbsp;$y&nbsp;:&nbsp;$z}],
+  [S => q<$x ? $y : $z>,    q{$x ? $y : $z}],
   [X => q<index>,           q{}],
   [Z => q<>,                q{}],
 
