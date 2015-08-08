@@ -219,6 +219,10 @@ sub _prepare_fragment_formats {
 # so we don't want to start now.
 sub parse_from_file {
   my ($self, $file) = @_;
+
+  # TODO: Check that all dependent cpan modules use the Pod::Simple API
+  # then add a deprecation warning here to avoid confusion.
+
   $self->output_string(\($self->{_as_markdown_}));
   $self->parse_file($file);
 }
@@ -313,10 +317,11 @@ sub _indent {
   return $text;
 }
 
-=method as_markdown
+# as_markdown() exists solely for backward compatibility
+# and requires having called parse_from_file() to be useful.
 
-Returns the parsed POD as Markdown. Takes named arguments. If the C<with_meta>
-argument is given a positive value, meta tags are generated as well.
+=for Pod::Coverage
+as_markdown
 
 =cut
 
@@ -1055,11 +1060,6 @@ my ($pod_string);
   $parser->parse_string_document($pod_string);
 
   # See Pod::Simple docs for more.
-
-  # Legacy (Pod::Parser-based) API is supported for backward compatibility:
-  my $parser = Pod::Markdown->new;
-  $parser->parse_from_filehandle(\*STDIN);
-  print $parser->as_markdown;
 
 =head1 DESCRIPTION
 

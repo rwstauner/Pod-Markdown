@@ -7,6 +7,12 @@ Revision history for Perl extension {{$dist->name}}
     for consistency with Pod::Simple classes.
   - Passing unknown arguments to the constructor now produces a warning
     and in the future may throw an error.
+
+  [Documentation]
+  - Remove documentation for deprecated API
+    (parse_from_file(), parse_from_filehandle(), and as_markdown())
+    to further discourage use.
+
 2.002     2014-07-05T15:20:40Z
 
   - Docs: Add example of command line usage to Synopsis.

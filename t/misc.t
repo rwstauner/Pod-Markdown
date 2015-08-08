@@ -12,8 +12,9 @@ my $parser = Pod::Markdown->new(
 );
 my $pod_prefix = $parser->perldoc_url_prefix;
 
-$parser->parse_from_filehandle(\*DATA);
-my $markdown = $parser->as_markdown;
+$parser->output_string(\my $markdown);
+$parser->parse_file(\*DATA);
+
 my $expect = <<'EOMARKDOWN';
 # POD
 

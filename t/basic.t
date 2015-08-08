@@ -10,8 +10,9 @@ use MarkdownTests tests => 1;
 my $parser = Pod::Markdown->new(
 );
 
-$parser->parse_from_filehandle(\*DATA);
-my $markdown = $parser->as_markdown;
+$parser->output_string(\my $markdown);
+$parser->parse_file(\*DATA);
+
 my $expect = <<EOMARKDOWN;
 # POD
 

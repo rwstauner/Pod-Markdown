@@ -7,8 +7,9 @@ use MarkdownTests tests => 1;
 my $parser = Pod::Markdown->new(
   perldoc_url_prefix => 'pod:',
 );
-$parser->parse_from_filehandle(\*DATA);
-my $markdown = $parser->as_markdown;
+
+$parser->output_string(\my $markdown);
+$parser->parse_file(\*DATA);
 
 # TODO: Verify this list behavior in html and perlpod(spec).
 my $expect = <<'EOMARKDOWN';
