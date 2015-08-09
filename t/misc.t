@@ -95,6 +95,8 @@ A ```` code span with triple ``` inside ````.
 
 # \*Special\* characters
 
+html: < & &lt;tag/> &amp;entity;
+
     foo_bar is the result of 4 * 4
 
 Regular characters like \*asterisks\* and \_\_underscores\_\_
@@ -262,6 +264,8 @@ L<<< FormattZ<>ing C<C>odes|Links/"LE<lt>...E<gt>" >>>
 L<<< back `tick|inside/"a link" >>>
 
 =head1 *Special* characters
+
+html: < & <tag/> &entity;
 
     foo_bar is the result of 4 * 4
 

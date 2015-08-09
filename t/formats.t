@@ -151,7 +151,7 @@ POD
   <<'MKDN',
 Some _pod_
 
-<i>yes</i> _pod_ \*text\*
+&lt;i>yes&lt;/i> _pod_ \*text\*
 MKDN
   '=for :html gets processed and escaped',
 );

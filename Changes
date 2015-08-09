@@ -2,6 +2,11 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+  [Bug Fixes]
+  - Literal ampersands and left angle brackets are encoded as html entities
+    when necessary to avoid interpretation as html.
+    http://stackoverflow.com/questions/28496298/escape-angle-brackets-using-podmarkdown
+
   [API Changes]
   - Make accessors read/write (instead of read-only)
     for consistency with Pod::Simple classes.

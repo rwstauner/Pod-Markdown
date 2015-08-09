@@ -13,6 +13,7 @@ our @ISA = qw(Exporter);
 our @EXPORT = (
   qw(
     convert_ok
+    hex_escape
     io_string
     eq_or_diff
     warning
@@ -27,6 +28,12 @@ sub import {
   strict->import;
   warnings->import;
   goto &Exporter::import;
+}
+
+sub hex_escape {
+  local $_ = $_[0];
+  s/([^\x20-\x7e])/sprintf "\\x{%x}", ord $1/ge;
+  return $_;
 }
 
 sub diag_xml {

@@ -247,6 +247,8 @@ sub _private {
     stacks      => [],
     states      => [{}],
     link        => [],
+    encode_amp  => 1,
+    encode_lt   => 1,
   };
 }
 
@@ -285,6 +287,9 @@ sub _save {
 
 sub _save_line {
   my ($self, $text) = @_;
+
+  $text = $self->_process_escapes($text);
+
   $self->_save($text . $/);
 }
 
@@ -406,6 +411,96 @@ sub _escape_paragraph_markdown {
     return $_;
 }
 
+
+# Additionally Markdown allows inline html so we need to escape things that look like it.
+# While _some_ Markdown processors handle backslash-escaped html,
+# [Daring Fireball](http://daringfireball.net/projects/markdown/syntax) states distinctly:
+# > In HTML, there are two characters that demand special treatment: < and &...
+# > If you want to use them as literal characters, you must escape them as entities, e.g. &lt;, and &amp;.
+
+# It goes on to say:
+# > Markdown allows you to use these characters naturally,
+# > taking care of all the necessary escaping for you.
+# > If you use an ampersand as part of an HTML entity,
+# > it remains unchanged; otherwise it will be translated into &amp;.
+# > Similarly, because Markdown supports inline HTML,
+# > if you use angle brackets as delimiters for HTML tags, Markdown will treat them as such.
+
+# In order to only encode the occurrences that require it (something that
+# could be interpreted as an entity) we escape them all so that we can do the
+# suffix test later after the string is complete (since we don't know what
+# strings might come after this one).
+
+my %_escape =
+  map {
+    my ($k, $v) = split /:/;
+    # Put the "code" marker before the char instead of after so that it doesn't
+    # get confused as the $2 (which is what requires us to entity-encode it).
+    # ( "XsX", "XcsX", "X(c?)sX" )
+    my ($s, $code, $re) = map { "\0$_$v\0" } '', map { ($_, '('.$_.'?)') } 'c';
+
+    (
+      $k         => $s,
+      $k.'_code' => $code,
+      $k.'_re'   => qr/$re/,
+    )
+  }
+    qw( amp:& lt:< );
+
+# Make the values of this private var available to the tests.
+sub __escape_sequences { %_escape }
+
+
+sub _encode_or_escape_entities {
+  my $self  = $_[0];
+  my $stash = $self->_private;
+  local $_  = $_[1];
+
+  if( $stash->{encode_amp} ){
+      s/&/$_escape{amp}/g;
+  }
+
+  s/</$_escape{lt}/g
+    if $stash->{encode_lt};
+
+  return $_;
+}
+
+# Process any escapes we put in the text earlier,
+# now that the text is complete (end of a block).
+sub _process_escapes {
+  my $self  = $_[0];
+  my $stash = $self->_private;
+  local $_  = $_[1];
+
+  # The patterns below are taken from Markdown.pl 1.0.1 _EncodeAmpsAndAngles().
+  # In this case we only want to encode the ones that Markdown won't.
+  # This is overkill but produces nicer looking text (less escaped entities).
+  # If it proves insufficent then we'll just encode them all.
+
+  # $1: If the escape was in a code sequence, simply replace the original.
+  # $2: If the unescaped value would be followed by characters
+  #     that could be interpreted as html, entity-encode it.
+  # else: The character is safe to leave bare.
+
+  # Neither currently allows $2 to contain '0' so bool tests are sufficient.
+
+  if( $stash->{encode_amp} ){
+    # Encode & if succeeded by chars that look like an html entity.
+    s,$_escape{amp_re}((?:#?[xX]?(?:[0-9a-fA-F]+|\w+);)?),
+      $1 ? '&'.$2 : $2 ? '&amp;'.$2 : '&',egos;
+  }
+
+  if( $stash->{encode_lt} ){
+    # Encode < if succeeded by chars that look like an html tag.
+    s,$_escape{lt_re}((?:[a-z/?\$!])?),
+      $1 ? '<'.$2 : $2 ?  '&lt;'.$2 : '<',egos;
+  }
+
+  return $_;
+}
+
+
 ## Parsing ##
 
 sub handle_text {
@@ -428,6 +523,17 @@ sub handle_text {
     # Don't let literal characters be interpreted as markdown.
     $_ = $self->_escape_inline_markdown($_);
 
+    # Entity-encode (or escape for later processing) necessary/desired chars.
+    $_ = $self->_encode_or_escape_entities($_);
+
+  }
+  # If this _is_ a code section, do limited/specific handling.
+  else {
+    # Always escaping these chars ensures that we won't mangle the text
+    # in the unlikely event that a sequence matching our escape occurred in the
+    # input stream (since we're going to escape it and then unescape it).
+    s/&/$_escape{amp_code}/gos if $stash->{encode_amp};
+    s/</$_escape{lt_code}/gos  if $stash->{encode_lt};
   }
 
   $self->_save($_);
