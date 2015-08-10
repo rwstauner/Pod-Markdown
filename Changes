@@ -16,6 +16,10 @@ Revision history for Perl extension {{$dist->name}}
     are now used literally for S<> sequences.
     This also fixes a bug with code spans nested inside of S<> sequences.
 
+  [New Attributes]
+  - Add `html_encode_chars` attribute to allow customizing what characters
+    should be html entity encoded.
+
   [Documentation]
   - Remove documentation for deprecated API
     (parse_from_file(), parse_from_filehandle(), and as_markdown())

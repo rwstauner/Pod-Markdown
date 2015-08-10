@@ -13,6 +13,7 @@ our @ISA = qw(Exporter);
 our @EXPORT = (
   qw(
     convert_ok
+    have_entities_or
     hex_escape
     io_string
     eq_or_diff
@@ -28,6 +29,10 @@ sub import {
   strict->import;
   warnings->import;
   goto &Exporter::import;
+}
+
+sub have_entities_or {
+  $Pod::Markdown::HAS_HTML_ENTITIES ? $_[0] : $_[1];
 }
 
 sub hex_escape {
@@ -56,7 +61,13 @@ sub diag_with {
 
 sub convert_ok {
   my ($pod, $exp, $desc, %opts) = @_;
-  my $parser = Pod::Markdown->new;
+  my %attr   = %{ $opts{attr} || {} };
+  my $parser = Pod::Markdown->new(%attr);
+
+  if( $opts{verbose} ){
+    $desc .= " \t" . hex_escape "($pod => $exp)";
+    $desc .= join ' ', ' (', %attr, ')' if keys %attr;
+  }
 
   diag_xml($pod)  if $opts{diag_xml};
   diag_text($pod) if $opts{diag_text};

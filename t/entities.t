@@ -14,6 +14,14 @@ sub entity_encode_ok {
   note hex_escape $pod;
 
   convert_both($pod, $markdown, $verbatim, $desc);
+
+  # Encoding some entities (but not [&<]) should produce the same as none.
+  convert_both($pod, $markdown, $verbatim, "$desc (html_encode_chars => non ascii)",
+    attr => {html_encode_chars => '\x80-\xff'});
+
+  # Encoding [&<] will produce more of those chars.
+  convert_both($pod, $opts{entities}, $verbatim, "$desc (html_encode_chars => 1)",
+    attr => {html_encode_chars => 1}) if $opts{entities};
 }
 
 sub convert_both {
@@ -23,11 +31,26 @@ sub convert_both {
 }
 
 my %_escape   = Pod::Markdown::__escape_sequences;
+my %_e_escape = do {
+  my $parser = Pod::Markdown->new(html_encode_chars => 1);
+  map { ($_ => $parser->encode_entities($_escape{$_})) } keys %_escape;
+};
+
+like $_e_escape{amp}, qr/&amp;/, 'entity-encoded escape sanity check';
+
+entity_encode_ok 'sanity check' => (
+  q{< & > E<0x2022>},
+  q{**< & > •**},
+  entities => "**&lt; &amp; &gt; ${\have_entities_or('&bull;', '&#x2022;')}**",
+  verbatim => q{< & > •},
+);
+
 
 # This was an actual bug report.
 entity_encode_ok 'command lines args' => (
   q{--file=<filename>},
   q{**--file=&lt;filename>**},
+  entities => q{**--file=&lt;filename&gt;**},
 );
 
 # Use real html tags.
@@ -38,6 +61,7 @@ entity_encode_ok 'command lines args' => (
 entity_encode_ok 'real html' => (
   q{h&nbsp;=<hr>},
   q{**h&amp;nbsp;=&lt;hr>**},
+  entities => q{**h&amp;nbsp;=&lt;hr&gt;**},
 );
 
 # Test with 'false' values to avoid conditional bugs.
@@ -45,6 +69,7 @@ entity_encode_ok 'real html' => (
 entity_encode_ok 'false values' => (
   q{<0 &0},
   q{**<0 &0**},
+  entities => q{**&lt;0 &amp;0**},
 );
 
 # Ensure that two pod "strings" still escape the < and & properly.
@@ -54,6 +79,7 @@ entity_encode_ok 'false values' => (
 entity_encode_ok '< and & are escaped properly even as separate pod strings' => (
   q{the <S<cmp>E<gt> operator and S<&>foobar; (or S<&>fooS<bar>;) and eol &},
   q{**the &lt;cmp> operator and &amp;foobar; (or &amp;foobar;) and eol &**},
+  entities => q{**the &lt;cmp&gt; operator and &amp;foobar; (or &amp;foobar;) and eol &amp;**},
   verbatim => q{the <cmp> operator and &foobar; (or &foobar;) and eol &},
 );
 
@@ -66,17 +92,21 @@ entity_encode_ok 'literal entity from pod at end of string stays amp-escaped' =>
 entity_encode_ok 'field splitting: amps at beginning and end and multiple in the middle' => (
   q{& ity &&& and &},
   q{**& ity &&& and &**},
+  entities => q{**&amp; ity &amp;&amp;&amp; and &amp;**},
 );
 
 entity_encode_ok 'literal occurrences of internal escape sequences are unaltered' => (
   qq[hi $_escape{amp} ($_escape{amp_code}) & $_escape{lt} ($_escape{lt_code}) < &exclam;],
   qq[**hi $_escape{amp} ($_escape{amp_code}) & $_escape{lt} ($_escape{lt_code}) < &amp;exclam;**],
+  entities => qq[**hi $_e_escape{amp} ($_e_escape{amp_code}) &amp; $_e_escape{lt} ($_e_escape{lt_code}) &lt; &amp;exclam;**],
 );
+
+# TODO: test entity encoding with and without HTML::Entities.
 
 sub so_example {
   # Test case from http://stackoverflow.com/questions/28496298/escape-angle-brackets-using-podmarkdown {
   my $str = "=head1 OPTIONS\n\n=over 4\n\n=item B<< --file=<filename> >>\n\nFile name \n\n=back\n";
-  my $parser = Pod::Markdown->new;
+  my $parser = Pod::Markdown->new(@_); # (@_) - rwstauner
   my $markdown;
   $parser->output_string( \$markdown );
   $parser->parse_string_document($str);
@@ -84,10 +114,14 @@ sub so_example {
   return $markdown;
 }
 
+# TODO: test with entities.
 eq_or_diff so_example(), "# OPTIONS\n\n- **--file=&lt;filename>**\n\n    File name \n",
   'SO example properly escaped';
 
-convert_ok(<<POD,
+eq_or_diff so_example(html_encode_chars => 1), "# OPTIONS\n\n- **--file=&lt;filename&gt;**\n\n    File name \n",
+  'SO example with additional escapes';
+
+my $list_pod = <<POD;
 =head2 hi <there> &you; < &
 
 =over
@@ -95,6 +129,10 @@ convert_ok(<<POD,
 =item & some < t&e;xt
 
 <paragraph>
+
+<
+
+&
 
 =back
 
@@ -108,19 +146,42 @@ item <text> < &
 
 =back
 POD
-  <<MKDN,
+
+convert_ok($list_pod, <<MKDN,
 ## hi &lt;there> &amp;you; < &
 
 - & some < t&amp;e;xt
 
     &lt;paragraph>
 
+    <
+
+    &
+
 1. item &lt;text> < &
 
     &lt;para>
 MKDN
-  'escape entities in lists and items properly',
+ 'escape entities in lists and items properly',
 );
 
+convert_ok($list_pod, <<MKDN,
+## hi &lt;there&gt; &amp;you; &lt; &amp;
+
+- &amp; some &lt; t&amp;e;xt
+
+    &lt;paragraph&gt;
+
+    &lt;
+
+    &amp;
+
+1. item &lt;text&gt; &lt; &amp;
+
+    &lt;para&gt;
+MKDN
+ 'escape all entities in lists and items',
+ attr => { html_encode_chars => 1 }
+);
 
 done_testing;

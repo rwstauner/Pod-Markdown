@@ -18,9 +18,57 @@ our %URL_PREFIXES = (
 );
 $URL_PREFIXES{perldoc} = $URL_PREFIXES{metacpan};
 
+#{
+  our $HAS_HTML_ENTITIES;
+
+  # Stolen from Pod::Simple::XHTML 3.28. {{{
+
+  BEGIN {
+    $HAS_HTML_ENTITIES = eval "require HTML::Entities; 1";
+  }
+
+  my %entities = (
+    q{>} => 'gt',
+    q{<} => 'lt',
+    q{'} => '#39',
+    q{"} => 'quot',
+    q{&} => 'amp',
+  );
+
+  sub encode_entities {
+    my $self = shift;
+    my $ents = $self->html_encode_chars;
+    return HTML::Entities::encode_entities( $_[0], $ents ) if $HAS_HTML_ENTITIES;
+    if (defined $ents) {
+        $ents =~ s,(?<!\\)([]/]),\\$1,g;
+        $ents =~ s,(?<!\\)\\\z,\\\\,;
+    } else {
+        $ents = join '', keys %entities;
+    }
+    my $str = $_[0];
+    $str =~ s/([$ents])/'&' . ($entities{$1} || sprintf '#x%X', ord $1) . ';'/ge;
+    return $str;
+  }
+
+  # }}}
+
+  # Add a few very common ones for consistency and readability
+  # (in case HTML::Entities isn't available).
+  %entities = (
+    $NBSP     => 'nbsp',
+    chr(0xA9) => 'copy',
+    %entities
+  );
+
+  # From HTML::Entities 3.69
+  my $DEFAULT_ENTITY_CHARS = '^\n\r\t !\#\$%\(-;=?-~';
+
+#}
+
 # Use hash for simple "exists" check in `new` (much more accurate than `->can`).
 my %attributes = map { ($_ => 1) }
   qw(
+    html_encode_chars
     man_url_prefix
     perldoc_url_prefix
     perldoc_fragment_format
@@ -136,6 +184,58 @@ sub new {
 
 ## Attribute accessors ##
 
+=method html_encode_chars
+
+A string of characters to encode as html entities
+(using L<HTML::Entities/encode_entities> if available, falling back to numeric entities if not).
+
+Possible values:
+
+=for :list
+* A value of C<1> will use the default set of characters from L<HTML::Entities> (control chars, high-bit chars, and C<< <&>"' >>).
+* A false value will disable.
+* Any other value is used as a string of characters (like a regular expression character class).
+
+By default this is disabled and literal characters will be in the output stream.
+If you specify a desired L</output_encoding> any characters not valid for that encoding will be HTML entity encoded.
+
+B<Note> that Markdown requires ampersands (C<< & >>) and left angle brackets (C<< < >>)
+to be entity-encoded if they could otherwise be interpreted as html entities.
+If this attribute is configured to encode those characters, they will always be encoded.
+If not, the module will make an effort to only encode the ones required,
+so there will be less html noise in the output.
+
+=cut
+
+sub html_encode_chars {
+  my $self  = shift;
+  my $stash = $self->_private;
+
+  # Setter.
+  if( @_ ){
+    # If false ('', 0, undef), disable.
+    if( !$_[0] ){
+      delete $stash->{html_encode_chars};
+      $stash->{encode_amp}  = 1;
+      $stash->{encode_lt}   = 1;
+    }
+    else {
+      # Special case boolean '1' to mean "all".
+      # If we have HTML::Entities, undef will use the default.
+      # Without it, we need to specify so that we use the same list (for consistency).
+      $stash->{html_encode_chars} = $_[0] eq '1' ? ($HAS_HTML_ENTITIES ? undef : $DEFAULT_ENTITY_CHARS) : $_[0];
+
+      # If [char] doesn't get encoded, we need to do it ourselves.
+      $stash->{encode_amp}  = ($self->encode_entities('&') eq '&');
+      $stash->{encode_lt}   = ($self->encode_entities('<') eq '<');
+    }
+    return;
+  }
+
+  # Getter.
+  return $stash->{html_encode_chars};
+}
+
 =method man_url_prefix
 
 Returns the url prefix in use for man pages.
@@ -165,7 +265,8 @@ whether or not meta tags will be printed.
 # to not support the same API as other Pod::Simple classes.
 
 # NOTE: Pod::Simple::_accessorize is not a documented public API.
-__PACKAGE__->_accessorize(keys %attributes);
+# Skip any that have already been defined.
+__PACKAGE__->_accessorize(grep { !__PACKAGE__->can($_) } keys %attributes);
 
 sub _prepare_fragment_formats {
   my ($self) = @_;
@@ -382,6 +483,7 @@ sub _build_markdown_head {
 # just the ones that start a line (likewise for plus and dot).
 # (Those will all be handled by _escape_paragraph_markdown).
 
+
 # Backslash escape markdown characters to avoid having them interpreted.
 sub _escape_inline_markdown {
   local $_ = $_[1];
@@ -451,13 +553,29 @@ my %_escape =
 sub __escape_sequences { %_escape }
 
 
+# HTML-entity encode any characters configured by the user.
+# If that doesn't include [&<] then we escape those chars so we can decide
+# later if we will entity-encode them or put them back verbatim.
 sub _encode_or_escape_entities {
   my $self  = $_[0];
   my $stash = $self->_private;
   local $_  = $_[1];
 
   if( $stash->{encode_amp} ){
+    if( exists($stash->{html_encode_chars}) ){
+      # Escape all amps for later processing.
+      # Pass intermediate strings to entity encoder so that it doesn't
+      # process any of the characters of our escape sequences.
+      # Use -1 to get "as many fields as possible" so that we keep leading and
+      # trailing (possibly empty) fields.
+      $_ = join $_escape{amp}, map { $self->encode_entities($_) } split /&/, $_, -1;
+    }
+    else {
       s/&/$_escape{amp}/g;
+    }
+  }
+  elsif( exists($stash->{html_encode_chars}) ){
+    $_ = $self->encode_entities($_);
   }
 
   s/</$_escape{lt}/g
@@ -1063,24 +1181,15 @@ Format url fragment like L<Pod::Simple::XHTML/idify>.
   # The strings gets passed through encode_entities() before idify().
   # If we don't do it here the substitutions below won't operate consistently.
 
-  # encode_entities {
-    my %entities = (
-      q{>} => 'gt',
-      q{<} => 'lt',
-      q{'} => '#39',
-      q{"} => 'quot',
-      q{&} => 'amp',
-    );
-
-    my
-      $ents = join '', keys %entities;
-  # }
-
   sub format_fragment_pod_simple_xhtml {
     my ($self, $t) = @_;
 
     # encode_entities {
-      $t =~ s/([$ents])/'&' . ($entities{$1} || sprintf '#x%X', ord $1) . ';'/ge;
+      # We need to use the defaults in case html_encode_chars has been customized
+      # (since the purpose is to match what external sources are doing).
+
+      local $self->_private->{html_encode_chars};
+      $t = $self->encode_entities($t);
     # }
 
     # idify {
@@ -1151,6 +1260,7 @@ html
 handle_text
 end_.+
 start_.+
+encode_entities
 
 =for test_synopsis
 my ($pod_string);
