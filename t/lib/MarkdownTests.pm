@@ -61,6 +61,11 @@ sub diag_with {
   diag $got;
 }
 
+sub hash_string {
+  my $h = $_[0];
+  return join ', ', map { "$_: $h->{$_}" } sort keys %$h;
+}
+
 sub convert_ok {
   my ($pod, $exp, $desc, %opts) = @_;
   my %attr   = %{ $opts{attr} || {} };
@@ -70,7 +75,7 @@ sub convert_ok {
 
   if( $opts{verbose} ){
     $desc .= " \t" . hex_escape "($pod => $exp)";
-    $desc .= join ' ', ' (', %attr, ')' if keys %attr;
+    $desc .= join ' ', ' (', hash_string(\%attr), ')' if keys %attr;
     $desc .= " =encoding $opts{encoding}" if $podenc;
   }
 
