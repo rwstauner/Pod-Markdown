@@ -192,6 +192,20 @@ test_fragments(
   'extra long real life example complicated section',
 );
 
+with_and_without_entities {
+  my $ents = shift;
+  my $exp  = $ents ? '101' : 'x65';
+  test_fragments(
+    q<page/section>,
+    {
+      metacpan => qq^["s&#${exp};ction" in pag&#${exp};](:page#section)^,
+      sco      => qq^["s&#${exp};ction" in pag&#${exp};](:page#section)^,
+    },
+    "respect html_encode_chars in code link text but not in fragment (HTML::Entites $ents)",
+    html_encode_chars => 'e',
+  );
+};
+
 
 foreach my $test ( @tests ){
   my ($desc, $pod, $mkdn, %opts) = @$test;
@@ -218,7 +232,7 @@ sub test_link {
 }
 
 sub test_fragments {
-  my ($pod, $tests, $desc) = @_;
+  my ($pod, $tests, $desc, %opts) = @_;
   foreach my $format ( sort keys %$tests ){
     test_link(
       # Only some combinations of these will normally make sense
@@ -227,6 +241,7 @@ sub test_fragments {
         perldoc_fragment_format => $format,
         perldoc_url_prefix      => ':', # easier
         markdown_fragment_format => $format,
+        %opts,
       ),
       $pod,
       $tests->{$format},

@@ -7,51 +7,87 @@ use MarkdownTests;
 
 my $pod_prefix = Pod::Markdown->new->perldoc_url_prefix;
 
-my @tests = (
-  [I => q<italic>,          q{_italic_}],
-  [B => q<bold>,            q{**bold**}],
-  [C => q<code>,            q{`code`}],
-  [C => q<c*de>,            q{`c*de`}],
+sub code {
+  my ($pod, $exp, %opts) = @_;
+  my $desc = delete $opts{desc} || $pod;
 
-  # links tested extensively in t/links.t
-  [L => q<link>,             "[link](${pod_prefix}link)"],
-  [L => q<star*>,            "[star\\*](${pod_prefix}star*)"],
+  convert_code_ok($pod, $exp, $desc);
 
-  # Pod::Simple handles the E<> entirely (Pod::Markdown never sees them).
-  [E => q<lt>,              q{<}],
-  [E => q<gt>,              q{>}],
-  [E => q<verbar>,          q{|}],
-  [E => q<sol>,             q{/}],
+  if( my $ents = delete $opts{entities} ){
+    # Use the same value for both if only one is specified.
+    $ents->[1] = $ents->[0] if @$ents == 1;
+    with_and_without_entities {
+      my $e = $ents->[ shift ? 0 : 1 ];
+      convert_code_ok($pod, $e, $desc, {
+        html_encode_chars => '^\x20-\x7e', # most chars
+      });
+    };
+  }
 
-  [E => q<eacute>,          q{é}],
-  [E => q<0x201E>,          q{„},  'E hex'],
-  [E => q<075>,             q{=},  'E octal'],
-  [E => q<181>,             q{µ},  'E decimal'],
+  if( my $utf8 = delete $opts{utf8} ){
+    convert_code_ok($pod, $utf8, $desc, { output_encoding => 'UTF-8' })
+  }
 
-  # legacy charnames specifically mentioned by perlpodspec
-  [E => q<lchevron>,        q{«}],
-  [E => q<rchevron>,        q{»}],
-
-  [F => q<file.ext>,        q{`file.ext`}],
-  [F => q<file_path.ext>,   q{`file_path.ext`}],
-  [S => q<$x ? $y : $z>,    q{$x ? $y : $z}],
-  [X => q<index>,           q{}],
-  [Z => q<>,                q{}],
-
-  #[Q => q<unknown>,         q{Q<unknown>}, 'uknown code (Q<>)' ],
-);
-
-plan tests => scalar @tests;
-
-foreach my $test ( @tests ){
-  my ($code, $text, $exp, $desc) = @$test;
-  $desc ||= "$code<$text>";
-
-  my $parser = Pod::Markdown->new;
-  $parser->output_string(\(my $got));
-  # Prefix line to avoid escaping beginning-of-line characters (like `>`).
-  my $prefix = 'Code:';
-  $parser->parse_string_document("=pod\n\n$prefix $code<<< $text >>>");
-  chomp($got);
-  is $got, "$prefix $exp", $desc;
+  die "Invalid args: %opts" if keys %opts;
 }
+
+sub convert_code_ok {
+  my ($pod, $exp, $desc, $attr) = @_;
+  convert_ok($pod, $exp, $desc, attr => $attr, verbose => 1,
+    # Prefix line to avoid escaping beginning-of-line characters (like `>`).
+    prefix  => 'Code: ',
+  );
+}
+
+code 'I<italic>',   '_italic_';
+code 'B<bold>',     '**bold**';
+code 'C<code>',     '`code`';
+code 'C<c*de>',     '`c*de`';
+
+# Links tested extensively in t/links.t.
+code 'L<link>',     "[link](${pod_prefix}link)";
+code 'L<star*>',    "[star\\*](${pod_prefix}star*)";
+
+# Pod::Simple handles the E<> entirely (Pod::Markdown never sees them).
+code 'E<lt>',       '<';
+code 'E<gt>',       '>';
+code 'E<verbar>',   '|';
+code 'E<sol>',      '/';
+
+code 'E<copy>',     '©', entities => ['&copy;'],   utf8 => "\xc2\xa9";
+
+code 'E<eacute>',   'é', entities => ['&eacute;', '&#xE9;'], utf8 => "\xc3\xa9";
+
+code 'E<0x201E>',   '„', entities => ['&bdquo;', '&#x201E;'],  desc => 'E hex';
+
+code 'E<075>',      '=', desc => 'E octal';
+code 'E<0241>',     '¡', entities => ['&iexcl;', '&#xA1;'],  utf8 => "\xc2\xa1", desc => 'E octal';
+
+code 'E<181>',      'µ', entities => ['&micro;', '&#xB5;'],  desc => 'E decimal';
+
+# Legacy charnames specifically mentioned by perlpodspec.
+code 'E<lchevron>', '«', entities => ['&laquo;', '&#xAB;'],  utf8 => "\xc2\xab";
+code 'E<rchevron>', '»', entities => ['&raquo;', '&#xBB;'],  utf8 => "\xc2\xbb";
+
+# Translate F<> as code spans.
+code 'F<file.ext>',        '`file.ext`';
+code 'F<file_path.ext>',   '`file_path.ext`';
+code 'F</weird/file`path`>',   '`` /weird/file`path` ``';
+
+# S<> for non-breaking spaces.
+code 'S<$x ? $y : $z>',    '$x ? $y : $z', # Literal NBSP chars.
+  # Entity-encode nbsp (whether we have HTML::Entities or not).
+  entities => ['$x&nbsp;?&nbsp;$y&nbsp;:&nbsp;$z'];
+
+code 'S<C<$x & $y>>', '`$x & $y`', # Literal NBSP chars.
+  # Amps inside code spans will get escaped, so leave nsbp bare.
+  entities => ['`$x & $y`'];
+
+# Zero-width entries.
+code 'X<index>', '';
+code 'Z<>',      '';
+
+# Pod::Simple swallows unknown codes.
+#code 'Q<unknown>', 'Q<unknown>', desc => 'uknown code (Q<>)';
+
+done_testing;
