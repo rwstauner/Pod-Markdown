@@ -18,6 +18,7 @@ our @EXPORT = (
     io_string
     eq_or_diff
     warning
+    with_and_without_entities
   ),
   @Test::More::EXPORT
 );
@@ -63,10 +64,13 @@ sub convert_ok {
   my ($pod, $exp, $desc, %opts) = @_;
   my %attr   = %{ $opts{attr} || {} };
   my $parser = Pod::Markdown->new(%attr);
+  my $prefix = $opts{prefix} || '';
+  my $podenc = ($opts{encoding} ? "=encoding $opts{encoding}\n\n" : '');
 
   if( $opts{verbose} ){
     $desc .= " \t" . hex_escape "($pod => $exp)";
     $desc .= join ' ', ' (', %attr, ')' if keys %attr;
+    $desc .= " =encoding $opts{encoding}" if $podenc;
   }
 
   diag_xml($pod)  if $opts{diag_xml};
@@ -75,11 +79,11 @@ sub convert_ok {
   $opts{init}->($parser) if $opts{init};
 
   $parser->output_string(\(my $got));
-  $parser->parse_string_document("=pod\n\n$pod\n\n=cut\n");
+  $parser->parse_string_document("$podenc=pod\n\n$prefix$pod\n\n=cut\n");
 
   chomp for ($got, $exp);
 
-  eq_or_diff($got, $exp, $desc);
+  eq_or_diff($got, $prefix.$exp, $desc);
 }
 
 { package # no_index
@@ -111,6 +115,16 @@ sub warning (&) { ## no critic (Prototypes)
   local $SIG{__WARN__} = sub { push @warnings, $_[0] };
   $_[0]->();
   pop @warnings;
+}
+
+sub with_and_without_entities (&) { ## no critic (Prototypes)
+  SKIP: for my $ents ( 0, 1 ){
+    if( $ents && ! $Pod::Markdown::HAS_HTML_ENTITIES ){
+      skip 'HTML::Entities required for this test', 1;
+    }
+    local $Pod::Markdown::HAS_HTML_ENTITIES = $ents;
+    $_[0]->($ents);
+  }
 }
 
 1;

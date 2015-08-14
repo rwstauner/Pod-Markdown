@@ -8,6 +8,7 @@ package Pod::Markdown;
 
 use Pod::Simple 3.14 (); # external links with text
 use parent qw(Pod::Simple::Methody);
+use Encode ();
 
 my $NBSP = chr(0xA0);
 
@@ -60,6 +61,17 @@ $URL_PREFIXES{perldoc} = $URL_PREFIXES{metacpan};
     %entities
   );
 
+  sub __entity_encode_ord_he {
+    my $chr = chr $_[0];
+    # Skip the encode_entities() logic and go straight for the substitution
+    # since we already have the char we know we want replaced.
+    # Both the hash and the function are documented as exportable (so should be reliable).
+    return $HTML::Entities::char2entity{ $chr } || HTML::Entities::num_entity( $chr );
+  }
+  sub __entity_encode_ord_basic {
+    return '&' . ($entities{chr $_[0]} || sprintf '#x%X', $_[0]) . ';';
+  }
+
   # From HTML::Entities 3.69
   my $DEFAULT_ENTITY_CHARS = '^\n\r\t !\#\$%\(-;=?-~';
 
@@ -69,6 +81,8 @@ $URL_PREFIXES{perldoc} = $URL_PREFIXES{metacpan};
 my %attributes = map { ($_ => 1) }
   qw(
     html_encode_chars
+    match_encoding
+    output_encoding
     man_url_prefix
     perldoc_url_prefix
     perldoc_fragment_format
@@ -235,6 +249,30 @@ sub html_encode_chars {
   # Getter.
   return $stash->{html_encode_chars};
 }
+
+=method match_encoding
+
+Boolean: If true, use the C<< =encoding >> of the input pod
+as the encoding for the output.
+
+If no encoding is specified, L<Pod::Simple> will guess the encoding
+if it sees a high-bit character.
+
+If no encoding is guessed (or the specified encoding is unusable),
+L</output_encoding> will be used if it was specified.
+Otherwise C<UTF-8> will be used.
+
+This attribute is not recommended
+but is provided for consistency with other pod converters.
+
+Defaults to false.
+
+=method output_encoding
+
+The encoding to use when writing to the output file handle.
+
+If neither this nor L</match_encoding> are specified,
+a character string will be returned in whatever L<Pod::Simple> output method you specified.
 
 =method man_url_prefix
 
@@ -626,6 +664,10 @@ sub handle_text {
   my $stash = $self->_private;
   local $_  = $_[1];
 
+  # NOTE: If this document ends up forcing ascii encoding (which might not be known at this
+  # point) and this is a code block, these will get entity-encoded which will be
+  # wrong.  In order to solve that we might have to escape them like we do [&<]
+  # or simply ignore nbsp if no_escape.
   s/ /$NBSP/g
     if $stash->{nbsp};
 
@@ -676,7 +718,36 @@ sub   end_Document {
     unshift @doc, $self->_build_markdown_head, ($/ x 2);
   }
 
-  print { $self->{output_fh} } @doc;
+  if( my $encoding = $self->_get_output_encoding ){
+    # Do the check outside the loop(s) for efficiency.
+    my $ents = $HAS_HTML_ENTITIES ? \&__entity_encode_ord_he : \&__entity_encode_ord_basic;
+    # Iterate indices to avoid copying large strings.
+    for my $i ( 0 .. $#doc ){
+      print { $self->{output_fh} } Encode::encode($encoding, $doc[$i], $ents);
+    }
+  }
+  else {
+    print { $self->{output_fh} } @doc;
+  }
+}
+
+sub _get_output_encoding {
+  my ($self) = @_;
+
+  # If 'match_encoding' is set we need to return an encoding.
+  # If pod has no =encoding, Pod::Simple will guess if it sees a high-bit char.
+  # If there are no high-bit chars, encoding is undef.
+  # Use detected_encoding() rather than encoding() because if Pod::Simple
+  # can't use whatever encoding was specified, we probably can't either.
+  # Fallback to 'o_e' if no match is found.  This gives the user the choice,
+  # since otherwise there would be no reason to specify 'o_e' *and* 'm_e'.
+  # Fallback to UTF-8 since it is a reasonable default these days.
+
+  return $self->detected_encoding || $self->output_encoding || 'UTF-8'
+    if $self->match_encoding;
+
+  # If output encoding wasn't specified, return false.
+  return $self->output_encoding;
 }
 
 ## Blocks ##
@@ -1296,6 +1367,28 @@ To change which regions are accepted use the L<Pod::Simple> API:
 
   my $parser = Pod::Markdown->new;
   $parser->unaccept_targets(qw( markdown html ));
+
+=head2 A note on encoding and escaping
+
+The common L<Pod::Simple> API returns a character string.
+If you want Pod::Markdown to return encoded octets, there are two attributes
+to assist: L</match_encoding> and L</output_encoding>.
+
+When an output encoding is requested any characters that are not valid
+for that encoding will be escaped as HTML entities.
+
+This is not 100% safe, however.
+
+Markdown escapes all ampersands inside of code spans, so escaping a character
+as an HTML entity inside of a code span will not be correct.
+However, with pod's C<S> and C<E> sequences it is possible
+to end up with high-bit characters inside of code spans.
+
+So, while C<< output_encoding => 'ascii' >> can work, it is not recommended.
+For these reasons (and more), C<UTF-8> is the default, fallback encoding (when one is required).
+
+If you prefer HTML entities over literal characters you can use
+L</html_encode_chars> which will only operate outside of code spans (where it is safe).
 
 =head1 SEE ALSO
 

@@ -19,6 +19,10 @@ Revision history for Perl extension {{$dist->name}}
   [New Attributes]
   - Add `html_encode_chars` attribute to allow customizing what characters
     should be html entity encoded.
+  - Add `match_encoding` attribute to use the same encoding as the input pod
+    when writing to the output handle.
+  - Add `output_encoding` attribute to specify the desired encoding
+    to apply to the output handle.
 
   [Documentation]
   - Remove documentation for deprecated API
