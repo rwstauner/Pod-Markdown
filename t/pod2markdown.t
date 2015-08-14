@@ -62,11 +62,3 @@ sub testp2m {
   );
 
 done_testing;
-
-sub slurp_file {
-  my $path = shift;
-  open(my $fh, '<', $path)
-    or die "Failed to open $path: $!";
-  slurp_fh($fh)
-}
-sub slurp_fh { my $fh = shift; local $/; <$fh>; }

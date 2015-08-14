@@ -17,6 +17,7 @@ our @EXPORT = (
     hex_escape
     io_string
     eq_or_diff
+    slurp_file
     warning
     with_and_without_entities
   ),
@@ -108,6 +109,14 @@ sub convert_ok {
 sub io_string {
   MarkdownTests::IOString->new(@_);
 }
+
+sub slurp_file {
+  my $path = shift;
+  open(my $fh, '<', $path)
+    or die "Failed to open $path: $!";
+  slurp_fh($fh)
+}
+sub slurp_fh { my $fh = shift; local $/; <$fh>; }
 
 # Similar interface to Test::Fatal;
 sub warning (&) { ## no critic (Prototypes)
