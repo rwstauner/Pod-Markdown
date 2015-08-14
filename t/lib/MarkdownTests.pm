@@ -67,6 +67,7 @@ sub hash_string {
 }
 
 sub convert_ok {
+  local $Test::Builder::Level = $Test::Builder::Level + 1;
   my ($pod, $exp, $desc, %opts) = @_;
   my %attr   = %{ $opts{attr} || {} };
   my $parser = Pod::Markdown->new(%attr);
