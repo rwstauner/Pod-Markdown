@@ -917,7 +917,11 @@ sub _start_item {
 
 sub   _end_item {
   my ($self, $marker) = @_;
-  $self->_save_line($self->_indent($marker . ' ' . $self->_pop_stack_text));
+  my $text = $self->_pop_stack_text;
+  $self->_save_line($self->_indent($marker .
+    # Add a space only if there is text after the marker.
+    (defined($text) && length($text) ? ' ' . $text : '')
+  ));
 
   # Store any possible contents in a new stack (like a sub-document).
   $self->_increase_indent;

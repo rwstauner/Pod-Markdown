@@ -76,6 +76,12 @@ And
 
 1. B
 2. D
+
+## No text after number
+
+1.
+
+        verbatim item
 EOMARKDOWN
 
 # check out Pod::IkiWiki (or something like that)...
@@ -216,6 +222,16 @@ B
 =item 2
 
 D
+
+=back
+
+=head2 No text after number
+
+=over
+
+=item 1
+
+  verbatim item
 
 =back
 
