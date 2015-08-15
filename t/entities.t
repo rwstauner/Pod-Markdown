@@ -26,8 +26,8 @@ sub entity_encode_ok {
 
 sub convert_both {
   my ($pod, $markdown, $verbatim, $desc, %opts) = @_;
-  convert_ok("B<< $pod >>", $markdown,  "$desc: inline html escaped", %opts);
-  convert_ok("C<< $pod >>", qq{`$verbatim`}, "$desc: html not escaped in code span", %opts);
+  convert_ok("B<<< $pod >>>", $markdown,  "$desc: inline html escaped", %opts);
+  convert_ok("C<<< $pod >>>", qq{`$verbatim`}, "$desc: html not escaped in code span", %opts);
 }
 
 my %_escape   = Pod::Markdown::__escape_sequences;
@@ -67,6 +67,26 @@ entity_encode_ok 'real html' => (
   entities => q{**h&amp;nbsp;=&lt;hr&gt;**},
 );
 
+
+# Test link text.
+entity_encode_ok 'html chars in link text' => (
+  q{L<< Some &amp; <thing>|http://some.where/ >>},
+  q{**[Some &amp;amp; &lt;thing>](http://some.where/)**},
+  entities => q{**[Some &amp;amp; &lt;thing&gt;](http://some.where/)**},
+  # Markdown will print this rather than making it a link,
+  # but I'm not sure what else to do about it.
+  verbatim => q{[Some &amp; <thing>](http://some.where/)},
+);
+
+entity_encode_ok 'html chars in url' => (
+  # This may not be a valid url but let this test demonstrate how it currently works.
+  q{L<< Yo|http://some.where?a=&amp;&lt=<tag> >>},
+  q{**[Yo](http://some.where?a=&amp;&lt=<tag>)**},
+  # Same as above (shrug).
+  verbatim => q{[Yo](http://some.where?a=&amp;&lt=<tag>)},
+);
+
+
 # Test with 'false' values to avoid conditional bugs.
 # In this case a bare zero won't trigger the need for an escape.
 entity_encode_ok 'false values' => (
@@ -103,6 +123,7 @@ entity_encode_ok 'literal occurrences of internal escape sequences are unaltered
   qq[**hi $_escape{amp} ($_escape{amp_code}) & $_escape{lt} ($_escape{lt_code}) < &amp;exclam;**],
   entities => qq[**hi $_e_escape{amp} ($_e_escape{amp_code}) &amp; $_e_escape{lt} ($_e_escape{lt_code}) &lt; &amp;exclam;**],
 );
+
 
 sub so_example {
   # Test case from http://stackoverflow.com/questions/28496298/escape-angle-brackets-using-podmarkdown {
