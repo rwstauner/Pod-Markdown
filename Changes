@@ -34,6 +34,12 @@ Revision history for Perl extension {{$dist->name}}
     (parse_from_file(), parse_from_filehandle(), and as_markdown())
     to further discourage use.
 
+  [New Packages]
+  - Added Pod::Perldoc::ToMarkdown to enable `perldoc -o Markdown ...`
+    Pod::Markdown maintains a backward compatible interface that is incompatible
+    with perldoc's `-o` so this module has been added to enable the functionality.
+    Thanks to Alberto Simões for investigating (gh-12) and providing some code to fix it (gh-13).
+
 2.002     2014-07-05T15:20:40Z
 
   - Docs: Add example of command line usage to Synopsis.
