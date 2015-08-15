@@ -13,7 +13,6 @@ our @ISA = qw(Exporter);
 our @EXPORT = (
   qw(
     convert_ok
-    have_entities_or
     hex_escape
     io_string
     eq_or_diff
@@ -31,10 +30,6 @@ sub import {
   strict->import;
   warnings->import;
   goto &Exporter::import;
-}
-
-sub have_entities_or {
-  $Pod::Markdown::HAS_HTML_ENTITIES ? $_[0] : $_[1];
 }
 
 sub hex_escape {

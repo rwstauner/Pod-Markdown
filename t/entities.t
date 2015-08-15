@@ -38,12 +38,15 @@ my %_e_escape = do {
 
 like $_e_escape{amp}, qr/&amp;/, 'entity-encoded escape sanity check';
 
-entity_encode_ok 'sanity check' => (
-  q{< & > E<0x2022>},
-  q{**< & > •**},
-  entities => "**&lt; &amp; &gt; ${\have_entities_or('&bull;', '&#x2022;')}**",
-  verbatim => q{< & > •},
-);
+with_and_without_entities {
+  my $char = shift ? '&bull;' : '&#x2022;';
+  entity_encode_ok 'sanity check' => (
+    q{< & > E<0x2022>},
+    q{**< & > •**},
+    entities => "**&lt; &amp; &gt; ${char}**",
+    verbatim => q{< & > •},
+  );
+};
 
 
 # This was an actual bug report.
@@ -101,8 +104,6 @@ entity_encode_ok 'literal occurrences of internal escape sequences are unaltered
   entities => qq[**hi $_e_escape{amp} ($_e_escape{amp_code}) &amp; $_e_escape{lt} ($_e_escape{lt_code}) &lt; &amp;exclam;**],
 );
 
-# TODO: test entity encoding with and without HTML::Entities.
-
 sub so_example {
   # Test case from http://stackoverflow.com/questions/28496298/escape-angle-brackets-using-podmarkdown {
   my $str = "=head1 OPTIONS\n\n=over 4\n\n=item B<< --file=<filename> >>\n\nFile name \n\n=back\n";
@@ -114,7 +115,6 @@ sub so_example {
   return $markdown;
 }
 
-# TODO: test with entities.
 eq_or_diff so_example(), "# OPTIONS\n\n- **--file=&lt;filename>**\n\n    File name \n",
   'SO example properly escaped';
 
