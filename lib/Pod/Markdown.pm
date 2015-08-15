@@ -671,7 +671,7 @@ sub handle_text {
   s/ /$NBSP/g
     if $stash->{nbsp};
 
-  # Unless we're in a code span or verbatim block.
+  # Unless we're in a code span, verbatim block, or formatted region.
   unless( $stash->{no_escape} ){
 
     # We could, in theory, alter what gets escaped according to context
@@ -862,7 +862,8 @@ sub   _end_head {
 
 ## Lists ##
 
-# TODO: over_empty
+# With Pod::Simple->parse_empty_lists(1) there could be an over_empty event,
+# but what would you do with that?
 
 sub _start_list {
   my ($self) = @_;
@@ -883,7 +884,6 @@ sub   _end_list {
   # but don't end with a double newline.
   my $text = $self->_chomp_all($self->_pop_stack_text);
 
-  # FIXME:
   $_[0]->_save_line($text . $/);
 }
 
