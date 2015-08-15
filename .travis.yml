@@ -8,6 +8,9 @@ perl:
 env:
   global:
     - COVERAGE=1
+  matrix:
+    - PERL_UNICODE=0
+    - PERL_UNICODE=SAD
 
 before_install:
   - eval $(curl https://travis-perl.github.io/init) --auto

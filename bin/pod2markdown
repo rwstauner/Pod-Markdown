@@ -34,6 +34,10 @@ $opts{output_encoding} = 'UTF-8' if delete $opts{utf8};
 my $in_fh  = get_handle(shift(@ARGV), '<', \*STDIN);
 my $out_fh = get_handle(shift(@ARGV), '>', \*STDOUT);
 
+# Undo any PERL_UNICODE effects.
+# Pod::Simple expects to receive bytes, and we're going to return bytes.
+binmode($_, ':bytes') for ($in_fh, $out_fh);
+
 convert($in_fh, $out_fh);
 
 sub convert {
