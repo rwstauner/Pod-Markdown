@@ -6,6 +6,30 @@ use warnings;
 # ABSTRACT: Convert POD text to Markdown
 
 use Pod::Markdown;
+use Getopt::Long;
+use Pod::Usage;
+
+my %opts = (
+  # Since we're writing to a file the module needs to know that it has to do
+  # some kind of encoding.  Default to UTF-8.
+  output_encoding => 'UTF-8',
+);
+
+GetOptions(\%opts, qw(
+  help|h
+  html_encode_chars|html-encode-chars=s
+  match_encoding|match-encoding|m
+  output_encoding|output-encoding|e=s
+  utf8|utf-8|u
+)) or pod2usage(2);
+pod2usage(1) if $opts{help};
+
+# TODO: Test PERL_UNICODE and/or layers on the handle?
+
+# Expand alias (-u is an alias for -e UTF-8).
+$opts{output_encoding} = 'UTF-8' if delete $opts{utf8};
+
+# TODO: Pod::Simple::parse_from_file(@ARGV[0,1]);
 
 my $in_fh  = get_handle(shift(@ARGV), '<', \*STDIN);
 my $out_fh = get_handle(shift(@ARGV), '>', \*STDOUT);
@@ -14,7 +38,7 @@ convert($in_fh, $out_fh);
 
 sub convert {
     my ($in_file, $out_file) = @_;
-    my $parser = Pod::Markdown->new;
+    my $parser = Pod::Markdown->new(%opts);
     $parser->output_fh($out_file);
     $parser->parse_file($in_file);
 }
@@ -46,11 +70,39 @@ sub get_handle {
 
 This program uses L<Pod::Markdown> to convert POD into Markdown sources.
 
+UTF-8 is the default output encoding
+if no encoding options are specified (see L</OPTIONS>).
+
 It accepts two optional arguments:
 
 =for :list
 * input pod file (defaults to C<STDIN>)
 * output markdown file (defaults to C<STDOUT>)
+
+=head1 OPTIONS
+
+=over
+
+=item --html-encode-chars
+
+A list of characters to encode as html entities.
+Pass a regexp character class, or C<1> to mean control chars, high-bit chars, and C<< <&>"' >>.
+
+See L<Pod::Markdown/html_encode_chars> for more information.
+
+=item --match-encoding (-m)
+
+Use the same C<< =encoding >> as the input pod for the output file.
+
+=item --output-encoding (-e)
+
+Specify the encoding for the output file.
+
+=item --utf8 (-u)
+
+Alias for C<< -e UTF-8 >>.
+
+=back
 
 =head1 SEE ALSO
 

@@ -24,6 +24,11 @@ Revision history for Perl extension {{$dist->name}}
   - Add `output_encoding` attribute to specify the desired encoding
     to apply to the output handle.
 
+  [pod2markdown script]
+  - Add command line options corresponding to new module attributes.
+  - The script now defaults to UTF-8 encoding if no encoding options are specified.
+    Previous versions did not produce consistent output and would sometimes emit warnings.
+
   [Documentation]
   - Remove documentation for deprecated API
     (parse_from_file(), parse_from_filehandle(), and as_markdown())

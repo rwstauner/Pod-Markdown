@@ -1,0 +1,5 @@
+=encoding cp1252
+
+=head1 cr
+
+{ `©` }
