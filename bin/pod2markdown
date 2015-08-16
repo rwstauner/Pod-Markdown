@@ -87,9 +87,12 @@ It accepts two optional arguments:
 
 =over
 
+=for stopwords
+html
+
 =item --html-encode-chars
 
-A list of characters to encode as html entities.
+A list of characters to encode as HTML entities.
 Pass a regexp character class, or C<1> to mean control chars, high-bit chars, and C<< <&>"' >>.
 
 See L<Pod::Markdown/html_encode_chars> for more information.
