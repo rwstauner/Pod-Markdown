@@ -32,7 +32,8 @@ sub convert_encodings {
 
 # Pod::Simple defaults to cp1252 (previously latin1) without an =encoding.
 with_and_without_entities {
-  my $char = shift ? '&Agrave;' : '&#xC0;';
+  my $char = $_[0] ? '&Agrave;' : '&#xC0;';
+
   foreach my $enc ( 'latin1', 'cp1252', '' ){
     test_encoding( $enc => "\xc0",
       utf8     => "\xc3\x80",
@@ -43,7 +44,7 @@ with_and_without_entities {
 };
 
 with_and_without_entities {
-  my $bullet = shift ? '&bull;' : '&#x2022;';
+  my $bullet = $_[0] ? '&bull;' : '&#x2022;';
 
   test_encoding( cp1252 => "\x95",
     utf8     => "\xe2\x80\xa2",
@@ -53,7 +54,7 @@ with_and_without_entities {
 };
 
 with_and_without_entities {
-  my $currency = shift ? '&curren;' : '&#xA4;';
+  my $currency = $_[0] ? '&curren;' : '&#xA4;';
 
   test_encoding( latin1 => "\xa4",
     match    => "\xa4",

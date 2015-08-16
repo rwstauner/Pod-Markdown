@@ -39,7 +39,7 @@ my %_e_escape = do {
 like $_e_escape{amp}, qr/&amp;/, 'entity-encoded escape sanity check';
 
 with_and_without_entities {
-  my $char = shift ? '&bull;' : '&#x2022;';
+  my $char = $_[0] ? '&bull;' : '&#x2022;';
   entity_encode_ok 'sanity check' => (
     q{< & > E<0x2022>},
     q{**< & > •**},

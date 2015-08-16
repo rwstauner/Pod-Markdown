@@ -17,7 +17,7 @@ sub code {
     # Use the same value for both if only one is specified.
     $ents->[1] = $ents->[0] if @$ents == 1;
     with_and_without_entities {
-      my $e = $ents->[ shift ? 0 : 1 ];
+      my $e = $ents->[ $_[0] ? 0 : 1 ];
       convert_code_ok($pod, $e, $desc, {
         html_encode_chars => '^\x20-\x7e', # most chars
       });
