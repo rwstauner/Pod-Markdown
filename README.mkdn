@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 2.002
+version 3.000
 
 # SYNOPSIS
 
@@ -20,11 +20,6 @@ version 2.002
     $parser->parse_string_document($pod_string);
 
     # See Pod::Simple docs for more.
-
-    # Legacy (Pod::Parser-based) API is supported for backward compatibility:
-    my $parser = Pod::Markdown->new;
-    $parser->parse_from_filehandle(\*STDIN);
-    print $parser->as_markdown;
 
 # DESCRIPTION
 
@@ -42,6 +37,28 @@ To change which regions are accepted use the [Pod::Simple](https://metacpan.org/
 
     my $parser = Pod::Markdown->new;
     $parser->unaccept_targets(qw( markdown html ));
+
+## A note on encoding and escaping
+
+The common [Pod::Simple](https://metacpan.org/pod/Pod::Simple) API returns a character string.
+If you want Pod::Markdown to return encoded octets, there are two attributes
+to assist: ["match\_encoding"](#match_encoding) and ["output\_encoding"](#output_encoding).
+
+When an output encoding is requested any characters that are not valid
+for that encoding will be escaped as HTML entities.
+
+This is not 100% safe, however.
+
+Markdown escapes all ampersands inside of code spans, so escaping a character
+as an HTML entity inside of a code span will not be correct.
+However, with pod's `S` and `E` sequences it is possible
+to end up with high-bit characters inside of code spans.
+
+So, while `output_encoding => 'ascii'` can work, it is not recommended.
+For these reasons (and more), `UTF-8` is the default, fallback encoding (when one is required).
+
+If you prefer HTML entities over literal characters you can use
+["html\_encode\_chars"](#html_encode_chars) which will only operate outside of code spans (where it is safe).
 
 # METHODS
 
@@ -106,6 +123,50 @@ The constructor accepts the following named arguments:
     Specifies whether or not to print author/title meta tags at the top of the document.
     Default is false.
 
+## html\_encode\_chars
+
+A string of characters to encode as html entities
+(using ["encode\_entities" in HTML::Entities](https://metacpan.org/pod/HTML::Entities#encode_entities) if available, falling back to numeric entities if not).
+
+Possible values:
+
+- A value of `1` will use the default set of characters from [HTML::Entities](https://metacpan.org/pod/HTML::Entities) (control chars, high-bit chars, and `<&>"'`).
+- A false value will disable.
+- Any other value is used as a string of characters (like a regular expression character class).
+
+By default this is disabled and literal characters will be in the output stream.
+If you specify a desired ["output\_encoding"](#output_encoding) any characters not valid for that encoding will be HTML entity encoded.
+
+**Note** that Markdown requires ampersands (`&`) and left angle brackets (`<`)
+to be entity-encoded if they could otherwise be interpreted as html entities.
+If this attribute is configured to encode those characters, they will always be encoded.
+If not, the module will make an effort to only encode the ones required,
+so there will be less html noise in the output.
+
+## match\_encoding
+
+Boolean: If true, use the `=encoding` of the input pod
+as the encoding for the output.
+
+If no encoding is specified, [Pod::Simple](https://metacpan.org/pod/Pod::Simple) will guess the encoding
+if it sees a high-bit character.
+
+If no encoding is guessed (or the specified encoding is unusable),
+["output\_encoding"](#output_encoding) will be used if it was specified.
+Otherwise `UTF-8` will be used.
+
+This attribute is not recommended
+but is provided for consistency with other pod converters.
+
+Defaults to false.
+
+## output\_encoding
+
+The encoding to use when writing to the output file handle.
+
+If neither this nor ["match\_encoding"](#match_encoding) are specified,
+a character string will be returned in whatever [Pod::Simple](https://metacpan.org/pod/Pod::Simple) output method you specified.
+
 ## man\_url\_prefix
 
 Returns the url prefix in use for man pages.
@@ -128,11 +189,6 @@ to an internal section in this document.
 
 Returns the boolean value indicating
 whether or not meta tags will be printed.
-
-## as\_markdown
-
-Returns the parsed POD as Markdown. Takes named arguments. If the `with_meta`
-argument is given a positive value, meta tags are generated as well.
 
 ## format\_man\_url
 
@@ -210,7 +266,7 @@ in addition to those websites please use your favorite search engine to discover
 ## Bugs / Feature Requests
 
 Please report any bugs or feature requests by email to `bug-pod-markdown at rt.cpan.org`, or through
-the web interface at [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Pod-Markdown](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Pod-Markdown). You will be automatically notified of any
+the web interface at [https://rt.cpan.org/Public/Bug/Report.html?Queue=Pod-Markdown](https://rt.cpan.org/Public/Bug/Report.html?Queue=Pod-Markdown). You will be automatically notified of any
 progress on the request by the system.
 
 ## Source Code
@@ -233,15 +289,17 @@ progress on the request by the system.
 - Cindy Wang (CindyLinz) <cindylinz@gmail.com>
 - Graham Ollis <plicease@cpan.org>
 - Mike Covington <mfcovington@gmail.com>
+- motemen <motemen@cpan.org>
+- moznion <moznion@cpan.org>
 - Peter Vereshagin <veresc@cpan.org>
 - Ryan C. Thompson <rthompson@cpan.org>
 - Yasutaka ATARASHI <yakex@cpan.org>
-- motemen <motemen@cpan.org>
-- moznion <moznion@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2004 by Marcel Gruenauer.
+This software is copyright (c) 2009-2011 by Marcel Gruenauer.
+
+This software is copyright (c) 2011 by Randy Stauner.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
