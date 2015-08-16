@@ -28,6 +28,7 @@ Revision history for Perl extension {{$dist->name}}
   - Add command line options corresponding to new module attributes.
   - The script now defaults to UTF-8 encoding if no encoding options are specified.
     Previous versions did not produce consistent output and would sometimes emit warnings.
+    Closes gh-14 and rt-101536.
 
   [Documentation]
   - Remove documentation for deprecated API
