@@ -17,6 +17,7 @@ our @EXPORT = (
     io_string
     eq_or_diff
     slurp_file
+    test_parser
     warning
     with_and_without_entities
   ),
@@ -65,7 +66,7 @@ sub convert_ok {
   local $Test::Builder::Level = $Test::Builder::Level + 1;
   my ($pod, $exp, $desc, %opts) = @_;
   my %attr   = %{ $opts{attr} || {} };
-  my $parser = Pod::Markdown->new(%attr);
+  my $parser = test_parser(%attr);
   my $prefix = $opts{prefix} || '';
   my $podenc = ($opts{encoding} ? "=encoding $opts{encoding}\n\n" : '');
 
@@ -83,9 +84,24 @@ sub convert_ok {
   $parser->output_string(\(my $got));
   $parser->parse_string_document("$podenc=pod\n\n$prefix$pod\n\n=cut\n");
 
-  chomp for ($got, $exp);
+  # Chomp both ends.
+  for ($got, $exp) {
+    s/^\n+//;
+    s/\n+$//;
+  }
 
   eq_or_diff($got, $prefix.$exp, $desc);
+}
+
+sub test_parser {
+  Pod::Markdown->new(
+    # Default to very simple values for simple tests.
+    perldoc_url_prefix       => 'pod://',
+    # Just return the raw fragment so we know that it isn't unexpectedly mangled.
+    perldoc_fragment_format  => sub { $_ },
+    markdown_fragment_format => sub { $_ },
+    @_
+  );
 }
 
 { package # no_index

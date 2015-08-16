@@ -5,7 +5,7 @@ use warnings;
 use lib 't/lib';
 use MarkdownTests;
 
-my $pod_prefix = Pod::Markdown->new->perldoc_url_prefix;
+my $pod_prefix = test_parser()->perldoc_url_prefix;
 
 sub code {
   my ($pod, $exp, %opts) = @_;
