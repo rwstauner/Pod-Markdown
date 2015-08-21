@@ -3,6 +3,8 @@ use warnings;
 
 package Pod::Perldoc::ToMarkdown;
 
+# ABSTRACT: Enable `perldoc -o Markdown`
+
 use parent qw(Pod::Markdown);
 
 sub new {
