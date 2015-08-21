@@ -4,7 +4,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 3.000
+version 3.001
 
 # SYNOPSIS
 
@@ -277,27 +277,25 @@ progress on the request by the system.
 
 # AUTHORS
 
-- Marcel Gruenauer <marcel@cpan.org>
-- Victor Moral <victor@taquiones.net>
-- Ryan C. Thompson <rct at thompsonclan d0t org>
-- Aristotle Pagaltzis <pagaltzis@gmx.de>
-- Randy Stauner <rwstauner@cpan.org>
+- Marcel Gruenauer &lt;marcel@cpan.org>
+- Victor Moral &lt;victor@taquiones.net>
+- Ryan C. Thompson &lt;rct at thompsonclan d0t org>
+- Aristotle Pagaltzis &lt;pagaltzis@gmx.de>
+- Randy Stauner &lt;rwstauner@cpan.org>
 
 # CONTRIBUTORS
 
-- Aristotle Pagaltzis <aristotle@cpan.org>
-- Cindy Wang (CindyLinz) <cindylinz@gmail.com>
-- Graham Ollis <plicease@cpan.org>
-- Mike Covington <mfcovington@gmail.com>
-- motemen <motemen@cpan.org>
-- moznion <moznion@cpan.org>
-- Peter Vereshagin <veresc@cpan.org>
-- Ryan C. Thompson <rthompson@cpan.org>
-- Yasutaka ATARASHI <yakex@cpan.org>
+- Aristotle Pagaltzis &lt;aristotle@cpan.org>
+- Cindy Wang (CindyLinz) &lt;cindylinz@gmail.com>
+- Graham Ollis &lt;plicease@cpan.org>
+- Mike Covington &lt;mfcovington@gmail.com>
+- motemen &lt;motemen@cpan.org>
+- moznion &lt;moznion@cpan.org>
+- Peter Vereshagin &lt;veresc@cpan.org>
+- Ryan C. Thompson &lt;rthompson@cpan.org>
+- Yasutaka ATARASHI &lt;yakex@cpan.org>
 
 # COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2009-2011 by Marcel Gruenauer.
 
 This software is copyright (c) 2011 by Randy Stauner.
 
