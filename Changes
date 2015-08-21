@@ -2,6 +2,8 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+  - Increase Pod::Simple requirement to 3.26 for detected_encoding().
+
 3.000     2015-08-16T21:55:14Z
 
   [Bug Fixes]

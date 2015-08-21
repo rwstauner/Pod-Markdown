@@ -6,7 +6,7 @@ use warnings;
 package Pod::Markdown;
 # ABSTRACT: Convert POD to Markdown
 
-use Pod::Simple 3.14 (); # external links with text
+use Pod::Simple 3.26 (); # detected_encoding
 use parent qw(Pod::Simple::Methody);
 use Encode ();
 
