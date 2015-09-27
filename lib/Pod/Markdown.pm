@@ -6,7 +6,7 @@ use warnings;
 package Pod::Markdown;
 # ABSTRACT: Convert POD to Markdown
 
-use Pod::Simple 3.26 (); # detected_encoding
+use Pod::Simple 3.27 (); # detected_encoding and keep_encoding bug fix
 use parent qw(Pod::Simple::Methody);
 use Encode ();
 

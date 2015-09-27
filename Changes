@@ -2,6 +2,8 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+  - Bump Pod::Simple prereq to fix bugs that were causing test failures.
+
 3.002     2015-08-21T03:24:24Z
 
   - Add attribution to changelog.
