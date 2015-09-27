@@ -10,8 +10,11 @@ my $pod_prefix = test_parser()->perldoc_url_prefix;
 sub code {
   my ($pod, $exp, %opts) = @_;
   my $desc = delete $opts{desc} || $pod;
+  my %args = (
+    init => delete($opts{init}),
+  );
 
-  convert_code_ok($pod, $exp, $desc);
+  convert_code_ok($pod, $exp, $desc, {}, %args);
 
   if( my $ents = delete $opts{entities} ){
     # Use the same value for both if only one is specified.
@@ -20,20 +23,20 @@ sub code {
       my $e = $ents->[ $_[0] ? 0 : 1 ];
       convert_code_ok($pod, $e, $desc, {
         html_encode_chars => '^\x20-\x7e', # most chars
-      });
+      }, %args);
     };
   }
 
   if( my $utf8 = delete $opts{utf8} ){
-    convert_code_ok($pod, $utf8, $desc, { output_encoding => 'UTF-8' })
+    convert_code_ok($pod, $utf8, $desc, { output_encoding => 'UTF-8' }, %args);
   }
 
   die "Invalid args: %opts" if keys %opts;
 }
 
 sub convert_code_ok {
-  my ($pod, $exp, $desc, $attr) = @_;
-  convert_ok($pod, $exp, $desc, attr => $attr, verbose => 1,
+  my ($pod, $exp, $desc, $attr, %opts) = @_;
+  convert_ok($pod, $exp, $desc, %opts, attr => $attr, verbose => 1,
     # Prefix line to avoid escaping beginning-of-line characters (like `>`).
     prefix  => 'Code: ',
   );
