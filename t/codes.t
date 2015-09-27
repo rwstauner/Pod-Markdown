@@ -86,6 +86,10 @@ code 'S<C<$x & $y>>', '`$x & $y`', # Literal NBSP chars.
   # Amps inside code spans will get escaped, so leave nsbp bare.
   entities => ['`$x & $y`'];
 
+code 'S<$x C<& $y>>', '$x `& $y`', # Just spaces.
+  entities => ['$x `& $y`'],
+  init => sub { $_[0]->nbsp_for_S(0) };
+
 # Zero-width entries.
 code 'X<index>', '';
 code 'Z<>',      '';

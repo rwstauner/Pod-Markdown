@@ -160,6 +160,7 @@ sub new {
 
   my $self = $class->SUPER::new();
   $self->preserve_whitespace(1);
+  $self->nbsp_for_S(1);
   $self->accept_targets(qw( markdown html ));
 
   while( my ($attr, $val) = each %args ){
@@ -664,13 +665,6 @@ sub handle_text {
   my $stash = $self->_private;
   local $_  = $_[1];
 
-  # NOTE: If this document ends up forcing ascii encoding (which might not be known at this
-  # point) and this is a code block, these will get entity-encoded which will be
-  # wrong.  In order to solve that we might have to escape them like we do [&<]
-  # or simply ignore nbsp if no_escape.
-  s/ /$NBSP/g
-    if $stash->{nbsp};
-
   # Unless we're in a code span, verbatim block, or formatted region.
   unless( $stash->{no_escape} ){
 
@@ -1057,9 +1051,6 @@ sub   end_C {
 # Use code spans for F<>.
 sub start_F { shift->start_C(@_); }
 sub   end_F { shift  ->end_C(@_); }
-
-sub start_S { $_[0]->_private->{nbsp}++; }
-sub   end_S { $_[0]->_private->{nbsp}--; }
 
 sub start_L {
   my ($self, $flags) = @_;

@@ -3,6 +3,8 @@ Revision history for Perl extension {{$dist->name}}
 {{$NEXT}}
 
   - Bump Pod::Simple prereq to fix bugs that were causing test failures.
+  - Use Pod::Simple's nbsp_for_S(1) by default instead of handling S<> sequences internally.
+    This means the feature can now also be disabled if desired.
 
 3.002     2015-08-21T03:24:24Z
 
