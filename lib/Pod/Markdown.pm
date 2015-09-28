@@ -10,8 +10,6 @@ use Pod::Simple 3.27 (); # detected_encoding and keep_encoding bug fix
 use parent qw(Pod::Simple::Methody);
 use Encode ();
 
-my $NBSP = chr(0xA0);
-
 our %URL_PREFIXES = (
   sco      => 'http://search.cpan.org/perldoc?',
   metacpan => 'https://metacpan.org/pod/',
@@ -56,8 +54,9 @@ $URL_PREFIXES{perldoc} = $URL_PREFIXES{metacpan};
   # Add a few very common ones for consistency and readability
   # (in case HTML::Entities isn't available).
   %entities = (
-    $NBSP     => 'nbsp',
-    chr(0xA9) => 'copy',
+    # Pod::Markdown has always required 5.8 so unicode_to_native will be available.
+    chr(utf8::unicode_to_native(0xA0)) => 'nbsp',
+    chr(utf8::unicode_to_native(0xA9)) => 'copy',
     %entities
   );
 
