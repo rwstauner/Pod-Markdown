@@ -56,6 +56,14 @@ entity_encode_ok 'command lines args' => (
   entities => q{**--file=&lt;filename&gt;**},
 );
 
+# Ditto
+entity_encode_ok 'email address' => (
+  q{Email Address E<lt>foo@bar.comE<gt>},
+  q{**Email Address <foo@bar.com>**},
+  entities => q{**Email Address &lt;foo@bar.com&gt;**},
+  verbatim => q{Email Address <foo@bar.com>},
+);
+
 # Use real html tags.
 # This is a good example to copy/paste into a markdown processor
 # to see how it handles the html.

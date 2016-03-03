@@ -2,6 +2,9 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+  - Leave email addresses (<foo@bar.com>) in tact for Markdown to process.
+    Thanks to Andreas Boesen for reporting [rt-112631].
+
 3.003     2015-09-28T00:29:45Z
 
   - Bump Pod::Simple prereq to fix bugs that were causing test failures.

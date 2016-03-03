@@ -622,6 +622,18 @@ sub _encode_or_escape_entities {
   return $_;
 }
 
+# From Markdown.pl version 1.0.1 line 1172 (_DoAutoLinks).
+my $EMAIL_MARKER = qr{
+#   <                  # Opening token is in parent regexp.
+        (?:mailto:)?
+    (
+      [-.\w]+
+      \@
+      [-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+
+    )
+    >
+}x;
+
 # Process any escapes we put in the text earlier,
 # now that the text is complete (end of a block).
 sub _process_escapes {
@@ -649,7 +661,8 @@ sub _process_escapes {
 
   if( $stash->{encode_lt} ){
     # Encode < if succeeded by chars that look like an html tag.
-    s,$_escape{lt_re}((?:[a-z/?\$!])?),
+    # Leave email addresses (<foo@bar.com>) for Markdown to process.
+    s,$_escape{lt_re}((?=$EMAIL_MARKER)|(?:[a-z/?\$!])?),
       $1 ? '<'.$2 : $2 ?  '&lt;'.$2 : '<',egos;
   }
 
