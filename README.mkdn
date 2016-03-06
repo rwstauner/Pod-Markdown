@@ -1,12 +1,17 @@
+[![Build Status](https://travis-ci.org/rwstauner/Pod-Markdown.svg?branch=master)](https://travis-ci.org/rwstauner/Pod-Markdown)
+[![Coverage Status](https://coveralls.io/repos/rwstauner/Pod-Markdown/badge.svg?branch=master)](https://coveralls.io/r/rwstauner/Pod-Markdown?branch=master)
+[![Kwalitee status](http://cpants.cpanauthors.org/dist/Pod-Markdown.png)](http://cpants.charsbar.org/dist/overview/Pod-Markdown)
+
 # NAME
 
 Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 3.003
+version 3.004
 
-# SYNOPSIS
+my ($pod\_string);
+&#x3d;head1 SYNOPSIS
 
     # Pod::Simple API is supported.
 
@@ -296,8 +301,6 @@ progress on the request by the system.
 - Yasutaka ATARASHI &lt;yakex@cpan.org>
 
 # COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2009-2011 by Marcel Gruenauer.
 
 This software is copyright (c) 2011 by Randy Stauner.
 

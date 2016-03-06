@@ -2,6 +2,8 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+3.004     2016-03-06T02:22:21Z
+
   - Leave email addresses (<foo@bar.com>) in tact for Markdown to process.
     Thanks to Andreas Boesen for reporting [rt-112631].
 
