@@ -2,6 +2,10 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+3.005     2016-03-06T02:51:24Z
+
+  - Fix pod.
+
 3.004     2016-03-06T02:22:21Z
 
   - Leave email addresses (<foo@bar.com>) in tact for Markdown to process.

@@ -8,10 +8,9 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 3.004
+version 3.005
 
-my ($pod\_string);
-&#x3d;head1 SYNOPSIS
+# SYNOPSIS
 
     # Pod::Simple API is supported.
 
@@ -282,23 +281,23 @@ progress on the request by the system.
 
 # AUTHORS
 
-- Marcel Gruenauer &lt;marcel@cpan.org>
-- Victor Moral &lt;victor@taquiones.net>
+- Marcel Gruenauer <marcel@cpan.org>
+- Victor Moral <victor@taquiones.net>
 - Ryan C. Thompson &lt;rct at thompsonclan d0t org>
-- Aristotle Pagaltzis &lt;pagaltzis@gmx.de>
-- Randy Stauner &lt;rwstauner@cpan.org>
+- Aristotle Pagaltzis <pagaltzis@gmx.de>
+- Randy Stauner <rwstauner@cpan.org>
 
 # CONTRIBUTORS
 
-- Aristotle Pagaltzis &lt;aristotle@cpan.org>
-- Cindy Wang (CindyLinz) &lt;cindylinz@gmail.com>
-- Graham Ollis &lt;plicease@cpan.org>
-- Mike Covington &lt;mfcovington@gmail.com>
-- motemen &lt;motemen@cpan.org>
-- moznion &lt;moznion@cpan.org>
-- Peter Vereshagin &lt;veresc@cpan.org>
-- Ryan C. Thompson &lt;rthompson@cpan.org>
-- Yasutaka ATARASHI &lt;yakex@cpan.org>
+- Aristotle Pagaltzis <aristotle@cpan.org>
+- Cindy Wang (CindyLinz) <cindylinz@gmail.com>
+- Graham Ollis <plicease@cpan.org>
+- Mike Covington <mfcovington@gmail.com>
+- motemen <motemen@cpan.org>
+- moznion <moznion@cpan.org>
+- Peter Vereshagin <veresc@cpan.org>
+- Ryan C. Thompson <rthompson@cpan.org>
+- Yasutaka ATARASHI <yakex@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
