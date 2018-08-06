@@ -8,7 +8,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 3.100
+version 3.101
 
 # SYNOPSIS
 
@@ -260,6 +260,10 @@ Format fragment for [metacpan.org](https://metacpan.org/pod/metacpan.org)
 Format fragment for [search.cpan.org](https://metacpan.org/pod/search.cpan.org)
 (uses ["format\_fragment\_pod\_simple\_html"](#format_fragment_pod_simple_html)).
 
+## is\_local\_module
+
+Uses `local_module_re` to determine if passed module is a "local" module.
+
 # SEE ALSO
 
 - [pod2markdown](https://metacpan.org/pod/pod2markdown) - script included for command line usage
@@ -320,8 +324,6 @@ progress on the request by the system.
 - Yasutaka ATARASHI <yakex@cpan.org>
 
 # COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2009-2011 by Marcel Gruenauer.
 
 This software is copyright (c) 2011 by Randy Stauner.
 
