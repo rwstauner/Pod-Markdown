@@ -20,6 +20,7 @@ $URL_PREFIXES{$_} = $URL_PREFIXES{metacpan}
 
 our $LOCAL_MODULE_RE = qr/^(Local::|\w*?_\w*)/;
 
+## no critic
 #{
   our $HAS_HTML_ENTITIES;
 
@@ -78,6 +79,7 @@ our $LOCAL_MODULE_RE = qr/^(Local::|\w*?_\w*)/;
   my $DEFAULT_ENTITY_CHARS = '^\n\r\t !\#\$%\(-;=?-~';
 
 #}
+## use critic
 
 # Use hash for simple "exists" check in `new` (much more accurate than `->can`).
 my %attributes = map { ($_ => 1) }
@@ -1374,6 +1376,7 @@ handle_text
 end_.+
 start_.+
 encode_entities
+is_local_module
 
 =for test_synopsis
 my ($pod_string);
