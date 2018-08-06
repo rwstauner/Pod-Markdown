@@ -2,6 +2,9 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+  - Add "local_module_url_prefix" and "local_module_re" args
+    to allow pointing links for local modules to another site [rt-120452].
+
 3.005     2016-03-06T02:51:24Z
 
   - Fix pod.

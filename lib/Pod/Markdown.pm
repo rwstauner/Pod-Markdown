@@ -15,7 +15,10 @@ our %URL_PREFIXES = (
   metacpan => 'https://metacpan.org/pod/',
   man      => 'http://man.he.net/man',
 );
-$URL_PREFIXES{perldoc} = $URL_PREFIXES{metacpan};
+$URL_PREFIXES{$_} = $URL_PREFIXES{metacpan}
+  for qw(perldoc local_module);
+
+our $LOCAL_MODULE_RE = qr/^(Local::|\w*?_\w*)/;
 
 #{
   our $HAS_HTML_ENTITIES;
@@ -82,6 +85,8 @@ my %attributes = map { ($_ => 1) }
     html_encode_chars
     match_encoding
     output_encoding
+    local_module_re
+    local_module_url_prefix
     man_url_prefix
     perldoc_url_prefix
     perldoc_fragment_format
@@ -96,6 +101,16 @@ my %attributes = map { ($_ => 1) }
 The constructor accepts the following named arguments:
 
 =begin :list
+
+* C<local_module_url_prefix>
+Alters the perldoc urls that are created from C<< LE<lt>E<gt> >> codes
+when the module is a "local" module (C<"Local::*"> or C<"Foo_Corp::*"> (see L<perlmodlib>)).
+
+The default is to use C<perldoc_url_prefix>.
+
+* C<local_module_re>
+Alternate regular expression for determining "local" modules.
+Default is C<< our $LOCAL_MODULE_RE = qr/^(Local::|\w*?_\w*)/ >>.
 
 * C<man_url_prefix>
 Alters the man page urls that are created from C<< LE<lt>E<gt> >> codes.
@@ -162,6 +177,9 @@ sub new {
   $self->nbsp_for_S(1);
   $self->accept_targets(qw( markdown html ));
 
+  # Default to the global, but allow it to be overwritten in args.
+  $self->local_module_re($LOCAL_MODULE_RE);
+
   while( my ($attr, $val) = each %args ){
     # NOTE: Checking exists on a private var means we don't allow Pod::Simple
     # attributes to be set this way.  It's not very consistent, but I think
@@ -183,7 +201,7 @@ sub new {
   }
 
     # TODO: move this logic to setter (and call _prepare_fragment_format).
-    for my $type ( qw( perldoc man ) ){
+    for my $type ( qw( local_module perldoc man ) ){
         my $attr  = $type . '_url_prefix';
         # Use provided argument or default alias.
         my $url = $self->$attr || $type;
@@ -273,6 +291,14 @@ The encoding to use when writing to the output file handle.
 
 If neither this nor L</match_encoding> are specified,
 a character string will be returned in whatever L<Pod::Simple> output method you specified.
+
+=method local_module_re
+
+Returns the regular expression used to determine local modules.
+
+=method local_module_url_prefix
+
+Returns the url prefix in use for local modules.
 
 =method man_url_prefix
 
@@ -1185,7 +1211,10 @@ and L</markdown_fragment_format> is used (which can be customized).
 sub format_perldoc_url {
   my ($self, $name, $section) = @_;
 
-  my $url_prefix = $self->perldoc_url_prefix;
+  my $url_prefix = $self->is_local_module($name)
+    ? $self->local_module_url_prefix
+    : $self->perldoc_url_prefix;
+
   my $url = '';
 
   # If the link is to another module (external link).
@@ -1328,6 +1357,12 @@ Format fragment for L<search.cpan.org>
 
 sub format_fragment_metacpan { shift->format_fragment_pod_simple_xhtml(@_); }
 sub format_fragment_sco      { shift->format_fragment_pod_simple_html(@_);  }
+
+sub is_local_module {
+  my ($self, $name) = @_;
+
+  return (defined($name) && $name =~ $self->local_module_re);
+}
 
 1;
 

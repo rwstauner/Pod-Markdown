@@ -104,6 +104,18 @@ my @tests = (
 ['pod alias: metacpan', q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo::Bar)^,       perldoc_url_prefix => 'metacpan'],
 ['pod alias: perldoc',  q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo::Bar)^,       perldoc_url_prefix => 'perldoc'],
 
+# Local Module URLs
+['Local::* default',     q<Local::Foo>,    qq^[Local::Foo](https://metacpan.org/pod/Local::Foo)^],
+['Local::* custom',      q<Local::Foo>,    qq^[Local::Foo](local://Local::Foo)^,                     local_module_url_prefix => 'local://'],
+['Foo_Corp::* default',  q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](https://metacpan.org/pod/Foo_Corp::Bar)^],
+['Foo_Corp::* custom',   q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](local://Foo_Corp::Bar)^,              local_module_url_prefix => 'local://'],
+
+['Normal::* is not local',  q<Normal::Foo>, qq^[Normal::Foo](https://metacpan.org/pod/Normal::Foo)^, local_module_url_prefix => 'local://'],
+
+# custom matcher
+['Normal::* with custom RE',  q<Normal::Foo>, qq^[Normal::Foo](local://Normal::Foo)^, local_module_re => qr/Normal/, local_module_url_prefix => 'local://'],
+['NonLocal* with custom RE',  q<NonLocal::Foo>, qq^[NonLocal::Foo](https://metacpan.org/pod/NonLocal::Foo)^, local_module_re => qr/Normal/, local_module_url_prefix => 'local://'],
+
 );
 
 # Most of these examples were internal links
