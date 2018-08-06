@@ -103,20 +103,39 @@ my @tests = (
 ['pod alias: sco',      q<Foo::Bar>, qq^[Foo::Bar](http://search.cpan.org/perldoc?Foo::Bar)^, perldoc_url_prefix => 'sco'],
 ['pod alias: metacpan', q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo::Bar)^,       perldoc_url_prefix => 'metacpan'],
 ['pod alias: perldoc',  q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo::Bar)^,       perldoc_url_prefix => 'perldoc'],
+);
 
 # Local Module URLs
-['Local::* default',     q<Local::Foo>,    qq^[Local::Foo](https://metacpan.org/pod/Local::Foo)^],
-['Local::* custom',      q<Local::Foo>,    qq^[Local::Foo](local://Local::Foo)^,                     local_module_url_prefix => 'local://'],
-['Foo_Corp::* default',  q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](https://metacpan.org/pod/Foo_Corp::Bar)^],
-['Foo_Corp::* custom',   q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](local://Foo_Corp::Bar)^,              local_module_url_prefix => 'local://'],
+{
+  my $p = {};
+  #'<,'>perldo if (s/^\[|\],$//g){ $a = [map { s/^\s+|\s+$//gr } split /,/, $_, 4]; @$a > 2 and $_ = "  test_link({$a->[3]}, $a->[1], $a->[2], $a->[0]);" }
 
-['Normal::* is not local',  q<Normal::Foo>, qq^[Normal::Foo](https://metacpan.org/pod/Normal::Foo)^, local_module_url_prefix => 'local://'],
+  test_link($p, q<Local::Foo>, qq^[Local::Foo](${pod_prefix}Local::Foo)^,
+    'Local::* defaults to perldoc');
+  test_link($p, q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](${pod_prefix}Foo_Corp::Bar)^,
+    'Foo_Corp::* defaults to perldoc');
 
-# custom matcher
-['Normal::* with custom RE',  q<Normal::Foo>, qq^[Normal::Foo](local://Normal::Foo)^, local_module_re => qr/Normal/, local_module_url_prefix => 'local://'],
-['NonLocal* with custom RE',  q<NonLocal::Foo>, qq^[NonLocal::Foo](https://metacpan.org/pod/NonLocal::Foo)^, local_module_re => qr/Normal/, local_module_url_prefix => 'local://'],
+  $p->{perldoc_url_prefix} = 'perldoc://';
+  test_link($p, q<Local::Foo>, qq^[Local::Foo](perldoc://Local::Foo)^,
+    'local module without custom url respects perldoc_url_prefix');
 
-);
+  $p->{local_module_url_prefix} = 'local://';
+  test_link($p, q<Local::Foo>, qq^[Local::Foo](local://Local::Foo)^,
+    'Local::* custom url');
+  test_link($p, q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](local://Foo_Corp::Bar)^,
+    'Foo_Corp::* custom url');
+
+  test_link($p, q<Normal::Foo>, qq^[Normal::Foo](perldoc://Normal::Foo)^,
+    'non local module');
+
+  $p->{local_module_re} = qr/Normal/;
+  test_link($p, q<Normal::Foo>,   qq^[Normal::Foo](local://Normal::Foo)^,
+    'Normal::* with custom RE');
+  test_link($p, q<NonLocal::Foo>, qq^[NonLocal::Foo](perldoc://NonLocal::Foo)^,
+    'NonLocal* with custom RE');
+  test_link($p, q<Local::Foo>, qq^[Local::Foo](perldoc://Local::Foo)^,
+    'even Local::* uses perldoc when custom re does not match');
+}
 
 # Most of these examples were internal links
 # so we add the perldoc name to make testing easier.
@@ -223,13 +242,14 @@ foreach my $test ( @tests ){
   my ($desc, $pod, $mkdn, %opts) = @$test;
   %opts = %defaults unless %opts;
   test_link(
-    Pod::Markdown->new(%opts),
+    \%opts,
     $pod, $mkdn, $desc,
   );
 }
 
 sub test_link {
-  my ($parser, $pod, $mkdn, $desc) = @_;
+  my ($opts, $pod, $mkdn, $desc) = @_;
+  my $parser = Pod::Markdown->new(%$opts);
 
   SKIP: {
     skip 'alt text with schemes/absolute URLs not supported until perl 5.12 / Pod::ParseLink 1.10', 1
@@ -249,12 +269,12 @@ sub test_fragments {
     test_link(
       # Only some combinations of these will normally make sense
       # but it makes the function reusable.
-      Pod::Markdown->new(
+      {
         perldoc_fragment_format => $format,
         perldoc_url_prefix      => ':', # easier
         markdown_fragment_format => $format,
         %opts,
-      ),
+      },
       $pod,
       $tests->{$format},
       "$desc: $format",

@@ -2,6 +2,8 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+  - Ensure local_module_url_prefix defaults to current perldoc_url_prefix.
+
 3.100     2018-08-06T02:07:18Z
 
   - Add "local_module_url_prefix" and "local_module_re" args

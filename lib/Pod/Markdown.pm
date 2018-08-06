@@ -15,8 +15,7 @@ our %URL_PREFIXES = (
   metacpan => 'https://metacpan.org/pod/',
   man      => 'http://man.he.net/man',
 );
-$URL_PREFIXES{$_} = $URL_PREFIXES{metacpan}
-  for qw(perldoc local_module);
+$URL_PREFIXES{perldoc} = $URL_PREFIXES{metacpan};
 
 our $LOCAL_MODULE_RE = qr/^(Local::|\w*?_\w*)/;
 
@@ -182,6 +181,12 @@ sub new {
   # Default to the global, but allow it to be overwritten in args.
   $self->local_module_re($LOCAL_MODULE_RE);
 
+  for my $type ( qw( perldoc man ) ){
+    my $attr  = $type . '_url_prefix';
+    # Initialize to the alias.
+    $self->$attr($type);
+  }
+
   while( my ($attr, $val) = each %args ){
     # NOTE: Checking exists on a private var means we don't allow Pod::Simple
     # attributes to be set this way.  It's not very consistent, but I think
@@ -202,18 +207,24 @@ sub new {
     $self->$attr($val);
   }
 
-    # TODO: move this logic to setter (and call _prepare_fragment_format).
-    for my $type ( qw( local_module perldoc man ) ){
-        my $attr  = $type . '_url_prefix';
-        # Use provided argument or default alias.
-        my $url = $self->$attr || $type;
-        # Expand alias if defined (otherwise use url as is).
-        $self->$attr( $URL_PREFIXES{ $url } || $url );
-    }
-
-    $self->_prepare_fragment_formats;
+  # TODO: call from the setters.
+  $self->_prepare_fragment_formats;
 
   return $self;
+}
+
+for my $type ( qw( local_module perldoc man ) ){
+  my $attr  = $type . '_url_prefix';
+  no strict 'refs'; ## no critic
+  *$attr = sub {
+    my $self = shift;
+    if (@_) {
+      $self->{$attr} = $URL_PREFIXES{ $_[0] } || $_[0];
+    }
+    else {
+      return $self->{$attr};
+    }
+  }
 }
 
 ## Attribute accessors ##
@@ -1213,9 +1224,10 @@ and L</markdown_fragment_format> is used (which can be customized).
 sub format_perldoc_url {
   my ($self, $name, $section) = @_;
 
-  my $url_prefix = $self->is_local_module($name)
-    ? $self->local_module_url_prefix
-    : $self->perldoc_url_prefix;
+  my $url_prefix = defined($name)
+    && $self->is_local_module($name)
+    && $self->local_module_url_prefix
+    || $self->perldoc_url_prefix;
 
   my $url = '';
 
@@ -1360,10 +1372,16 @@ Format fragment for L<search.cpan.org>
 sub format_fragment_metacpan { shift->format_fragment_pod_simple_xhtml(@_); }
 sub format_fragment_sco      { shift->format_fragment_pod_simple_html(@_);  }
 
+=method is_local_module
+
+Uses C<local_module_re> to determine if passed module is a "local" module.
+
+=cut
+
 sub is_local_module {
   my ($self, $name) = @_;
 
-  return (defined($name) && $name =~ $self->local_module_re);
+  return ($name =~ $self->local_module_re);
 }
 
 1;
@@ -1376,7 +1394,6 @@ handle_text
 end_.+
 start_.+
 encode_entities
-is_local_module
 
 =for test_synopsis
 my ($pod_string);
