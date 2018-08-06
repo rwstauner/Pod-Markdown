@@ -321,6 +321,8 @@ progress on the request by the system.
 
 # COPYRIGHT AND LICENSE
 
+This software is copyright (c) 2009-2011 by Marcel Gruenauer.
+
 This software is copyright (c) 2011 by Randy Stauner.
 
 This is free software; you can redistribute it and/or modify it under
