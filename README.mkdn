@@ -8,7 +8,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 3.005
+version 3.100
 
 # SYNOPSIS
 
@@ -71,6 +71,18 @@ If you prefer HTML entities over literal characters you can use
     Pod::Markdown->new(%options);
 
 The constructor accepts the following named arguments:
+
+- `local_module_url_prefix`
+
+    Alters the perldoc urls that are created from `L<>` codes
+    when the module is a "local" module (`"Local::*"` or `"Foo_Corp::*"` (see [perlmodlib](https://metacpan.org/pod/perlmodlib))).
+
+    The default is to use `perldoc_url_prefix`.
+
+- `local_module_re`
+
+    Alternate regular expression for determining "local" modules.
+    Default is `our $LOCAL_MODULE_RE = qr/^(Local::|\w*?_\w*)/`.
 
 - `man_url_prefix`
 
@@ -171,6 +183,14 @@ The encoding to use when writing to the output file handle.
 If neither this nor ["match\_encoding"](#match_encoding) are specified,
 a character string will be returned in whatever [Pod::Simple](https://metacpan.org/pod/Pod::Simple) output method you specified.
 
+## local\_module\_re
+
+Returns the regular expression used to determine local modules.
+
+## local\_module\_url\_prefix
+
+Returns the url prefix in use for local modules.
+
 ## man\_url\_prefix
 
 Returns the url prefix in use for man pages.
@@ -265,7 +285,7 @@ in addition to those websites please use your favorite search engine to discover
 
     A modern, open-source CPAN search engine, useful to view POD in HTML format.
 
-    [http://metacpan.org/release/Pod-Markdown](http://metacpan.org/release/Pod-Markdown)
+    [https://metacpan.org/release/Pod-Markdown](https://metacpan.org/release/Pod-Markdown)
 
 ## Bugs / Feature Requests
 
