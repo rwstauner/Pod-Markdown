@@ -2,6 +2,10 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+  - Allow local_module_url_prefix to be '' [rt-129865].
+  - URI Escape the module name in external pod links
+    (introduces dependency on URI::Escape).
+
 3.101     2018-08-06T14:32:38Z
 
   - Ensure local_module_url_prefix defaults to current perldoc_url_prefix.

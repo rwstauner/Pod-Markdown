@@ -9,6 +9,7 @@ package Pod::Markdown;
 use Pod::Simple 3.27 (); # detected_encoding and keep_encoding bug fix
 use parent qw(Pod::Simple::Methody);
 use Encode ();
+use URI::Escape ();
 
 our %URL_PREFIXES = (
   sco      => 'http://search.cpan.org/perldoc?',
@@ -1224,16 +1225,20 @@ and L</markdown_fragment_format> is used (which can be customized).
 sub format_perldoc_url {
   my ($self, $name, $section) = @_;
 
-  my $url_prefix = defined($name)
+  my $url_prefix = $self->perldoc_url_prefix;
+  if (
+    defined($name)
     && $self->is_local_module($name)
-    && $self->local_module_url_prefix
-    || $self->perldoc_url_prefix;
+    && defined($self->local_module_url_prefix)
+  ) {
+    $url_prefix = $self->local_module_url_prefix;
+  }
 
   my $url = '';
 
   # If the link is to another module (external link).
   if ($name) {
-    $url = $url_prefix . $name;
+    $url = $url_prefix . URI::Escape::uri_escape($name);
   }
 
   # See https://rt.cpan.org/Ticket/Display.html?id=57776
