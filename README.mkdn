@@ -27,7 +27,7 @@ version 3.101
 
 # DESCRIPTION
 
-This module uses [Pod::Simple](https://metacpan.org/pod/Pod::Simple) to convert POD to Markdown.
+This module uses [Pod::Simple](https://metacpan.org/pod/Pod%3A%3ASimple) to convert POD to Markdown.
 
 Literal characters in Pod that are special in Markdown
 (like \*asterisks\*) are backslash-escaped when appropriate.
@@ -37,14 +37,14 @@ Regions of `markdown` will be passed through unchanged.
 Regions of `html` will be placed inside a `<div>` tag
 so that markdown characters won't be processed.
 Regions of `:markdown` or `:html` will be processed as POD and included.
-To change which regions are accepted use the [Pod::Simple](https://metacpan.org/pod/Pod::Simple) API:
+To change which regions are accepted use the [Pod::Simple](https://metacpan.org/pod/Pod%3A%3ASimple) API:
 
     my $parser = Pod::Markdown->new;
     $parser->unaccept_targets(qw( markdown html ));
 
 ## A note on encoding and escaping
 
-The common [Pod::Simple](https://metacpan.org/pod/Pod::Simple) API returns a character string.
+The common [Pod::Simple](https://metacpan.org/pod/Pod%3A%3ASimple) API returns a character string.
 If you want Pod::Markdown to return encoded octets, there are two attributes
 to assist: ["match\_encoding"](#match_encoding) and ["output\_encoding"](#output_encoding).
 
@@ -142,11 +142,11 @@ The constructor accepts the following named arguments:
 ## html\_encode\_chars
 
 A string of characters to encode as html entities
-(using ["encode\_entities" in HTML::Entities](https://metacpan.org/pod/HTML::Entities#encode_entities) if available, falling back to numeric entities if not).
+(using ["encode\_entities" in HTML::Entities](https://metacpan.org/pod/HTML%3A%3AEntities#encode_entities) if available, falling back to numeric entities if not).
 
 Possible values:
 
-- A value of `1` will use the default set of characters from [HTML::Entities](https://metacpan.org/pod/HTML::Entities) (control chars, high-bit chars, and `<&>"'`).
+- A value of `1` will use the default set of characters from [HTML::Entities](https://metacpan.org/pod/HTML%3A%3AEntities) (control chars, high-bit chars, and `<&>"'`).
 - A false value will disable.
 - Any other value is used as a string of characters (like a regular expression character class).
 
@@ -164,7 +164,7 @@ so there will be less html noise in the output.
 Boolean: If true, use the `=encoding` of the input pod
 as the encoding for the output.
 
-If no encoding is specified, [Pod::Simple](https://metacpan.org/pod/Pod::Simple) will guess the encoding
+If no encoding is specified, [Pod::Simple](https://metacpan.org/pod/Pod%3A%3ASimple) will guess the encoding
 if it sees a high-bit character.
 
 If no encoding is guessed (or the specified encoding is unusable),
@@ -181,7 +181,7 @@ Defaults to false.
 The encoding to use when writing to the output file handle.
 
 If neither this nor ["match\_encoding"](#match_encoding) are specified,
-a character string will be returned in whatever [Pod::Simple](https://metacpan.org/pod/Pod::Simple) output method you specified.
+a character string will be returned in whatever [Pod::Simple](https://metacpan.org/pod/Pod%3A%3ASimple) output method you specified.
 
 ## local\_module\_re
 
@@ -244,11 +244,11 @@ by replacing non-word characters with dashes.
 
 ## format\_fragment\_pod\_simple\_xhtml
 
-Format url fragment like ["idify" in Pod::Simple::XHTML](https://metacpan.org/pod/Pod::Simple::XHTML#idify).
+Format url fragment like ["idify" in Pod::Simple::XHTML](https://metacpan.org/pod/Pod%3A%3ASimple%3A%3AXHTML#idify).
 
 ## format\_fragment\_pod\_simple\_html
 
-Format url fragment like ["section\_name\_tidy" in Pod::Simple::HTML](https://metacpan.org/pod/Pod::Simple::HTML#section_name_tidy).
+Format url fragment like ["section\_name\_tidy" in Pod::Simple::HTML](https://metacpan.org/pod/Pod%3A%3ASimple%3A%3AHTML#section_name_tidy).
 
 ## format\_fragment\_metacpan
 
@@ -267,7 +267,7 @@ Uses `local_module_re` to determine if passed module is a "local" module.
 # SEE ALSO
 
 - [pod2markdown](https://metacpan.org/pod/pod2markdown) - script included for command line usage
-- [Pod::Simple](https://metacpan.org/pod/Pod::Simple) - Super class that handles Pod parsing
+- [Pod::Simple](https://metacpan.org/pod/Pod%3A%3ASimple) - Super class that handles Pod parsing
 - [perlpod](https://metacpan.org/pod/perlpod) - For writing POD
 - [perlpodspec](https://metacpan.org/pod/perlpodspec) - For parsing POD
 - [http://daringfireball.net/projects/markdown/syntax](http://daringfireball.net/projects/markdown/syntax) - Markdown spec

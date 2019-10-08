@@ -49,7 +49,7 @@ code 'C<c*de>',     '`c*de`';
 
 # Links tested extensively in t/links.t.
 code 'L<link>',     "[link](${pod_prefix}link)";
-code 'L<star*>',    "[star\\*](${pod_prefix}star*)";
+code 'L<star*>',    "[star\\*](${pod_prefix}star%2A)";
 
 # Pod::Simple handles the E<> entirely (Pod::Markdown never sees them).
 code 'E<lt>',       '<';

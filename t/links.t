@@ -28,21 +28,21 @@ my @tests = (
 
 # in order of L<> examples in perlpod:
 ['name',                         q<name>,                   qq^[name](${pod_prefix}name)^],
-['other module',                 q<Other::Pod>,             qq^[Other::Pod](${pod_prefix}Other::Pod)^],
-['other module, empty text',     q<|Other::Pod>,            qq^[Other::Pod](${pod_prefix}Other::Pod)^],
+['other module',                 q<Other::Pod>,             qq^[Other::Pod](${pod_prefix}Other%3A%3APod)^],
+['other module, empty text',     q<|Other::Pod>,            qq^[Other::Pod](${pod_prefix}Other%3A%3APod)^],
 
-['other module/sec, empty text', q<|Other::Pod/sec>,        qq^["sec" in Other::Pod](${pod_prefix}Other::Pod#sec)^],
-['section in other module',      q<Other::Pod/sec>,         qq^["sec" in Other::Pod](${pod_prefix}Other::Pod#sec)^],
+['other module/sec, empty text', q<|Other::Pod/sec>,        qq^["sec" in Other::Pod](${pod_prefix}Other%3A%3APod#sec)^],
+['section in other module',      q<Other::Pod/sec>,         qq^["sec" in Other::Pod](${pod_prefix}Other%3A%3APod#sec)^],
 ['quoted section in other doc',  q<perlsyn/"For Loops">,    qq^["For Loops" in perlsyn](${pod_prefix}perlsyn#For${space}Loops)^],
 
 ['section in this doc',          q</sec>,                   qq^["sec"](#sec)^],
 ['quoted section in this doc',   q</"sec">,                 qq^["sec"](#sec)^],
 ['/sec, empty text',             q<|/sec>,                  qq^["sec"](#sec)^],
 
-['other module, alternate text', q<other-pod|Other::Pod>,   qq^[other-pod](${pod_prefix}Other::Pod)^],
+['other module, alternate text', q<other-pod|Other::Pod>,   qq^[other-pod](${pod_prefix}Other%3A%3APod)^],
 
-['sec in other mod, alt text',   q<x-sec|Other::Pod/sec>,   qq^[x-sec](${pod_prefix}Other::Pod#sec)^],
-['"sec" in other mod, alt text', q<x-sec|Other::Pod/"sec">, qq^[x-sec](${pod_prefix}Other::Pod#sec)^],
+['sec in other mod, alt text',   q<x-sec|Other::Pod/sec>,   qq^[x-sec](${pod_prefix}Other%3A%3APod#sec)^],
+['"sec" in other mod, alt text', q<x-sec|Other::Pod/"sec">, qq^[x-sec](${pod_prefix}Other%3A%3APod#sec)^],
 
 ['/"sec" in this doc, alt text', q<other-sec|/"sec">,       qq^[other-sec](#sec)^],
 ['/sec in this doc, alt text',   q<other-sec|/sec>,         qq^[other-sec](#sec)^],
@@ -56,7 +56,7 @@ my @tests = (
 ["don't expand nested L's",      q^perlpodspec/"About LE<lt>...E<gt> Codes"^, qq^["About L<...> Codes" in perlpodspec](${pod_prefix}perlpodspec#About${space}L<...>${space}Codes)^],
 
 # perlpodspec examples:
-['name',                         q<Foo::Bar>,               qq^[Foo::Bar](${pod_prefix}Foo::Bar)^],
+['name',                         q<Foo::Bar>,               qq^[Foo::Bar](${pod_prefix}Foo%3A%3ABar)^],
 ['alt|pod/sec', q<Perlport's section on NL's|perlport/Newlines>, qq^[Perlport's section on NL's](${pod_prefix}perlport#Newlines)^],
 ['pod/sec',                      q<perlport/Newlines>,      qq^["Newlines" in perlport](${pod_prefix}perlport#Newlines)^],
 ['man/sec',               q<crontab(5)/"DESCRIPTION">,      qq^["DESCRIPTION" in crontab(5)](${man_prefix}5/crontab)^],
@@ -80,7 +80,7 @@ my @tests = (
 
 # Insert backslashes (to escape markdown).
 ['_underscore_',                 q<_underscore_>,           qq^[\\_underscore\\_](${pod_prefix}_underscore_)^],
-['*asterisk*',                   q<*asterisk*>,             qq^[\\*asterisk\\*](${pod_prefix}*asterisk*)^],
+['*asterisk*',                   q<*asterisk*>,             qq^[\\*asterisk\\*](${pod_prefix}%2Aasterisk%2A)^],
 ['section with quotes',          q<whiskey|/Say "Cheese">,  qq^[whiskey](#Say${space}${quot}Cheese${quot})^],
 
 # is there something better to do?
@@ -99,10 +99,10 @@ my @tests = (
 ['man alias: manny', q<crontab(1)>, qq^[crontab(1)](http://manny.local/page/1/crontab)^,      man_url_prefix => 'manny'],
 ['man alias: man',   q<crontab(1)>, qq^[crontab(1)](http://man.he.net/man1/crontab)^,         man_url_prefix => 'man'],
 
-['pod url',             q<Foo::Bar>, qq^[Foo::Bar](http://localhost/pod/Foo::Bar)^,           perldoc_url_prefix => 'http://localhost/pod/'],
-['pod alias: sco',      q<Foo::Bar>, qq^[Foo::Bar](http://search.cpan.org/perldoc?Foo::Bar)^, perldoc_url_prefix => 'sco'],
-['pod alias: metacpan', q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo::Bar)^,       perldoc_url_prefix => 'metacpan'],
-['pod alias: perldoc',  q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo::Bar)^,       perldoc_url_prefix => 'perldoc'],
+['pod url',             q<Foo::Bar>, qq^[Foo::Bar](http://localhost/pod/Foo%3A%3ABar)^,           perldoc_url_prefix => 'http://localhost/pod/'],
+['pod alias: sco',      q<Foo::Bar>, qq^[Foo::Bar](http://search.cpan.org/perldoc?Foo%3A%3ABar)^, perldoc_url_prefix => 'sco'],
+['pod alias: metacpan', q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo%3A%3ABar)^,       perldoc_url_prefix => 'metacpan'],
+['pod alias: perldoc',  q<Foo::Bar>, qq^[Foo::Bar](https://metacpan.org/pod/Foo%3A%3ABar)^,       perldoc_url_prefix => 'perldoc'],
 );
 
 # Local Module URLs
@@ -110,31 +110,35 @@ my @tests = (
   my $p = {};
   #'<,'>perldo if (s/^\[|\],$//g){ $a = [map { s/^\s+|\s+$//gr } split /,/, $_, 4]; @$a > 2 and $_ = "  test_link({$a->[3]}, $a->[1], $a->[2], $a->[0]);" }
 
-  test_link($p, q<Local::Foo>, qq^[Local::Foo](${pod_prefix}Local::Foo)^,
+  test_link($p, q<Local::Foo>, qq^[Local::Foo](${pod_prefix}Local%3A%3AFoo)^,
     'Local::* defaults to perldoc');
-  test_link($p, q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](${pod_prefix}Foo_Corp::Bar)^,
+  test_link($p, q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](${pod_prefix}Foo_Corp%3A%3ABar)^,
     'Foo_Corp::* defaults to perldoc');
 
   $p->{perldoc_url_prefix} = 'perldoc://';
-  test_link($p, q<Local::Foo>, qq^[Local::Foo](perldoc://Local::Foo)^,
+  test_link($p, q<Local::Foo>, qq^[Local::Foo](perldoc://Local%3A%3AFoo)^,
     'local module without custom url respects perldoc_url_prefix');
 
   $p->{local_module_url_prefix} = 'local://';
-  test_link($p, q<Local::Foo>, qq^[Local::Foo](local://Local::Foo)^,
+  test_link($p, q<Local::Foo>, qq^[Local::Foo](local://Local%3A%3AFoo)^,
     'Local::* custom url');
-  test_link($p, q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](local://Foo_Corp::Bar)^,
+  test_link($p, q<Foo_Corp::Bar>, qq^[Foo\\_Corp::Bar](local://Foo_Corp%3A%3ABar)^,
     'Foo_Corp::* custom url');
 
-  test_link($p, q<Normal::Foo>, qq^[Normal::Foo](perldoc://Normal::Foo)^,
+  test_link($p, q<Normal::Foo>, qq^[Normal::Foo](perldoc://Normal%3A%3AFoo)^,
     'non local module');
 
   $p->{local_module_re} = qr/Normal/;
-  test_link($p, q<Normal::Foo>,   qq^[Normal::Foo](local://Normal::Foo)^,
+  test_link($p, q<Normal::Foo>,   qq^[Normal::Foo](local://Normal%3A%3AFoo)^,
     'Normal::* with custom RE');
-  test_link($p, q<NonLocal::Foo>, qq^[NonLocal::Foo](perldoc://NonLocal::Foo)^,
+  test_link($p, q<NonLocal::Foo>, qq^[NonLocal::Foo](perldoc://NonLocal%3A%3AFoo)^,
     'NonLocal* with custom RE');
-  test_link($p, q<Local::Foo>, qq^[Local::Foo](perldoc://Local::Foo)^,
+  test_link($p, q<Local::Foo>, qq^[Local::Foo](perldoc://Local%3A%3AFoo)^,
     'even Local::* uses perldoc when custom re does not match');
+
+  $p = {local_module_url_prefix => ''};
+  test_link($p, q<Local::Foo::Bar>, qq^[Local::Foo::Bar](Local%3A%3AFoo%3A%3ABar)^,
+    'local module with empty prefix');
 }
 
 # Most of these examples were internal links
