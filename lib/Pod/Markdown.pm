@@ -94,6 +94,7 @@ my %attributes = map { ($_ => 1) }
     perldoc_fragment_format
     markdown_fragment_format
     include_meta_tags
+    escape_url
   );
 
 =method new
@@ -166,6 +167,11 @@ the same values: a (shortcut to a) method name or a code ref.
 Specifies whether or not to print author/title meta tags at the top of the document.
 Default is false.
 
+* C<escape_url>
+Specifies whether or not to escape URLs.  Default is true.  It is not recommended
+to turn this off with an empty local_module_url_prefix, as the resulting local
+module URLs can be confused with IPv6 addresses by web browsers.
+
 =end :list
 
 =cut
@@ -178,6 +184,7 @@ sub new {
   $self->preserve_whitespace(1);
   $self->nbsp_for_S(1);
   $self->accept_targets(qw( markdown html ));
+  $self->escape_url(1);
 
   # Default to the global, but allow it to be overwritten in args.
   $self->local_module_re($LOCAL_MODULE_RE);
@@ -210,6 +217,10 @@ sub new {
 
   # TODO: call from the setters.
   $self->_prepare_fragment_formats;
+
+  if(defined $self->local_module_url_prefix && $self->local_module_url_prefix eq '' && !$self->escape_url) {
+    warn("turning escape_url with an empty local_module_url_prefix is not recommended as relative URLs could be confused for IPv6 addresses");
+  }
 
   return $self;
 }
@@ -336,6 +347,11 @@ to an internal section in this document.
 
 Returns the boolean value indicating
 whether or not meta tags will be printed.
+
+=method escape_url
+
+Returns the boolean value indicating
+whether or not URLs should be escaped.
 
 =cut
 
@@ -1238,7 +1254,7 @@ sub format_perldoc_url {
 
   # If the link is to another module (external link).
   if ($name) {
-    $url = $url_prefix . URI::Escape::uri_escape($name);
+    $url = $url_prefix . ($self->escape_url ? URI::Escape::uri_escape($name) : $name);
   }
 
   # See https://rt.cpan.org/Ticket/Display.html?id=57776
