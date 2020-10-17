@@ -139,6 +139,10 @@ my @tests = (
   $p = {local_module_url_prefix => ''};
   test_link($p, q<Local::Foo::Bar>, qq^[Local::Foo::Bar](Local%3A%3AFoo%3A%3ABar)^,
     'local module with empty prefix');
+
+  $p = {local_module_url_prefix => 'http://foo/', escape_url => 0};
+  test_link($p, q<Local::Foo::Bar>, qq^[Local::Foo::Bar](http://foo/Local::Foo::Bar)^,
+    'local module with empty prefix');
 }
 
 # Most of these examples were internal links

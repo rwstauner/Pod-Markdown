@@ -67,4 +67,8 @@ like warning { Pod::Markdown->new(unknown_arg => 1); },
 like warning { Pod::Markdown->new(encoding => 'oops'); },
   qr/encoding/, 'method that is not a rw attribute throws a warning';
 
+like warning { Pod::Markdown->new(local_module_url_prefix => '', escape_url => 0) },
+  qr/turning escape_url with an empty local_module_url_prefix is not recommended as relative URLs could be confused for IPv6 addresses/,
+  'use empty url prefix and do not escape url';
+
 done_testing;
