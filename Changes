@@ -2,6 +2,11 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+3.300     2020-10-31T22:57:42Z
+
+  - Add escape_url option to allow disabling it (defaults to true).
+    Thanks plicease! (gh-19)
+
 3.200     2019-10-09T16:36:15Z
 
   - Allow local_module_url_prefix to be '' [rt-129865].

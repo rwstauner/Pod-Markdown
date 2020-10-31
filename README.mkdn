@@ -8,7 +8,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 3.200
+version 3.300
 
 # SYNOPSIS
 
@@ -139,6 +139,12 @@ The constructor accepts the following named arguments:
     Specifies whether or not to print author/title meta tags at the top of the document.
     Default is false.
 
+- `escape_url`
+
+    Specifies whether or not to escape URLs.  Default is true.  It is not recommended
+    to turn this off with an empty local\_module\_url\_prefix, as the resulting local
+    module URLs can be confused with IPv6 addresses by web browsers.
+
 ## html\_encode\_chars
 
 A string of characters to encode as html entities
@@ -213,6 +219,11 @@ to an internal section in this document.
 
 Returns the boolean value indicating
 whether or not meta tags will be printed.
+
+## escape\_url
+
+Returns the boolean value indicating
+whether or not URLs should be escaped.
 
 ## format\_man\_url
 
@@ -324,8 +335,6 @@ progress on the request by the system.
 - Yasutaka ATARASHI <yakex@cpan.org>
 
 # COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2009-2011 by Marcel Gruenauer.
 
 This software is copyright (c) 2011 by Randy Stauner.
 
