@@ -176,6 +176,44 @@ module URLs can be confused with IPv6 addresses by web browsers.
 
 =cut
 
+sub filter {
+  my($class, $source) = @_;
+
+  my $new = $class->new;
+
+  while( my ($attr, $val) = each %attributes ){
+    # NOTE: Checking exists on a private var means we don't allow Pod::Simple
+    # attributes to be set this way.  It's not very consistent, but I think
+    # I'm ok with that for now since there probably aren't many Pod::Simple attributes
+    # being changed besides `output_*` which feel like API rather than attributes.
+    # We'll see.
+    # This is currently backward-compatible as we previously just put the attribute
+    # into the private stash so anything unknown was silently ignored.
+    # We could open this up to `$self->can($attr)` in the future if that seems better
+    # but it tricked me when I was testing a misspelled attribute name
+    # which also happened to be a Pod::Simple method.
+
+    exists $attributes{ $attr } or
+      # Provide a more descriptive message than "Can't locate object method".
+      warn("Unknown argument to ${class}->new(): '$attr'"), next;
+
+    # Call setter.
+    $new->$attr($class->$attr);
+  }
+
+  $new->output_fh(*STDOUT{IO});
+
+  if(ref($source || '') eq 'SCALAR') {
+    $new->parse_string_document( $$source );
+  } elsif(ref($source)) {  # it's a file handle
+    $new->parse_file($source);
+  } else {  # it's a filename
+    $new->parse_file($source);
+  }
+
+  return $new;
+}
+
 sub new {
   my $class = shift;
   my %args = @_;
@@ -231,7 +269,7 @@ for my $type ( qw( local_module perldoc man ) ){
   *$attr = sub {
     my $self = shift;
     if (@_) {
-      $self->{$attr} = $URL_PREFIXES{ $_[0] } || $_[0];
+        $self->{$attr} = $URL_PREFIXES{ $_[0] } || $_[0] if $_[0];
     }
     else {
       return $self->{$attr};
