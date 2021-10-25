@@ -176,28 +176,20 @@ module URLs can be confused with IPv6 addresses by web browsers.
 
 =cut
 
+# lifed from Pod::Simple and modified to address issue #21
 sub filter {
   my($class, $source) = @_;
 
+  # The contructor is called again, so we loose the initial parameters
   my $new = $class->new;
 
   while( my ($attr, $val) = each %attributes ){
-    # NOTE: Checking exists on a private var means we don't allow Pod::Simple
-    # attributes to be set this way.  It's not very consistent, but I think
-    # I'm ok with that for now since there probably aren't many Pod::Simple attributes
-    # being changed besides `output_*` which feel like API rather than attributes.
-    # We'll see.
-    # This is currently backward-compatible as we previously just put the attribute
-    # into the private stash so anything unknown was silently ignored.
-    # We could open this up to `$self->can($attr)` in the future if that seems better
-    # but it tricked me when I was testing a misspelled attribute name
-    # which also happened to be a Pod::Simple method.
+    # Please see new for details
 
     exists $attributes{ $attr } or
       # Provide a more descriptive message than "Can't locate object method".
       warn("Unknown argument to ${class}->new(): '$attr'"), next;
 
-    # Call setter.
     $new->$attr($class->$attr);
   }
 
