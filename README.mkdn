@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/rwstauner/Pod-Markdown.svg?branch=master)](https://travis-ci.org/rwstauner/Pod-Markdown)
 [![Coverage Status](https://coveralls.io/repos/rwstauner/Pod-Markdown/badge.svg?branch=master)](https://coveralls.io/r/rwstauner/Pod-Markdown?branch=master)
-[![Kwalitee status](http://cpants.cpanauthors.org/dist/Pod-Markdown.png)](http://cpants.charsbar.org/dist/overview/Pod-Markdown)
+[![Kwalitee status](https://cpants.cpanauthors.org/dist/Pod-Markdown.png)](https://cpants.cpanauthors.org/dist/Pod-Markdown)
 
 # NAME
 
@@ -8,7 +8,7 @@ Pod::Markdown - Convert POD to Markdown
 
 # VERSION
 
-version 3.300
+version 3.400
 
 # SYNOPSIS
 
@@ -327,6 +327,7 @@ progress on the request by the system.
 - Aristotle Pagaltzis <aristotle@cpan.org>
 - Cindy Wang (CindyLinz) <cindylinz@gmail.com>
 - Graham Ollis <plicease@cpan.org>
+- Johannes Schauer Marin Rodrigues <josch@mister-muffin.de>
 - Mike Covington <mfcovington@gmail.com>
 - motemen <motemen@cpan.org>
 - moznion <moznion@cpan.org>

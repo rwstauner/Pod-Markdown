@@ -2,6 +2,11 @@ Revision history for Perl extension {{$dist->name}}
 
 {{$NEXT}}
 
+3.400     2023-10-29T18:55:47Z
+
+  - Add CLI options for local-module, man, and perldoc url prefixes.
+    Thanks josch! (gh-25)
+
 3.300     2020-10-31T22:57:42Z
 
   - Add escape_url option to allow disabling it (defaults to true).
