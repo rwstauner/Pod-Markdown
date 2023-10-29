@@ -19,6 +19,7 @@ GetOptions(\%opts, qw(
   help|h
   html_encode_chars|html-encode-chars=s
   match_encoding|match-encoding|m
+  man_url_prefix|man-url-prefix=s
   output_encoding|output-encoding|e=s
   utf8|utf-8|u
 )) or pod2usage(2);
@@ -100,6 +101,14 @@ See L<Pod::Markdown/html_encode_chars> for more information.
 =item --match-encoding (-m)
 
 Use the same C<< =encoding >> as the input pod for the output file.
+
+=item --man-url-prefix
+
+Alters the man page urls that are created from C<< LE<lt>E<gt> >> codes.
+
+The default is C<http://man.he.net/man>.
+
+See L<Pod::Markdown/man_url_prefix> for more information.
 
 =item --output-encoding (-e)
 
