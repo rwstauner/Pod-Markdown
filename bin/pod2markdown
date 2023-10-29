@@ -18,8 +18,10 @@ my %opts = (
 GetOptions(\%opts, qw(
   help|h
   html_encode_chars|html-encode-chars=s
+  local_module_url_prefix|local-module-url-prefix=s
   match_encoding|match-encoding|m
   man_url_prefix|man-url-prefix=s
+  perldoc_url_prefix|perldoc-url-prefix=s
   output_encoding|output-encoding|e=s
   utf8|utf-8|u
 )) or pod2usage(2);
@@ -102,6 +104,15 @@ See L<Pod::Markdown/html_encode_chars> for more information.
 
 Use the same C<< =encoding >> as the input pod for the output file.
 
+=item --local-module-url-prefix
+
+Alters the perldoc urls that are created from C<< LE<lt>E<gt> >> codes
+when the module is a "local" module (C<"Local::*"> or C<"Foo_Corp::*"> (see L<perlmodlib>)).
+
+The default is to use C<perldoc_url_prefix>.
+
+See L<Pod::Markdown/local_module_url_prefix> for more information.
+
 =item --man-url-prefix
 
 Alters the man page urls that are created from C<< LE<lt>E<gt> >> codes.
@@ -109,6 +120,20 @@ Alters the man page urls that are created from C<< LE<lt>E<gt> >> codes.
 The default is C<http://man.he.net/man>.
 
 See L<Pod::Markdown/man_url_prefix> for more information.
+
+=item --perldoc-url-prefix
+
+Alters the perldoc urls that are created from C<< LE<lt>E<gt> >> codes.
+Can be:
+
+=for :list
+* C<metacpan> (shortcut for C<https://metacpan.org/pod/>)
+* C<sco> (shortcut for C<http://search.cpan.org/perldoc?>)
+* any url
+
+The default is C<metacpan>.
+
+See L<Pod::Markdown/perldoc_url_prefix> for more information.
 
 =item --output-encoding (-e)
 
